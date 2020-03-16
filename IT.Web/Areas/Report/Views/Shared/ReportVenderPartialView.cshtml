@@ -1,0 +1,11 @@
+﻿<div class="form-group">
+    <label>Vender:</label>
+    <div class="chosen-select-act fm-cmp-mg">
+        <select data-placeholder="Vender" class="chosen Id" name="Id" id="Id" title="select Vender">
+            @foreach (var Vender in ViewBag.Vender)
+            {
+                <option value="@Vender.Id">@Vender.Name</option>
+            }
+        </select>
+    </div>
+</div>

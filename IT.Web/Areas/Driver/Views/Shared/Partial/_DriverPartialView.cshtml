@@ -1,0 +1,118 @@
+﻿
+<div class="modal fade" id="DriverModel" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Driver Name:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Driver Full Name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Contact:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Contact" name="Contact" placeholder="Driver Contact">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Email" name="Email" placeholder="Driver Email">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Facebook:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Facebook" name="Facebook" placeholder="Driver Facebook">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>License Type:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" multiple data-placeholder="LicenseType" name="LicienceList" id="LicenseType" title="Licence Type">
+                                    <option value="1">Heavy</option>
+                                    <option value="2">Light</option>
+                                    <option value="3">Bus</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>License Expiry:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control LicenseExpiry" id="LicenseExpiry" name="LicenseExpiry" value="03/19/2018" title="Licence Expiry">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Nationality:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="Nationality" class="chosen" data-placeholder="Choose a Country..." id="Nationality">
+                                    @foreach (var country in ViewBag.CountryList)
+                                    {
+                                        <option value="@country.CountryName" @(country.CountryName == Model.Nationality ? "selected='selected'" : "")>@country.CountryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Note:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Comments" name="Comments" placeholder="Comments/Note..">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="updateDriver">Save changes</button>
+                <button type="button" class="btn btn-default" id="saveDriver">Save changes</button>
+                <button type="button" class="btn btn-default" id="CancelDriver" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

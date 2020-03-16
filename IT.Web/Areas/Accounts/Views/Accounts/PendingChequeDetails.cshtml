@@ -1,0 +1,84 @@
+﻿
+@model IT.Core.ViewModels.AccountViewModel
+@{
+    ViewBag.Title = "PendingChequeDetails";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IT.Core.ViewModels.AccountViewModel accountViewModel = new IT.Core.ViewModels.AccountViewModel();
+
+    accountViewModel = Model;
+
+}
+
+<input type="hidden" value="@accountViewModel.Id" id="Id" />
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Cheque Details...</h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="ReceiveAmount"><i class="fa fa-plus"></i> Receive</button>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            Customer : &nbsp;@accountViewModel.Name<br />
+                            Bank:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; @accountViewModel.BankName<br />
+                            Acount No: @accountViewModel.AccountNumber<br />
+                            Issued Date: @accountViewModel.CreatedDates<br />
+                            Posted Date: @accountViewModel.PostedDates
+                        </div>
+                        <div class="col-md-2"></div>
+                        <div class="col-md-4">
+                            <div class="pull-right">
+                                Amount: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>@Math.Round(accountViewModel.Received, 2)</b> <br />
+                                Cheque No: @accountViewModel.CheckNumber<br />
+                                Received By: @accountViewModel.UserName
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        @Html.Partial("~/Areas/Accounts/Views/Shared/PartialView/_AccountChequeReceivedTablePartialView.cshtml")
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-6"></div>
+                        <div class="col-md-6">
+                            <div class="pull-right">
+                                <a href="/PendingCheque" class="btn btn-info">Back to list</a>
+                                <button type="button" id="SaveToAccount" class="btn btn-success">Cheque Received</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+
+        $('#SaveToAccount').click(function () {
+
+            var Data = JSON.stringify({
+                Id: $('#Id').val(),
+            })
+            ajaxRequest("POST", "/AccountPaymentReceiveFromCheque", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    sucessAdd();
+                }
+            });
+        });
+    </script>
+
+}

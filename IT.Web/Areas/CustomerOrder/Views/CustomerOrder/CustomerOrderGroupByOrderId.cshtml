@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "CusOrderDetGrpByOdrIdForCustomer";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+
+    IT.Core.ViewModels.CustomerOrderGroupViewModel customerOrderGroupViewModel = new IT.Core.ViewModels.CustomerOrderGroupViewModel();
+    customerOrderGroupViewModel = ViewBag.CustomerOrderGroupViewModel as IT.Core.ViewModels.CustomerOrderGroupViewModel;
+
+    List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModel = new List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>();
+    customerGroupOrderDetailsViewModel = ViewBag.customerGroupOrderDetailsViewModel as List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>;
+}
+
+<div class="container" style="background-color:white">
+    <p></p>
+    <div class="row">
+        <div class="col-md-12">
+            Id #: <label id="Id">@customerOrderGroupViewModel.Id</label><br />
+            Order No #:     <label> @customerOrderGroupViewModel.CustomerOrderId</label><br />
+            Created By #:   <label> @customerOrderGroupViewModel.UserName  </label><br />
+            Company Name: <label> @customerOrderGroupViewModel.Name</label><br />
+            Requested Quantity #: <label> @customerOrderGroupViewModel.RequestedQuantity</label>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped" id="EmployeeTable">
+                <thead>
+                    <tr>
+                        <th>
+                            Vehicle
+                        </th>
+                        <th>
+                            Driver
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>Deliverd Quantity</th>
+                        <th>
+                            Comments
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (customerGroupOrderDetailsViewModel.Count > 0)
+                    {
+                        foreach (var item in customerGroupOrderDetailsViewModel)
+                        {
+                            <tr>
+                                <td>@item.TraficPlateNumber</td>
+                                <td>@item.Name</td>
+                                <td>@item.RequestedQuantity</td>
+                                <th>@item.DeliverdQuantity</th>
+                                <td>@item.Comments</td>
+                                <td>@item.IsAsigned</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            Description:  @customerOrderGroupViewModel.CustomerNote
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="8">
+                            <div class="pull-right">
+                                @if (customerOrderGroupViewModel.IsSend == false)
+                                {
+                                    <a href="/OrderGroupEdit/@customerOrderGroupViewModel.Id" type="button" value="Edit" class="btn btn-info" id="EditCustomerOrder">Edit</a>
+                                    <input type="button" value="Send Order Request" class="btn btn-success" id="SendCustomerOrder" />
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerResponsePartialView.cshtml")
+
+
+@section scripts{
+
+    <script>
+
+        $('#SendCustomerOrder').click(function () {
+
+            var Id = $('#Id').text();
+
+            ajaxRequest("Post", "/CustomerOrderSend/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+
+                    setTimeout(function () {
+                        swal({
+                            title: "Thank You!",
+                            text: "Your Order Request has been sent successfully!",
+                            type: "success"
+                        }, function () {
+                            window.location = "/MyRequestedOrder";
+                        });
+                    }, 100);
+                }
+            });
+
+        });
+
+    </script>
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/CustomerScript.js"></script>
+}

@@ -1,0 +1,97 @@
+﻿@model IT.Core.ViewModels.SiteViewModel
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+   
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+           Site Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiteName)
+        </dd>
+
+        <dt>
+           Contact Person Name
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContactPersonName)
+        </dd>
+
+        <dt>
+            Phone
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ContactPhone)
+        </dd>
+
+        <dt>
+            Cell
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiteCell)
+        </dd>
+
+        <dt>
+            FaceBook
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FaceBook)
+        </dd>
+
+        <dt>
+           Email
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.SiteEmail)
+        </dd>
+
+        <dt>
+            Address
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt>
+           Created Date
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.IsActive)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.IsActive)
+        </dd>
+
+        <dt>
+          Oprater
+        </dt>
+
+        <dd>    
+            @Html.DisplayFor(model => model.UserName)
+        </dd>
+
+    </dl>
+</div>
+<p>   
+    @Html.ActionLink("Back to List", "Index")
+</p>

@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon"> <i class="icon-align-justify"></i> </span>
+                    <h5>Vehicle-info</h5>
+                </div>
+                <div class="widget-content nopadding">
+                    <form action="/Vehicle/Vehicle/Create" method="POST" class="form-horizontal" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="span6">
+
+                                <div class="control-group">
+                                    <label class="control-label">Type :</label>
+                                    <div class="controls">
+                                        <select name="vehicleType" id="vehicleType">
+                                            <option value="AddNewProductSelect">Select Vehicle Type...</option>
+                                            @foreach (var Types in ViewBag.vehicleType)
+                                            {
+                                                <option value="@Types.Id">@Types.VehicleType</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                                <div class="control-group">
+                                    <label class="control-label">Traffic Plate Number :</label>
+                                    <div class="controls">
+                                        <input type="text" name="TraficPlateNumber" class="span11" placeholder="Traffic Plate Number" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Place of Issue :</label>
+                                    <div class="controls">
+                                        <select name="RegisteredRegion">
+                                            <option>Select Place of Issue</option>
+                                            <option>Abu Dhabi</option>
+                                            <option>Dubai</option>
+                                            <option>Sharja</option>
+                                            <option>Ajman</option>
+                                            <option>Fujairah</option>
+                                            <option>Ras Al Khaimah</option>
+                                            <option>Umm Al Quwain</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">T.C Number</label>
+                                    <div class="controls">
+                                        <input type="text" name="TCNumber" class="span11" placeholder="T.C Number" maxlength="10" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Model :</label>
+                                    <div class="controls">
+                                        <input type="text" name="Model" class="span11" placeholder="Model" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Brand:</label>
+                                    <div class="controls">
+                                        <input type="text" name="Brand" class="span11" placeholder="Brand" />
+                                    </div>
+                                </div>
+                                <div class="control-group">
+                                    <label class="control-label">Color</label>
+                                    <div class="controls">
+                                        <select name="Color">
+                                            <option class="text-light">White</option>
+                                            <option class="text-secondary">Black</option>
+                                            <option class="text-danger">Red</option>
+                                            <option class="text-success">Green</option>
+                                            <option class="text-primary">Blue</option>
+                                            <option class="text-warning">Gold</option>
+                                            <option>Other Please specify...</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="span6">
+                                <div class="control-group">
+                                    <label class="control-label">Mulkia Expiry:</label>
+                                    <div class="controls">
+                                        <input type="text" id="MulkiaExpiry" name="MulkiaExpiry" value="12/12/2019" class="datePick span11" placeholder="Mulkia Expiry Date" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Insurance Expiry:</label>
+                                    <div class="controls">
+                                        <input type="text" id="InsuranceExpiry" name="InsuranceExpiry" value="12/12/2019" class="datePick span11" placeholder="Insurance Expiry Date" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Insurance Company Name:</label>
+                                    <div class="controls">
+                                        <input type="text" name="" class="span11" placeholder="Insurance Company Name" />
+                                    </div>
+                                </div>
+
+
+                                <div class="control-group">
+                                    <label class="control-label">Upload Mulkia Front 1:</label>
+                                    <div class="controls">
+                                        <input type="file" name="files" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Upload Mulkia Back 1:</label>
+                                    <div class="controls">
+                                        <input type="file" name="files" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group" style="display:none" id="MF2">
+                                    <label class="control-label">Upload Mulkia Front 2:</label>
+                                    <div class="controls">
+                                        <input type="file" name="files" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group" style="display:none" id="MB2">
+                                    <label class="control-label">Upload Mulkia Back 2:</label>
+                                    <div class="controls">
+                                        <input type="file" name="files" />
+                                    </div>
+                                </div>
+
+                                <div class="control-group">
+                                    <label class="control-label">Note</label>
+                                    <div class="controls">
+                                        <textarea class="span11"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-save"></i> Save</button>
+                            <button type="reset" class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i> Reset</button>
+                            <button type="submit" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i> Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <ul class="pager">
+                <li class="previous"><a href="/Vehicle" title="List of Vehicle"><i class="glyphicon glyphicon-arrow-left"></i> Go to List</a></li>
+                @*<li class="next"><a href="/Home" title="Home Page"><i class="glyphicon glyphicon-home"></i> Home</a></li>*@
+            </ul>
+
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+    $(document).ready(function () {
+
+        $('#vehicleType').change(function () {
+            var TypeSelected = $(this).val();
+            if (TypeSelected == 1) {
+                $('#MB2').css('display', 'block');
+                $('#MF2').css('display', 'block');
+            }
+            else {
+                $('#MB2').css('display', 'None');
+                $('#MF2').css('display', 'None');
+            }
+
+        });
+    });
+    </script>
+}
+

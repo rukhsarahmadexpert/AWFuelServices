@@ -1,0 +1,284 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Reports</h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="ReceiveAmount"><i class="fa fa-plus"></i> Receive</button>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="form-control">My Payments</label>
+
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/UnpadInvoiceReportCustomer">All Invoice</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="InviceFromDateToDate">Invice from Date to Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="InvoiceByDates">Invoice By Date</a>
+                                </li>
+                                <hr />
+                                <li>
+                                    <a href="/PaidInvoiceReportByCompanyId"> All Paid Invoice</a>
+                                </li>
+                                <hr />
+                                <li>
+                                    <a href="/PartailPaidInvoiceReportByCompanyId">Partial Paid Invoice</a>
+                                </li>
+                                <hr />
+                                <li>
+                                    <a href="/OverDueInvoiceReportByCompanyId" id="OverDueInvoice"> Over Due Invoice</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-control">My Orders</label>
+
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="#" id="OrderReportByVehicle">Order Report By Vehicle</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="OrderReportFromDateToDate">Order Report from Date to Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="InvoiceByDates">Order By Date</a>
+                                </li>
+                                <hr />
+                                <li>
+                                    <a href="#" id="OrderReportByVehicle">Delivery Notes</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-control">My Expenses</label>
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="#" id="OrderReportByVehicle">All Expenses</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="OrderReportFromDateToDate">Expenses From Date To Date</a>
+                                </li>
+
+                                <hr />
+                                <li>
+                                    <a href="#" id="InvoiceByDates">General Expenses</a>
+                                </li>
+                                <hr />
+                                <li>
+                                    <a href="#" id="InvoiceByDates">Expense By Employee</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="InvoiceByDates">Expense By Vehicle</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ReportModelFromByDate" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportByDate" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>select Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control FromDate" id="FromDates" name="FromDate" value="03/19/2019" title="From Date" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="LoadReportByDate">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelByPerson" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control lblHeadingFromDateToDate" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportByPerson" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        @*@Html.Partial("~/Areas/Report/Views/Shared/ReportVenderPartialView.cshtml")*@
+                        <select name="Id" id="Id">
+                            <option value="0">Select Vehicle</option>
+                            <option value="1">1122112</option>
+                        </select>
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" id="LoadReportByPerson">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelFromDateToDate" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportFormDateToDate" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>From Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control FromDate" id="FromDate" name="FromDate" value="03/19/2019" title="From Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control ToDate" id="ToDate" name="ToDate" value="03/19/2019" title="To Date">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="LoadReportFromDateToDate">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerResponsePartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/CustomerScript.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var Url = "";
+            $('#InvoiceByDates').click(function () {
+
+                Url = "";
+                Url = "UnpadInvoiceReportCustomerByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+
+            $('#LoadReportByDate').click(function (e) {
+
+                if ($('#FromDates').val().trim() == "" || $('#FromDates').val().trim() == "03/19/2019") {
+
+                    alert('Please select Date');
+                }
+                else {
+
+                    e.preventDefault();
+                    $('#reportByDate').attr('action', Url).submit();
+                    $('#ReportModelFromByDate').modal('hide');
+                }
+            });
+
+
+            $('#LoadReportFromDateToDate').click(function (e) {
+                e.preventDefault();
+                // $("#reportFormDateToDate").attr('target', '_blank');
+                $('#reportFormDateToDate').attr('action', Url).submit();
+
+                $('#ReportModelFromDateToDate').modal('hide');
+            });
+
+
+            $("#InviceFromDateToDate").click(function () {
+                Url = "";
+                Url = "UnpadInvoiceReportFromDateToDateCustomer";
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#OrderReportByVehicle').click(function () {
+
+                Url = "";
+                Url = "OrderDeliverdReportByVehicle";
+                $('#ReportModelByPerson').modal('show');
+
+            });
+
+            $('#LoadReportByPerson').click(function (e) {
+
+                //if ($('.Id').val() == 0) {
+                //    alert('Please Select Vender');
+                //}
+                //else {
+
+                e.preventDefault();
+                $('#reportByPerson').attr('action', Url).submit();
+                $('#reportByPerson').modal('hide');
+                $('#ReportModelByPerson').modal('hide');
+                //}
+            })
+
+            $('#OrderReportFromDateToDate').click(function () {
+                Url = "";
+                Url = "OrderDeliverdReportFromDateToDate";
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+        })
+    </script>
+}
+

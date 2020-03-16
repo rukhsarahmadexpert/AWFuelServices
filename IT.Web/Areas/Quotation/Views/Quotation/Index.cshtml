@@ -1,0 +1,120 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Quotation-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewQuotation"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="QuotationListTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Quotation #</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Total</th>
+                                    <th>VAT</th>
+                                    <th>Grand Total</th>
+                                    <th>Is Updated</th>
+                                    <th>Oprater</th>
+
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+        $('#createNewQuotation').click(function () {
+
+            window.location.href = "Quotation-Create";
+        });
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#QuotationListTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/QuotationAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "PONumber" },
+                    { "mData": "Name" },
+                    { "mData": "FDate" },
+                    { "mData": "DDate" },
+                    { "mData": "Total" },
+                    { "mData": "VAT" },
+                    { "mData": "GrandTotal" },
+                    { "mData": "IsUpdated" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditLPO(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewLPO(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>' + ' | ' + '<a href="#" onclick="DeletePro(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>' + ' | ' + '<a href="#" onclick="CreateBill(' + Id + ')">Invoice</a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        $('#createNewLPO').click(function () {
+
+            window.location.href = "/LPO-Create";
+        });
+
+        function EditLPO(Id) {
+            window.location.href = "/Quotation-Edit/" + Id;
+        }
+
+        function ViewLPO(Id) {
+            window.location.href = "/Quotation-Details/" + Id;
+        }
+
+        function CreateBill(Id) {
+
+            window.location.href = "/MakeInvoice/" + Id;
+        }
+    </script>
+
+}
+
+

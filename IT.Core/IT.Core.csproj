@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DFB28E16-DD10-4174-835D-4FC77DCC8A47}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>IT.Core</RootNamespace>
+    <AssemblyName>IT.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Common\SQLParameters.cs" />
+    <Compile Include="ViewModels\AboutUsViewModel.cs" />
+    <Compile Include="ViewModels\AppVersionViewModel.cs" />
+    <Compile Include="ViewModels\AWDepartments.cs" />
+    <Compile Include="ViewModels\AWFuelDepartmentDetailsViewModel.cs" />
+    <Compile Include="ViewModels\BookingUpdateReason.cs" />
+    <Compile Include="ViewModels\CompanyAboutUs.cs" />
+    <Compile Include="ViewModels\CompanyContactUs.cs" />
+    <Compile Include="ViewModels\CompanyModel.cs" />
+    <Compile Include="ViewModels\CompanyPersonalInformation.cs" />
+    <Compile Include="ViewModels\ContactInformationViewModel.cs" />
+    <Compile Include="ViewModels\CustomerBookingReservedRemaining.cs" />
+    <Compile Include="ViewModels\CustomerBookingViewModel.cs" />
+    <Compile Include="ViewModels\CustomerNotification.cs" />
+    <Compile Include="ViewModels\CustomerOrderLocationViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderStatistics.cs" />
+    <Compile Include="Interfaces\IRepository.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\AccountDetailsViewModel.cs" />
+    <Compile Include="ViewModels\AccountsModel.cs" />
+    <Compile Include="ViewModels\AccountStatisticsViewModel.cs" />
+    <Compile Include="ViewModels\AccountViewModel.cs" />
+    <Compile Include="ViewModels\AWFuelSalaryViewModel.cs" />
+    <Compile Include="ViewModels\ChangePasswordViewModel.cs" />
+    <Compile Include="ViewModels\CityViewModel.cs" />
+    <Compile Include="ViewModels\Common\SingleIntegerValueResult.cs" />
+    <Compile Include="ViewModels\CompanyImages.cs" />
+    <Compile Include="ViewModels\CompanyViewModel.cs" />
+    <Compile Include="ViewModels\CompnayModel.cs" />
+    <Compile Include="ViewModels\CountryViewModel.cs" />
+    <Compile Include="ViewModels\countryViewModels.cs" />
+    <Compile Include="ViewModels\CustomerGroupOrderDetailsViewModel.cs" />
+    <Compile Include="ViewModels\CustomerNoteOrderViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderDateViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderDeliverVewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderGroupViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderListViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderViewModel.cs" />
+    <Compile Include="ViewModels\CustomerViewModel.cs" />
+    <Compile Include="ViewModels\DailyTyreTestViewModel.cs" />
+    <Compile Include="ViewModels\DataTablesParm.cs" />
+    <Compile Include="ViewModels\DeleteRowViewModel.cs" />
+    <Compile Include="ViewModels\DesignationViewModel.cs" />
+    <Compile Include="ViewModels\DirectSaleViewModel.cs" />
+    <Compile Include="ViewModels\DriverLoginHistoryViewModel.cs" />
+    <Compile Include="ViewModels\DriverLoginHistoryViewModelForAdmin.cs" />
+    <Compile Include="ViewModels\DriverModel.cs" />
+    <Compile Include="ViewModels\DriverTransferRequestType.cs" />
+    <Compile Include="ViewModels\DriverVehicelViewModel.cs" />
+    <Compile Include="ViewModels\DriverViewModel.cs" />
+    <Compile Include="ViewModels\DynamicPages.cs" />
+    <Compile Include="ViewModels\EmailFormModel.cs" />
+    <Compile Include="ViewModels\EmployeeSalaryGenerateViewModel.cs" />
+    <Compile Include="ViewModels\EmployeeViewModel.cs" />
+    <Compile Include="ViewModels\ExceptionLogViewModel.cs" />
+    <Compile Include="ViewModels\ExpenseDetailsViewModel.cs" />
+    <Compile Include="ViewModels\ExpenseForVIewModel.cs" />
+    <Compile Include="ViewModels\ExpenseTypeViewModel.cs" />
+    <Compile Include="ViewModels\ExpenseViewModel.cs" />
+    <Compile Include="ViewModels\FeedBackViewModel.cs" />
+    <Compile Include="ViewModels\FuelPricesViewModel.cs" />
+    <Compile Include="ViewModels\FuelTransferViewModel.cs" />
+    <Compile Include="ViewModels\GeneralExpenseViewModel.cs" />
+    <Compile Include="ViewModels\LicenseTypeViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\LPOInvoiceDetails.cs" />
+    <Compile Include="ViewModels\LPOInvoiceDetailsModel.cs" />
+    <Compile Include="ViewModels\LPOInvoiceModel.cs" />
+    <Compile Include="ViewModels\LPOInvoiceViewModel.cs" />
+    <Compile Include="ViewModels\LpoRemainingQuantityViewModel.cs" />
+    <Compile Include="ViewModels\NotificationInformation.cs" />
+    <Compile Include="ViewModels\OrderDetailsViewModel.cs" />
+    <Compile Include="ViewModels\OrderReport.cs" />
+    <Compile Include="ViewModels\OrderTransferRequestsViewModel.cs" />
+    <Compile Include="ViewModels\OurServicesViewModel.cs" />
+    <Compile Include="ViewModels\PrivacyPolicyDetailsViewModel.cs" />
+    <Compile Include="ViewModels\PrivatePolicyViewModel.cs" />
+    <Compile Include="ViewModels\ProductUnitViewModel.cs" />
+    <Compile Include="ViewModels\ProductViewModel.cs" />
+    <Compile Include="ViewModels\ProjectViewModel.cs" />
+    <Compile Include="ViewModels\RejectedOrderDetails.cs" />
+    <Compile Include="ViewModels\ReportAdminViewModel.cs" />
+    <Compile Include="ViewModels\ReportsByDatesVehicleDetails.cs" />
+    <Compile Include="ViewModels\ReportsByDatesViewModel.cs" />
+    <Compile Include="ViewModels\RolesViewModel.cs" />
+    <Compile Include="ViewModels\SalePurchaseReport.cs" />
+    <Compile Include="ViewModels\SearchViewModel.cs" />
+    <Compile Include="ViewModels\ServiceResponseModel.cs" />
+    <Compile Include="ViewModels\SingleStringValueResult.cs" />
+    <Compile Include="ViewModels\SiteViewModel.cs" />
+    <Compile Include="ViewModels\StateViewModel.cs" />
+    <Compile Include="ViewModels\StockViewModel.cs" />
+    <Compile Include="ViewModels\StorageViewModel.cs" />
+    <Compile Include="ViewModels\TransferFromDriverViewModel.cs" />
+    <Compile Include="ViewModels\TypeOwnerReprentative.cs" />
+    <Compile Include="ViewModels\UploadDocumentsViewModel.cs" />
+    <Compile Include="ViewModels\UserCompanyViewModel.cs" />
+    <Compile Include="ViewModels\UserViewModel.cs" />
+    <Compile Include="ViewModels\VatModel.cs" />
+    <Compile Include="ViewModels\VehicleModel.cs" />
+    <Compile Include="ViewModels\VehicleServiceViewModel.cs" />
+    <Compile Include="ViewModels\VehicleTypeViewModel.cs" />
+    <Compile Include="ViewModels\VehicleViewModel.cs" />
+    <Compile Include="ViewModels\VenderViewModel.cs" />
+    <Compile Include="ViewModels\WebSiteImagesviewModel.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

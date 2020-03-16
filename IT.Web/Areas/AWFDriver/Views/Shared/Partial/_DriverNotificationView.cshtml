@@ -1,0 +1,217 @@
+﻿
+<div class="modal fade" id="EmployeeModel" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Employee Full Name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Nationality:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Nationality" name="Nationality" id="Nationality" title="Employee Nationality">
+                                    <option value="0">Select Country...</option>
+                                    @*@foreach (var country in ViewBag.CountryList)
+                                        {
+
+                                            <option value="@country.CountryName" @(country.CountryName == Model.Nationality ? "selected='selected'" : "")>@country.CountryName</option>
+                                        }*@
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Contact:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Contact" name="Contact" placeholder="Employee Contact">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Email" name="Email" placeholder="Employee Email">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Designation:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Emloyee Designation" name="Designation" id="Designation" title="Employee Designation">
+                                    <option value="0">Select Designation...</option>
+                                    @*@foreach (var Desig in ViewBag.DesignationList)
+                                        {
+
+                                            <option value="@Desig.Id" @(Desig.Id == Model.Designation ? "selected='selected'" : "")>@Desig.Designation</option>
+                                        }*@
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Basic Salary:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="BasicSalary" name="BasicSalary" placeholder="Employee Basic Salry">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @*<div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label>Mulkiya Expiry:</label>
+                                <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                    <div class="input-group date nk-int-st">
+                                        <span class="input-group-addon"></span>
+                                        <input type="text" class="form-control MulkiaExpiry" id="MulkiaExpiry" name="MulkiaExpiry" value="03/19/2018" title="Mulkia Expiry">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                <label>Insurance Expiry:</label>
+                                <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                    <div class="input-group date nk-int-st">
+                                        <span class="input-group-addon"></span>
+                                        <input type="text" class="form-control InsuranceExpiry" id="InsuranceExpiry" name="InsuranceExpiry" value="03/19/2018" title="Insurance Expiry">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>*@
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Employee Facebook:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Facebook" name="Facebook" placeholder="Employee Facebook">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Note:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Comments" name="Comments" placeholder="Comments/Note..">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="updateEmployee">Save changes</button>
+                <button type="button" class="btn btn-default" id="saveEmployee">Save changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal animated bounce" id="NotifyMeOrder" role="dialog">
+    <div class="modal-dialog modal-sm modals-default">
+        <div class="modal-content" style="padding:30px 30px">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="normal-table-list" style="padding:0 !important">
+                            <div class="basic-tb-hd">
+                                <h2 style="text-align:center">Order view and Accept</h2>
+                            </div>
+                            <div class="bsc-tbl-bdr">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <td>Company</td>
+                                            <td><span id="CompanyName" style="font-weight:bold">Dubai Oil</span></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Company Contact</td>
+                                            <td id="CompanyContact">091 654564465</td>
+                                        </tr>
+                                        <tr>
+                                            <td>Total Quantity</td>
+                                            <td id="Quantity">102 Gellon</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                <table id="AsignOrderTable" class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                Driver Name
+                                            </th>
+                                            <th>
+                                                Driver Contact
+                                            </th>
+                                            <th>
+                                                Vehicle Number
+                                            </th>
+                                            <th>
+                                                 Quantity
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="modal-footer">
+
+                <button class="btn btn-success" id="AcceptDriver">Accept</button>
+                <button class="btn btn-danger" id="RejectDriver">Reject</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<input type="hidden" id="CurrentOrderId" />

@@ -1,0 +1,87 @@
+﻿
+@{
+    ViewBag.Title = "ReceivedCheques";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Cheque Cashed</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="ReceiveAmount"><i class="fa fa-plus"></i> Receive</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="AccountTableChequeReceived" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No #</th>
+                                    <th>Bank</th>
+                                    <th>Account Number</th>
+                                    <th>Cheque No</th>
+                                    <th>Amount</th>
+                                    <th>Posted Date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#AccountTableChequeReceived').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/AccountChequeCashedAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "Id" },
+                    { "mData": "BankName" },
+                    { "mData": "Name" },
+                    { "mData": "CheckNumber" },
+                    { "mData": "Received" },
+                    { "mData": "PostedDates" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="ViewLPO(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>' + ' | ' + '<a href="#" onclick="DeleteTran(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+    </script>
+
+}
+
+

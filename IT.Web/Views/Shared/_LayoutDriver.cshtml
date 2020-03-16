@@ -1,0 +1,245 @@
+﻿@{
+    IT.Core.ViewModels.UserCompanyViewModel userCompanyViewModel = new IT.Core.ViewModels.UserCompanyViewModel();
+
+    if (Session["userCompanyViewModel"] != null)
+    {
+        userCompanyViewModel = Session["userCompanyViewModel"] as IT.Core.ViewModels.UserCompanyViewModel;
+    }
+}
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <title>AWFuel | @ViewBag.Title </title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/Icon/favicon.png">
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/fonts/FontFamily.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.theme.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.transitions.css" rel="stylesheet" />
+    <link href="~/Content/css/meanmenu/meanmenu.min.css" rel="stylesheet" />
+    <link href="~/Content/css/animate.css" rel="stylesheet" />
+    <link href="~/Content/css/normalize.css" rel="stylesheet" />
+    <link href="~/Content/css/scrollbar/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link href="~/Content/css/jvectormap/jquery-jvectormap-2.0.3.css" rel="stylesheet" />
+    <link href="~/Content/css/notika-custom-icon.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/waves.min.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/button.css" rel="stylesheet" />
+    <link href="~/Content/Toast.css" rel="stylesheet" />
+    <link href="~/Content/jquery.toast.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap-select/bootstrap-select.css" rel="stylesheet" />
+    <link href="~/Content/css/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/Content/css/chosen/chosen.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/css/main.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="~/Content/css/responsive.css" rel="stylesheet" />
+    <link href="~/Content/fonts/notika-icon.woff" rel="stylesheet" />
+    <link href="~/Content/fonts/notika-icon.ttf" rel="stylesheet" />
+    <link href="~/Scripts/sweetalart/sweetalert.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    @Html.Partial("~/Views/Shared/_PartialView/_HeaderTopDriverAWFPartialView.cshtml")
+    @Html.Partial("~/Views/Shared/_PartialView/_MenuAWFuelDriverPartialView.cshtml")
+    @Html.Partial("~/Areas/AWFDriver/Views/Shared/Partial/_DriverNotificationView.cshtml")
+
+    @RenderBody();
+
+    <input type="hidden" id="CompanyId" value="@userCompanyViewModel.CompanyId" />
+
+    <input type="hidden" value="@userCompanyViewModel.UserName" id="UserName" />
+    <input type="hidden" id="DriverId" />
+
+    <!-- End Footer area-->
+    <!-- jquery-->
+
+    @Html.Partial("~/Areas/Driver/Views/Shared/Partial/_VehiclePartialView.cshtml")
+
+
+    @Scripts.Render("~/bundles/jquery")   
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @*<script src="~/Scripts/js/vendor/jquery-1.12.4.min.js"></script>*@
+    @*<script src="~/Scripts/js/wow.min.js"></script>
+    <script src="~/Scripts/js/jquery-price-slider.js"></script>
+    <script src="~/Scripts/js/owl.carousel.min.js"></script>
+    <script src="~/Scripts/js/jquery.scrollUp.min.js"></script>
+    <script src="~/Scripts/js/meanmenu/jquery.meanmenu.js"></script>
+    <script src="~/Scripts/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/Scripts/js/sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/Scripts/js/sparkline/sparkline-active.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.resize.js"></script>
+    <script src="~/Scripts/js/flot/curvedLines.js"></script>
+    <script src="~/Scripts/js/flot/flot-active.js"></script>
+    <script src="~/Scripts/js/knob/jquery.knob.js"></script>
+    <script src="~/Scripts/js/knob/jquery.appear.js"></script>
+    <script src="~/Scripts/js/knob/knob-active.js"></script>
+    <script src="~/Scripts/js/wave/waves.min.js"></script>
+    <script src="~/Scripts/js/todo/jquery.todo.js"></script>
+    <script src="~/Scripts/js/plugins.js"></script>
+    <script src="~/Scripts/js/chat/moment.min.js"></script>
+    <script src="~/Scripts/js/chat/jquery.chat.js"></script>
+    <script src="~/Scripts/js/data-table/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/js/data-table/data-table-act.js"></script>
+    <script src="~/Scripts/js/datapicker/bootstrap-datepicker.js"></script>
+    <script src="~/Scripts/js/datapicker/datepicker-active.js"></script>
+    <script src="~/Scripts/js/bootstrap-select/bootstrap-select.js"></script>
+    <script src="~/Scripts/js/chosen/chosen.jquery.js"></script>
+    <script src="~/Scripts/js/wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="~/Scripts/js/wizard/wizard-active.js"></script>
+    <script src="~/Scripts/js/tawk-chat.js"></script>
+    <script src="~/Scripts/js/main.js"></script>
+    <script src="~/Scripts/jquery.toast.js"></script>
+    <script src="~/Scripts/Common-Scripts/common-script.js"></script>
+    <script src="~/Scripts/Common-Scripts/massageAlert.js"></script>
+    <script src="~/Scripts/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/sweetalart/sweetalert.min.js"></script>*@
+     
+    <script>
+        $(document).ready(function () {
+            GetDriverId();
+            $('#AsignVehicleToDriver').click(function () {
+
+                var DataHist = JSON.stringify({
+                    VehicleId: $("#DropDownVehicle").val(),
+                    DriverId: $('#DriverId').val()
+                })
+                ajaxRequest("POST", "/DriverLoginHistory", DataHist, "json").then(function (resHis) {
+
+                    if (resHis = "Success") {
+                        $('#VehicleSelectModel').modal('hide');
+                        GetDriverId();
+                        alert('asign successfull');
+                    }
+                    else {
+                        $('#left-panel').html(resHis);
+                    }
+                });
+            });
+
+            $('#AcceptDriver').click(function () {
+
+                var Data = JSON.stringify({
+                    Id: $('#CID').val(),
+                    OrderId: $('#OrdId').val()
+                });
+
+                ajaxRequest("POST", "/CustomerOrderAccepted", Data, "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#NotifyMeOrder').modal('hide');
+                        swal("Success!", "Order accept successfully!", "success");
+
+                    }
+                });
+            });
+
+        });
+
+        function GetDriverId() {
+
+            var Datas = JSON.stringify({
+                searchkey: $('#UserName').val()
+            })
+            ajaxRequest("POST", "/DriverAWFInfoByEmail", Datas, "json").then(function (result1) {
+                if (result1 != "Failed") {
+                    $('#DriverId').val(result1.Id);
+                    localStorage.setItem('DriverId', result1.Id);
+                    CheckIsVehicleAsignToDriver(result1.Id);
+                }
+                $('#left-panel').html(result1);
+            });
+        }
+
+        function CheckIsVehicleAsignToDriver(Id) {
+
+            var Data = JSON.stringify({
+                Id: Id
+            })
+            ajaxRequest("POST", "/IsDriverTakinVehicle", Data, "json").then(function (res) {
+                if (res == 1) {
+                }
+                else {
+                    $("#DropDownVehicle").empty();
+                    var Vehicle = $('#DropDownVehicle');
+                    Vehicle.prepend("<option value=0>" + 'select Vehicle' + "</option>");
+
+                    ajaxRequest("POST", "/VehicleGatAllUnAsigned", "", "json").then(function (result) {
+                        $.each(result, function (key, item) {
+                            Vehicle.append('<option value=' + item.Id + '>' + item.TraficPlateNumber + '</option>');
+                            $("#DropDownVehicle").append('<option value=' + item.Id + '>' + item.TraficPlateNumber + '</option>');
+                        })
+                        $("#DropDownVehicle").trigger("chosen:updated");
+
+                        $('#left-panel').html(result);
+                        $('#VehicleSelectModel').modal('show');
+                    });
+                }
+            })
+        }
+
+        function GetMessagesesDriver(Id) {
+
+            ajaxRequest("GET", "GetMessagesesDriver/" + Id, "", "json").then(function (result) {
+                debugger;
+                if (result != "Failed") {
+                    if (parseInt(result) > 0) {
+                        GetOrderData(Id);
+                    }
+                }
+            });
+
+        }
+
+        function GetOrderData(id) {
+            var Data = JSON.stringify({
+                OrderId: id
+            })
+            ajaxRequest("POST", "/DriverViewOrder", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+
+                    $('#CID').val(result.DriverId);
+                    $('#OrdId').val(result.OrderId);
+
+                    $('#CurrentOrderId').val(result.OrderId);
+                    $('#CompanyName').text(result.Company);
+                    $('#CompanyContact').text(result.Cell);
+                    $('#Quantity').text(result.OrderQuantity + ' GALLON');
+
+                    ajaxRequest("POST", "/CustomerOrderGroupDetailsDriverView/" + result.OrderId, "", "json").then(function (res) {
+
+                        if (res != "Failed") {
+                            $('#AsignOrderTable').empty();
+
+                            $(function () {
+                                $.each(res, function (i, item) {
+                                    $('#AsignOrderTable tbody').append('<tr><td>' + item.Name + '</td><td>' + item.OrderProgress + '</td><td>' + item.CustomerOrderId + '</td><td>' + item.RequestedQuantity + '</td></tr>')
+                                })
+                            });
+                        }
+                    });
+
+                    $('#NotifyMeOrder').modal('show');
+                }
+            });
+        }
+        
+    </script>
+
+
+
+</body>
+</html>

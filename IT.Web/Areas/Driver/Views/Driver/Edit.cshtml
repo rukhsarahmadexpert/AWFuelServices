@@ -1,0 +1,148 @@
+﻿@model IT.Core.ViewModels.DriverViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="container-fluid">
+
+    <div class="span3"></div>
+    <div class="row-fluid">
+        <div class="span12">
+            <div class="widget-box">
+                <div class="widget-title">
+                    <span class="icon"> <i class="icon-align-justify"></i> </span>
+                    <h5>Driver-info</h5>
+                </div>
+
+                <div class="widget-content nopadding">
+
+                    <form action="/Driver/Driver/Edit" method="Post" class="form-horizontal">
+                        <input type="hidden" value="@Model.Id" name="Id" />
+                        <div class="container">
+                            <div class="row-fluid">
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Name :</label>
+                                        <div class="controls">
+                                            <input type="text" class="span11" value="@Model.Name" name="Name" placeholder="Driver Name" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Email</label>
+                                        <div class="controls">
+                                            <input type="text" name="Email" value="@Model.Email" id="Email" class="span11" placeholder="Email" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Phone</label>
+                                        <div class="controls">
+                                            <input type="text" name="Contact" value="@Model.Contact" id="Contact" class="span11" placeholder="Contact" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Facebook</label>
+                                        <div class="controls">
+                                            <input type="text" name="Facebook" id="Facebook" value="@Model.Facebook" class="span11" placeholder="Facebook" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Email</label>
+                                        <div class="controls">
+                                            <input type="text" name="Email" id="Email" value="@Model.Email" class="span11" placeholder="Email" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">LicenseType</label>
+                                        <div class="controls">
+
+                                            <select name="LicenseType">
+                                                <option value="AddNewProductSelect">Select License Type...</option>
+                                                @foreach (var pro in ViewBag.LicenseType)
+                                                {
+                                                    <option value="@pro.Id" @(pro.Id == Model.LicenseType ? "selected='selected'" : "")>@pro.Name</option>
+                                                }
+                                            </select>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row-fluid">
+                                <div class="span6">
+                                    <div class="control-group">
+
+                                        <label class="control-label">Nationaity</label>
+                                        <div class="controls">
+
+                                            <select name="Nationality">
+                                                <option value="AddNewProductSelect">Select Country...</option>
+                                                @foreach (var country in ViewBag.CountryList)
+                                                {
+                                                    <option value="@country.CountryName" @(country.CountryName == Model.Nationality ? "selected='selected'" : "")>@country.CountryName</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Driving License Expiry Date</label>
+                                        <div class="controls">
+                                            <input type="text" id="DrivingLicenseExpiryDate" name="LicenseExpiry" value="@Model.LicenseExpiry" class="datePick span11" placeholder="Driving License Expiry Date" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row-fluid">
+
+                                <div class="span6">
+                                    <div class="control-group">
+                                        <label class="control-label">Note</label>
+                                        <div class="controls">
+                                            <textarea class="span11" name="Comments" placeholder="Comments">@Model.Comments</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="submit" title="Save" class="btn btn-default"><i class="glyphicon glyphicon-save"></i> Update</button>
+                                <button type="reset" title="Clear all stages" class="btn btn-default"><i class="glyphicon glyphicon-refresh"></i> Reset</button>
+                                <a href="/Home" type="submit" class="btn btn-default"><i class="glyphicon glyphicon-remove"></i> Cancel</a>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

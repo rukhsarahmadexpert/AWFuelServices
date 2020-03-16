@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "Dashboard";
+    // Layout = "~/Views/Shared/_Layout.cshtml";
+
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_AdminViewDeliveryMessagePartialView.cshtml")
+
+<h2>Dashboard</h2>
+
+
+@section Scripts{
+
+        <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+        <script src="~/signalr/hubs"></script>
+        <script>
+
+            $(function () {
+
+                var notifications = $.connection.adminHub;
+
+                notifications.client.updateMessages = function () {
+                    GetOrderNotification();
+                }
+
+                notifications.client.updateDeliveryMessages = function () {
+                    GetInfoOnDelivery();
+                }
+                
+                $.connection.hub.start().done(function () {
+                    GetOrderNotification();
+                    GetInfoOnDelivery();
+                }).fail(function (e) {
+                    alert(e);
+                });
+
+            });
+        </script>
+    }

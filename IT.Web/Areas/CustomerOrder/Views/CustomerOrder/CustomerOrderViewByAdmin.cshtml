@@ -1,0 +1,443 @@
+﻿
+@{
+    ViewBag.Title = "CustomerOrderViewByAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IT.Core.ViewModels.CustomerOrderGroupViewModel customerOrderGroupViewModel = new IT.Core.ViewModels.CustomerOrderGroupViewModel();
+    customerOrderGroupViewModel = ViewBag.CustomerOrderGroupViewModel as IT.Core.ViewModels.CustomerOrderGroupViewModel;
+
+    List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModel = new List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>();
+    customerGroupOrderDetailsViewModel = ViewBag.customerGroupOrderDetailsViewModel as List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>;
+
+    List<IT.Core.ViewModels.RejectedOrderDetails> rejectedOrderDetails = new List<IT.Core.ViewModels.RejectedOrderDetails>();
+    rejectedOrderDetails = ViewBag.rejectedOrderDetails as List<IT.Core.ViewModels.RejectedOrderDetails>;
+}
+
+<div class="container" style="background-color:white">
+    <p></p>
+    <div class="row">
+        <div class="col-md-12">
+            OrderId #:  <label id="CurrentOrderId"> @customerOrderGroupViewModel.Id</label><br />
+            Order No #:     <label> @customerOrderGroupViewModel.CustomerOrderId</label><br />
+            Created By #:   <label> @customerOrderGroupViewModel.UserName  </label><br />
+            Company Name: <label> @customerOrderGroupViewModel.Name</label><br />
+            Requested Quantity #: <label> @customerOrderGroupViewModel.RequestedQuantity</label>
+        </div>
+    </div>
+    <label style="text-align:center"> Order Details:</label>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped" id="OrderViewTable">
+                <thead>
+                    <tr>
+                        <th><input type="checkbox" id="CheckAll"> All</th>
+                        <th>
+                            Vehicle
+                        </th>
+                        <th>
+                            Driver
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Comments
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @if (customerGroupOrderDetailsViewModel.Count > 0)
+                    {
+                        foreach (var item in customerGroupOrderDetailsViewModel)
+                        {
+                            <tr>
+                                <td><input type="checkbox" name="IsChecked" /><input type="hidden" class="Id" value="@item.Id" /></td>
+                                <td><input type="hidden" class="VehicleId" value="@item.VehicleId" />@item.TraficPlateNumber</td>
+                                <td>@item.Name</td>
+                                <td class="OrderQuantity">@item.RequestedQuantity</td>
+                                <td>@item.Comments</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            Description:  @customerOrderGroupViewModel.CustomerNote
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="pull-right">
+                                @if (customerOrderGroupViewModel.OrderProgress == "Order Created")
+                                {
+                                    <a href="#" type="button" id="OrderCancelByAdmin" class="btn btn-danger">Rejected Order</a>
+                                    <a href="#" type="button" value="Edit" class="btn btn-info" id="AsignToDriver">Asign to logistics</a>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    @if (rejectedOrderDetails.Count > 0)
+    {
+        <span style="font-size:x-large; text-decoration:underline">Reject Order Details:</span>
+        <button class="btn btn-info pull-right" id="AddNewRejectDetalis">New Conversation Add</button>
+        <hr />
+
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table" id="OrderViewTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                Oprater
+                            </th>
+                            <th>
+                                DateTime
+                            </th>
+                            <th>
+                                Comments
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            foreach (var items in rejectedOrderDetails)
+                            {
+                                <tr>
+                                    <td>
+                                        @items.UserName
+                                    </td>
+                                    <td>
+                                        @items.CreatedDates
+                                    </td>
+                                    <td>
+                                        @items.Description
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="CustomerOrderDriverModel" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure ?</h3><br />
+                <h5>You want to delete this record   <span id="spanId" class="badge badge-light">101</span></h5>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="DeleteDriver">Yes! Delete</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No! Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="CurrentDriverID" />
+<input type="hidden" id="CurrentCompanyId" />
+<input type="hidden" id="CurrentVehicleID" />
+
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerRejectedOrderPartialView.cshtml")
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_ViewCustomerOrderPartialView.cshtml")
+
+@section scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#Online').click(function () {
+
+                LoadOnline();
+
+            });
+
+            $('#Offline').click(function () {
+
+                ajaxRequest("POST", "/DriverAllOnline", "", "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#ViewDriverOffline tbody').empty();
+                        $.each(result, function (index, value) {
+                            if (value.IsActive != true) {
+                                $('#ViewDriverOffline tbody').append('<tr><td><input type="radio" id="Id" name="DriverR"/></td><td><input type="hidden" class="VehicleId" value="' + value.VehicleId + '"/></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-success" style="background-color:red">Offline</span></td></tr>')
+
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#ALlDriver').click(function () {
+
+                ajaxRequest("POST", "/DriverAllOnline", "", "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#ViewDriverAll tbody').empty();
+                        $.each(result, function (index, value) {
+                            if (value.IsActive == true) {
+                                $('#ViewDriverAll').append('<tr><td><input type="radio" id="Id" name="DriverR"/></td><td><input type="hidden" class="VehicleId" value="' + value.VehicleId + '"/></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-success" style="background-color:green">Online</span></td><td><input type="button" class="btn btn-success" id="Asign" value="Asign"/></td></tr>')
+
+                            }
+                            else {
+                                $('#ViewDriverAll').append('<tr><td><input type="radio" disabled name="DriverR" id="Id"/></td></td><td><input type="hidden" class="VehicleId" value="' + value.VehicleId + '"/></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-danger" style="background-color:red">Offline</span></td><td><input type="button" class="btn btn-success" disabled value="Asign"/></td></tr>')
+
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('#AsignToDriver').click(function () {
+
+                LoadOnline();
+                $('#Model1').modal('show');
+
+            });
+
+            $('#LockOrderToShipment').click(function () {
+
+                $('#ViewDriverOnline tbody tr').each(function () {
+
+                    if ($(this).find('input[type="radio"]').is(':checked')) {
+                        var row = $(this).find('.ID').val();
+                        var VehicleId = $(this).find('.VehicleId').val();
+                        $('#CurrentDriverID').val(row);
+                        $('#CurrentVehicleID').val(VehicleId);
+
+                    }
+                });
+
+                $('#ViewDriverModel').modal('hide');
+                OrderShipment("/GroupOrderAsignedToDriver");
+            });
+
+            $('#YesReject').click(function () {
+
+                var Data = JSON.stringify({
+                    OrderId: $('#CurrentOrderId').text(),
+                    Description: $('#RejectDescription').val()
+                })
+                ajaxRequest("POST", "/RejectDescriptionAdd", Data, "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#CustomerOrderRejectModel').modal('hide');
+
+                        RejectOrder();
+                    }
+                    else {
+                        alert("Failed");
+                    }
+                })
+            });
+
+            $('#AddNewRejectDetalis').click(function () {
+
+                $('#YesReject').hide();
+                $('#AddComments').show();
+                $('#CustomerOrderRejectModel').modal('show');
+
+            });
+
+        });
+
+        function LoadOnline() {
+            ajaxRequest("POST", "/DriverAllOnline", "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#ViewDriverOnline tbody').empty();
+                    $.each(result, function (index, value) {
+                        if (value.IsActive == true) {
+                            $('#ViewDriverOnline tbody').append('<tr><td><input type="radio" id="Id" name="DriverR"/></td><td><input type="hidden" class="VehicleId" value="' + value.VehicleId + '"/></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-success" style="background-color:green">Online</span></td><td><a href="#" onclick="Process(' + value.Id + ',' + value.VehicleId + ')" class="btn btn-success" >Asign</a></td></tr>')
+
+                        }
+                    });
+                }
+            });
+        }
+
+        function OrderShipment(Url) {
+
+            var list = [], orderItem, CurrentRow;
+            var formData = new FormData();
+
+            var TotalQuantity = 0;
+
+            $('#OrderViewTable tbody tr').each(function () {
+                if ($(this).find('input:checkbox[name=IsChecked]').is(':checked') == true) {
+
+                    CurrentRow: $(this).closest("tr");
+
+                    TotalQuantity = parseInt(TotalQuantity) + parseInt($(this).find('.OrderQuantity').text());
+
+                    orderItem = {
+                        Id: $(this).find('.Id').val(),
+                        VehicleId: $(this).find('.VehicleId').val()
+                    }
+                    list.push(orderItem);
+                }
+            });
+
+            var empObj = {
+                RequestedQuantity: TotalQuantity,
+                CustomerOrderId: $('#CurrentOrderId').text(),
+                DriverId: $('#CurrentDriverID').val(),
+                VehicleId: $('#CurrentVehicleID').val(),
+            };
+
+            for (var key in empObj) {
+                formData.append(key, empObj[key]);
+            }
+
+            for (var i = 0; i < list.length; i++) {
+                formData.append('customerOrderViewModels[' + i + '][Id]', list[i].Id),
+                    formData.append('customerOrderViewModels[' + i + '][VehicleId]', list[i].VehicleId)
+            }
+            if (list.length > 0) {
+
+                $.ajax({
+                    url: Url,
+                    type: "POST",
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        if (result != "Failed") {
+
+                            $('#Model1').modal('hide');
+
+                            list = [];
+                            setTimeout(function () {
+                                swal({
+                                    title: "Thank You!",
+                                    text: "Your Order is assigned successfully to selected driver!",
+                                    type: "success"
+                                }, function () {
+                                    if (parseInt(result) == 0) {
+                                        window.location.href = "/AllUnreadOrderGroup";
+                                    }
+                                    else {
+                                        window.location.reload();
+                                    }
+                                });
+                            }, 100);
+
+                        }
+                        else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+            else {
+                swal(
+                    'Warning!',
+                    'Please select atlease one record from Order Table!',
+                    'warning'
+                );
+
+                $('#Model1').modal('hide');
+            }
+        }
+
+        function Process(Id, VehicleId) {
+
+            //  alert('alert ' + Id + ' ' + VehicleId);
+
+            $('#CurrentDriverID').val(Id);
+            $('#CurrentVehicleID').val(VehicleId);
+
+            OrderShipment("/GroupOrderAsignedToDriver");
+        }
+
+        $('#CheckAll').click(function () {
+
+            if ($('#CheckAll').is(':checked') == true) {
+                $('#OrderViewTable tbody tr').each(function () {
+                    ($(this).find('input:checkbox[name=IsChecked]').prop("checked", true));
+                })
+            }
+            else {
+                $('#OrderViewTable tbody tr').each(function () {
+                    ($(this).find('input:checkbox[name=IsChecked]').prop("checked", false));
+                })
+            }
+        });
+
+        $('#OrderCancelByAdmin').click(function () {
+            $('#YesReject').show();
+            $('#AddComments').hide();
+
+            $('#CustomerOrderRejectModel').modal('show');
+
+        });
+
+        $('#AddComments').click(function () {
+
+            var Data = JSON.stringify({
+                OrderId: $('#CurrentOrderId').text(),
+                Description: $('#RejectDescription').val()
+            })
+            ajaxRequest("POST", "/RejectDescriptionAdd", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#CustomerOrderRejectModel').modal('hide');
+
+                    window.location.reload();
+                }
+                else {
+                    alert("Failed");
+                }
+            })
+        });
+
+        function RejectOrder() {
+            var Id = $('#CurrentOrderId').text();
+
+            ajaxRequest("POST", "/CustomerOrderRejectByAdmin/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+
+                    setTimeout(function () {
+                        swal({
+                            title: "Thank You!",
+                            text: "Customer Order Request has been Rejected successfully!",
+                            type: "success"
+                        }, function () {
+                            window.location = "/AllUnreadOrderGroup";
+                        });
+                    }, 100);
+                }
+            });
+        }
+
+
+    </script>
+
+}

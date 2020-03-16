@@ -1,0 +1,281 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Vender Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewVender"><i class="fa fa-plus"></i> New</button>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table id="VenderTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Representative</th>
+                                    <th>TRN</th>
+                                    <th>Phone</th>
+                                    <th>Mobile </th>
+                                    <th>Email</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Html.Partial("~/Areas/Vender/Views/Shared/Partial/_VenderPartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+        $('#createNewVender').click(function () {
+
+            $('#updateVender').hide();
+            $('#saveVender').show();
+
+            $('#VenderModel').modal('show');
+
+        });
+
+        $('#saveVender').click(function () {
+
+            var Data = JSON.stringify({
+                Name: $('#Name').val(),
+                Address: $('#Address').val(),
+                City: $('#City').val(),
+                LandLine: $('#LandLine').val(),
+                Mobile: $('#Mobile').val(),
+                Email: $('#Email').val(),
+                Website: $('#Website').val(),
+                Remarks: $('#Remarks').val(),
+                TRN: $('#TRN').val(),
+                Representative: $('#Representative').val(),
+                Title: $('#Title').val()
+            })
+            ajaxRequest("POST", "/Vender-Create", Data, "json").then(function (result) {
+                if (result == "Success") {
+                    sucessAdd();
+                    $('#VenderModel').modal('hide');
+                    $('#VenderTable').DataTable().ajax.reload();
+                    ClearVender();
+                }
+            });
+        });
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#VenderTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/VenderAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "Name" },
+                    { "mData": "Representative" },
+                    { "mData": "TRN" },
+                    { "mData": "LandLine" },
+                    { "mData": "Mobile" },
+                    { "mData": "Email" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditVender(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="DeleteVender(' + Id + ')"><i class="glyphicon glyphicon-trash"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        function EditVender(Id) {
+            ajaxRequest("GET", "/Vender-Edit/" + Id, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('select').chosen();
+                    $('#Name').val(result.Name);
+                    $('#Address').val(result.Address);
+                    $('#City').val(result.City);
+                    $('select').trigger("chosen:updated");
+                    $('#SiteCell').val(result.SiteCell);
+                    $('#LandLine').val(result.LandLine);
+                    $('#Mobile').val(result.Mobile);
+                    $('#Email').val(result.Email);
+                    $('#VenderId').val(result.Id);
+                    $('#TRN').val(result.TRN);
+                    $('#Representative').val(result.Representative);
+                    $('#Title').val(result.Title);
+
+                    $('#saveVender').hide();
+                    $('#updateVender').show();
+
+                    $('#VenderModel').modal('show');
+                }
+                else {
+                    alert('data not found');
+                }
+            });
+        }
+
+        $('#updateVender').click(function () {
+
+            if (IsVenderValid) {
+
+                var Data = JSON.stringify({
+                    Name: $('#Name').val(),
+                    Address: $('#Address').val(),
+                    City: $('#City').val(),
+                    LandLine: $('#LandLine').val(),
+                    Mobile: $('#Mobile').val(),
+                    Email: $('#Email').val(),
+                    Website: $('#Website').val(),
+                    Remarks: $('#Remarks').val(),
+                    Id: $('#VenderId').val(),
+                    TRN: $('#TRN').val(),
+                    Representative: $('#Representative').val(),
+                    Title: $('#Title').val()
+                })
+                ajaxRequest("POST", "/Vender-Update", Data, "json").then(function (result) {
+
+                    if (result == "Success") {
+                        $('#VenderModel').modal('hide');
+                        sucessUpdate();
+                        ClearSite();
+                        ClearVender();
+                        $('#VenderTable').DataTable().ajax.reload();
+                    }
+                    else {
+                        alert("Failed");
+                    }
+                });
+            }
+        });
+
+        function IsVenderValid() {
+            var isValid = true;
+            if ($('#Name').val().trim() == "") {
+                $('#Name').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Name').css('border-color', 'lightgrey');
+            }
+
+            if ($('#Address').val().trim() == "") {
+                $('#Address').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Address').css('border-color', 'lightgrey');
+            }
+
+            if ($('#City').val() == 0) {
+                $('#City').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#City').css('border-color', 'lightgrey');
+            }
+
+            if ($('#LandLine').val() == 0) {
+                $('#LandLine').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#LandLine').css('border-color', 'lightgrey');
+            }
+            if ($('#Mobile').val() == 0) {
+                $('#Mobile').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Mobile').css('border-color', 'lightgrey');
+            }
+
+            return isValid;
+        }
+
+        function DeleteVender(Id) {
+
+            $('#spanId').text(Id);
+            $('#ModelDeleteVender').modal('show');
+        }
+
+        $('#DeleteVender').click(function () {
+            var Data = JSON.stringify({
+
+                Id: $('#spanId').text()
+            })
+            ajaxRequest("Post", "/Vender-Delete/", Data, "json").then(function (result) {
+                if (result != "Failed") {
+                    sucessDelete();
+                    $('#ModelDeleteVender').modal('hide');
+                    $('#VenderTable').DataTable().ajax.reload();
+                }
+                else {
+                    alert('Falied');
+                }
+            });
+        });
+
+        $('#CancelVender').click(function () {
+
+            ClearVender();
+        });
+
+        function ClearVender() {
+            $('select').chosen();
+            $('#Name').css('border-color', 'lightgrey').val('');
+            $('#Representative').css('border-color', 'lightgrey').val('');
+            $('#Address').css('border-color', 'lightgrey').val('');
+            $('#City').css('border-color', 'lightgrey').val('');
+            $('#LandLine').css('border-color', 'lightgrey').val('');
+            $('#Email').css('border-color', 'lightgrey').val('');
+            $('#Website').css('border-color', 'lightgrey').val('');
+            $('#Remarks').css('border-color', 'lightgrey').val('');
+            $('#TRN').css('border-color', 'lightgrey').val('');
+            $('#Mobile').css('border-color', 'lightgrey').val('');
+            $('#VenderId').css('border-color', 'lightgrey').val(0);
+            $('select').trigger("chosen:updated");
+        }
+
+    </script>
+
+}

@@ -1,0 +1,93 @@
+﻿
+
+@{
+    ViewBag.Title = "CustomerOrderAsignedViewByAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    IT.Core.ViewModels.CustomerOrderGroupViewModel customerOrderGroupViewModel = new IT.Core.ViewModels.CustomerOrderGroupViewModel();
+    customerOrderGroupViewModel = ViewBag.CustomerOrderGroupViewModel as IT.Core.ViewModels.CustomerOrderGroupViewModel;
+
+    List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModel = new List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>();
+    customerGroupOrderDetailsViewModel = ViewBag.customerGroupOrderDetailsViewModel as List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>;
+
+}
+
+
+<div class="container" style="background-color:white">
+    <p></p>
+    <div class="row">
+        <div class="col-md-12">
+            OrderId #:  <label id="CurrentOrderId"> @customerOrderGroupViewModel.Id</label><br />
+            Order No #:     <label> @customerOrderGroupViewModel.CustomerOrderId</label><br />
+            Created By #:   <label> @customerOrderGroupViewModel.UserName  </label><br />
+            Company Name: <label> @customerOrderGroupViewModel.Name</label><br />
+            Requested Quantity #: <label> @customerOrderGroupViewModel.RequestedQuantity</label>
+        </div>
+    </div>
+    <label style="text-align:center"> Order Details:</label>
+    <hr />
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped" id="OrderViewTable">
+                <thead>
+                    <tr>
+
+                        <th>
+                            Vehicle
+                        </th>
+                        <th>
+                            Driver
+                        </th>
+                        <th>
+                            Quantity
+                        </th>
+                        <th>
+                            Comments
+                        </th>
+                        <th>
+                            Status
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (customerGroupOrderDetailsViewModel.Count > 0)
+                    {
+                        foreach (var item in customerGroupOrderDetailsViewModel)
+                        {
+                            <tr>
+
+                                <td><input type="hidden" class="VehicleId" value="@item.VehicleId" />@item.TraficPlateNumber</td>
+                                <td>@item.Name</td>
+                                <td class="OrderQuantity">@item.RequestedQuantity</td>
+                                <td>@item.Comments</td>
+                                <td>@item.IsAsigned</td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            Description:  @customerOrderGroupViewModel.CustomerNote
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                            <div class="pull-right">
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+}

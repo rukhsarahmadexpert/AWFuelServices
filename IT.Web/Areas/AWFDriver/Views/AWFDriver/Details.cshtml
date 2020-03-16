@@ -1,0 +1,137 @@
+﻿@model IT.Core.ViewModels.DriverViewModel
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" id="EntityName" value="Driver" />
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="data-table-list">
+                <div class="basic-tb-hd">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h2>Driver Details</h2>
+                        </div>
+                        <div class="col-md-1">
+                            @*<button class="btn btn-primary btn-sm" onclick="Edit(@Model.Id)" > Edit</button>*@
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="widget-content nopadding">
+                            <div class="widget-box">
+                                <div class="widget-content">
+                                    <table class="table table-bordered table-striped with-check">
+                                        <thead>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+
+                                                <td>Name:</td>
+                                                <td id="CompanyName">@Model.Name</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Phone:</td>
+                                                <td>@Model.Contact</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Email:</td>
+                                                <td>@Model.Email</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Facebook:</td>
+                                                <td>@Model.Facebook</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>Nationality:</td>
+                                                <td>@Model.Nationality</td>
+                                            </tr>
+                                            <tr>
+                                                <td>LicenseType:</td>
+                                                @*<td>@Model.LicenseType</td>*@
+                                            </tr>
+                                            <tr>
+                                                <td>License Expiry Date:</td>
+                                                <td>@Model.LicenseExpiry</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="widget-box">
+                            <div class="widget-content">
+                                @*<ul class="thumbnails">
+                                        @{
+                                            foreach (var k in ViewBag.Images)
+                                            {
+                                                var UR = "";
+
+                                                if (k.ImagesUrl != "NULL")
+                                                {
+
+                                                    UR = "/Uploads/uploads/Driver-" + Model.UID + "/" + k.ImagesUrl;
+
+                                                    <li class="span4">
+                                                        <input type="hidden" class="ImageName" value="@k.ImagesUrl" />
+                                                        <a href="@UR" target="_blank"> <img src="@UR" /></a>
+                                                        <div style="background-color:darkgrey; text-align:center; color:white"> <a href="#" onclick="ImageEdit('@UR');"><i class="icon-pencil icon-white"></i></a> | <a href="#" onclick="ImageDelete('@UR')"><i class="icon-remove icon-white"></i></a></div>
+                                                    </li>
+                                                }
+                                            }
+                                        }
+                                    </ul>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@Html.Partial("~/Areas/AWFDriver/Views/Shared/Partial/_DriverPartialView.cshtml")
+
+@*@Html.Partial("~/Views/Shared/_PartialView/_EditImagePartialView.cshtml")*@
+
+@section Scripts{
+
+    <script src="~/Areas/AWFDriver/Script/Driver.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $('#DelImage').click(function () {
+
+                var data = JSON.stringify({
+                    ImagesUrl: $('#ImagesUrl').val(),
+                    Id: $('#Id').val()
+                })
+                ajaxRequest("POST", "/Driver/Driver/DeleteImage", data, "JSON").then(function (result) {
+                    if (result == 202) {
+                        window.location.reload();
+                        alert('Delete Success');
+                        window.location.reload();
+                    }
+                    else {
+                        $('#left-panel').html(result);
+                    }
+                });
+
+            });
+        });
+
+    </script>
+}

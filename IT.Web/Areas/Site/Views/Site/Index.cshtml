@@ -1,0 +1,229 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>All Sites</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewSite"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="SiteTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Contact Person</th>
+                                    <th>Phone</th>
+                                    <th>Cell</th>
+                                    <th>Date</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Site/Views/Shared/Partial/_SitePartialView.cshtml")
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $('#createNewSite').click(function () {
+            $('#updateSite').hide();
+            $('#saveSite').show();
+            $('#SiteModel').modal('show');
+        });
+
+        $('#saveSite').click(function () {
+            if (IsSiteValid) {
+
+                var Data = JSON.stringify({
+
+                    SiteName: $('#SiteName').val(),
+                    ContactPersonName: $('#ContactPersonName').val(),
+                    ContactPhone: $('#ContactPhone').val(),
+                    SiteCell: $('#SiteCell').val(),
+                    FaceBook: $('#FaceBook').val(),
+                    SiteEmail: $('#SiteEmail').val(),
+                    Address: $('#Address').val()
+                })
+                ajaxRequest("POST", "/Site-Create", Data, "json").then(function (result) {
+                    if (result == "Success") {
+                        $('#SiteTable').DataTable().ajax.reload();
+                        sucessAdd();
+                        ClearSite();
+                        $('#SiteModel').modal('hide');
+                    }
+                    else {
+                        alert("Failed");
+                    }
+                });
+            }
+
+        });
+
+        function ClearSite() {
+            $('#SiteName').css('border-color', 'lightgrey').val('');
+            $('#ContactPersonName').css('border-color', 'lightgrey').val('');
+            $('#ContactPhone').css('border-color', 'lightgrey').val('');
+            $('#SiteCell').css('border-color', 'lightgrey').val('');
+            $('#FaceBook').css('border-color', 'lightgrey').val('');
+            $('#SiteEmail').css('border-color', 'lightgrey').val('');
+            $('#Address').css('border-color', 'lightgrey').val('');
+        }
+
+        function IsSiteValid() {
+            var isValid = true;
+            if ($('#SiteName').val().trim() == "") {
+                $('#SiteName').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#SiteName').css('border-color', 'lightgrey');
+            }
+
+            if ($('#ContactPersonName').val().trim() == "") {
+                $('#ContactPersonName').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#ContactPersonName').css('border-color', 'lightgrey');
+            }
+
+            if ($('#ContactPhone').val().trim() == "") {
+                $('#ContactPhone').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#ContactPhone').css('border-color', 'lightgrey');
+            }
+
+            return isValid;
+        }
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+
+        var BindDataTable = function (response) {
+            $('#SiteTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/SiteAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "SiteName" },
+                    { "mData": "ContactPersonName" },
+                    { "mData": "ContactPhone" },
+                    { "mData": "SiteCell" },
+                    { "mData": "CreatedDates" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditSite(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewSite(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function EditSite(Id) {
+            ajaxRequest("GET", "/Site-Edit/" + Id, "json").then(function (result) {
+
+                if (result != "Failed") {
+
+                    $('#SiteName').val(result.SiteName);
+                    $('#ContactPersonName').val(result.ContactPersonName);
+                    $('#ContactPhone').val(result.ContactPhone);
+                    $('#SiteCell').val(result.SiteCell);
+                    $('#FaceBook').val(result.FaceBook);
+                    $('#SiteEmail').val(result.SiteEmail);
+                    $('#Address').val(result.Address);
+                    $('#SiteId').val(result.Id);
+
+
+                    $('#saveSite').hide();
+                    $('#updateSite').show();
+                    $('#SiteModel').modal('show');
+                }
+                else {
+                    alert('data not found');
+                }
+            });
+        }
+
+
+        $('#updateSite').click(function () {
+
+            if (IsSiteValid) {
+
+                var Data = JSON.stringify({
+
+                    SiteName: $('#SiteName').val(),
+                    ContactPersonName: $('#ContactPersonName').val(),
+                    ContactPhone: $('#ContactPhone').val(),
+                    SiteCell: $('#SiteCell').val(),
+                    FaceBook: $('#FaceBook').val(),
+                    SiteEmail: $('#SiteEmail').val(),
+                    Address: $('#Address').val(),
+                    Id: $('#SiteId').val(),
+                })
+                ajaxRequest("POST", "/Site-Update", Data, "json").then(function (result) {
+                    if (result == "Success") {
+                        sucessUpdate();
+                        ClearSite();
+                        $('#SiteModel').modal('hide');
+                        $('#SiteTable').DataTable().ajax.reload();
+                    }
+                    else {
+                        alert("Failed");
+                    }
+                });
+            }
+
+        });
+
+        function ViewSite(Id) {
+
+            window.location.href = "/Site-Details/" + Id;
+        }
+
+
+    </script>
+
+}
+

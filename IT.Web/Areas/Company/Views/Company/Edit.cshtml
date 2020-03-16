@@ -1,0 +1,48 @@
+﻿@model IT.Core.ViewModels.CompanyViewModel
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">          
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <form action="/Company-Edit" method="post" enctype="multipart/form-data">
+                        <div class="basic-tb-hd">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <h2>Company-Info</h2>
+                                </div>
+                                <div class="col-md-4">
+                                    <h6 class="pull-right" style="color:red">@ViewBag.Massage</h6>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" name="Flag" value="@ViewBag.Flag" />
+                        @Html.Partial("~/Areas/Company/Views/Shared/_CompanyEditView.cshtml")
+
+                        <input type="hidden" id="Id" value="@Model.Id" name="Id" />
+                        <div class="row">
+                            <div class="form-element-list pull-right">
+                                <button type="submit" class="btn btn-success" id="UpdatedCompany">Update changes</button>
+                                @if (ViewBag.Flag == "Admin")
+                                {
+                                    <a href="/Dashboard" type="button" class="btn btn-danger">Cancel</a>
+                                }
+                                else
+                                {
+                                    <a href="/Home" type="button" class="btn btn-danger">Cancel</a>
+                                }
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

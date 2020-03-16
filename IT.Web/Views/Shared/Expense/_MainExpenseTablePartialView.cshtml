@@ -1,0 +1,197 @@
+﻿@model IT.Core.ViewModels.ExpenseDetailsViewModel
+
+@{
+    /**/
+
+    List<IT.Core.ViewModels.ExpenseDetailsViewModel> expenseDetailsViewModel = new List<IT.Core.ViewModels.ExpenseDetailsViewModel>();
+
+    IT.Core.ViewModels.ExpenseViewModel expenseViewModels = new IT.Core.ViewModels.ExpenseViewModel();
+    expenseViewModels = ViewBag.ExpenseViewModel as IT.Core.ViewModels.ExpenseViewModel;
+
+    if (expenseViewModels != null)
+    {
+        <input type="hidden" id="ExpId" value="@expenseViewModels.Id" />
+        if (expenseViewModels.expenseDetailsList != null)
+        {
+            expenseDetailsViewModel = expenseViewModels.expenseDetailsList;
+        }
+    }
+}
+
+
+
+<div id="TableGood">
+    <table class="table table-hover" id="orderdetailsitems">
+        <thead class="thead-dark">
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Expense Category
+                </th>
+                <th>
+                    Category Details
+                </th>
+                @*<th>
+                        Choice
+                    </th>*@
+                <th>
+                    Description
+                </th>
+                <th>
+                    Sub Total
+                </th>
+                <th>
+                    VAT
+                </th>
+                <th>
+                    Net Total
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        <tbody class="tbodyGood">
+
+            @if (expenseDetailsViewModel != null && expenseDetailsViewModel.Count > 0)
+            {
+
+                foreach (var item in expenseDetailsViewModel)
+                {
+                    <tr>
+                        <td>
+                            <input type="hidden" class="DetId" value="@item.Id" />
+                            <div class="form-group">
+                                <div class="form-elet-mg" id="data_2">
+                                    <div class="input-group">
+                                        @*<span class="input-group-addon"></span>*@
+                                        @*<input type="text" class="form-control OnDates Input-height " id="OnDates" style="width: 90px; font-size:12px" name="LicenseExpiry" value="@item.ExpDates" title="Expense OnDates">*@
+
+                                        @Html.EditorFor(model => item.OnDates, new { htmlAttributes = new { @class = "form-control OnDates Input-height", @style = "width: 138px; font-size:12px", name = "OnDates", id = "OnDates", @title = "Expense OnDates" } })
+
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="ExpenseType form-control pClassG  Input-height select2" style="width: 130px; font-size:12px" id="ExpenseType">
+                                @foreach (var expfor in ViewBag.ExpenseFor)
+                                {
+                                    <option value="@expfor.ExpenseFor" @(expfor.ExpenseFor == item.Category ? "selected='selected'" : "")>@expfor.ExpenseFor</option>
+                                }
+                            </select>
+                        </td>
+
+                        @if (item.Category.Trim() == "Vehicle")
+                        {
+                            <td>
+                                <select class="ChoiceBox form-control pClassG  Input-height select2" style="width: 140px; font-size:12px">
+                                    @foreach (var cho in ViewBag.VehicleViewModels)
+                                    {
+                                        <option value="@cho.Id" @(cho.Id == item.ExpenseRefrenceId ? "selected='selected'" : "")>@cho.TraficPlateNumber</option>
+                                    }
+
+                                </select>
+                            </td>
+                        }
+                        else if (item.Category == "Employee")
+                        {
+                            <td>
+                                <select class="ChoiceBox form-control pClassG  Input-height select2" style="width: 140px; font-size:12px">
+                                    @foreach (var cho in ViewBag.employeeViewModels)
+                                    {
+                                        <option value="@cho.Id" @(cho.Id == item.ExpenseRefrenceId ? "selected='selected'" : "")>@cho.Name</option>
+                                    }
+
+                                </select>
+                            </td>
+                        }
+                        else if (item.Category == "General")
+                        {
+                            <td>
+                                <select class="ChoiceBox form-control pClassG  Input-height select2" style="width: 140px; font-size:12px">
+                                    @foreach (var cho in ViewBag.generalExpenseViewModels)
+                                    {
+                                        <option value="@cho.Id" @(cho.Id == item.ExpenseRefrenceId ? "selected='selected'" : "")>@cho.ExpenseName</option>
+                                    }
+
+                                </select>
+                            </td>
+                        }
+
+                        <td>
+                            <textarea type="text" class="Description form-control" rows="1" placeholder="Description" autocomplete="off" style="width:150px;font-size:12px">@item.Description</textarea>
+                        </td>
+                        <td>
+                            <input type="text" class="RowSubTotal form-control Input-height" autocomplete="off" style="width:70px;font-size:12px" value="@Math.Round(item.SubTotal,2)" onkeypress="return IsOneDecimalPoint(event);" />
+                        </td>
+                        <td>
+                            <select class="vat form-control Input-height" style="width:55px;font-size:12px">
+                                @foreach (var V in ViewBag.VatDrop)
+                                {
+                                    <option value="@V.Id" @(V.VAT == item.VAT ? "selected='selected'" : "")>@V.VAT</option>
+                                }
+                            </select>
+                        </td>
+                        <td>
+                            <input type="text" readonly class="rownettotal  form-control Input-height" style="width:100px" value="@Math.Round(item.NetTotal,2)" />
+                        </td>
+                        <td>
+                            <input type="button" value="x" class="btn-height-Remove BtnRemove" style="width:50px" />
+                        </td>
+                    </tr>
+                }
+            }
+
+            <tr id="mainrowgood">
+                <td>
+                    <div class="form-group">
+                        <div class="form-elet-mg" id="data_2">
+                            <div class="input-group">                               
+                                @*<input type="text" class="form-control OnDates Input-height " id="OnDates" style="width: 90px; font-size:12px" name="LicenseExpiry" value="06/30/2019" title="Expense OnDates">*@
+
+                                @Html.EditorFor(model => model.OnDates, new { htmlAttributes = new { @class = "form-control OnDates Input-height", @style = "width: 138px; font-size:12px", name = "LicenseExpiry", id = "FromDate", @title = "Expense OnDates" } })
+
+                            </div>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <select class="ExpenseType form-control pClassG  Input-height select2" style="width: 130px; font-size:12px" id="ExpenseType">
+                        @foreach (var expfor in ViewBag.ExpenseFor)
+                        {
+                            <option value="@expfor.ExpenseFor">@expfor.ExpenseFor</option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select class="ChoiceBox form-control pClassG  Input-height select2" style="width: 140px; font-size:12px" id="ChoiceBox"></select>
+                </td>
+
+                <td>
+                    <textarea type="text" id="Description" class="Description form-control" rows="1" placeholder="Description" autocomplete="off" style="width:150px;font-size:12px"></textarea>
+                </td>
+                <td>
+                    <input type="text" id="RowSubTotal" class="RowSubTotal form-control Input-height" value="0" autocomplete="off" style="width:70px;font-size:12px" onkeypress="return IsOneDecimalPoint(event);" />
+                </td>
+                <td>
+                    <select id="VAT" class="vat form-control Input-height" style="width:55px;font-size:12px">
+                        <option value="0">0</option>
+                        <option value="5">5</option>
+
+                    </select>
+                </td>
+                <td>
+                    <input type="text" id="rownettotal" readonly class="rownettotal  form-control Input-height" value="0" style="width:100px" />
+                </td>
+                <td>
+                    <input type="button" id="btnaddRow" value="+" class="btn-height" style="width:50px" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+

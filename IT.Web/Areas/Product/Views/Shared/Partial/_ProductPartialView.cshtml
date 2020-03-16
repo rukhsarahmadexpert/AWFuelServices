@@ -1,0 +1,75 @@
+﻿
+<div class="modal fade" id="ProductModel" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label>Product:</label>
+                        <div class="form-group">
+                            <div class="nk-int-st">
+                                <input type="text" class="form-control" id="Name" name="Name" placeholder="Product Name">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label>Unit:</label>
+                        <div class="chosen-select-act fm-cmp-mg">
+                            <select name="unitId" class="chosen" data-placeholder="Choose a Unit..." id="unitId">
+                                @foreach (var unit in ViewBag.Unit)
+                                {
+                                    <option value="@unit.Id">@unit.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <div class="form-group">
+                            <div class="nk-int-st">
+                                <input type="text" class="form-control" id="Description" name="Description" placeholder="Description">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="updateProduct">Save changes</button>
+                <button type="button" class="btn btn-success" id="saveProduct">Save changes</button>
+                <button type="button" class="btn btn-danger" id="CancelProduct" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="ModelDeleteProduct" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure ?</h3><br />
+                <h5>You want to delete this record   <span id="spanId" class="badge badge-light">101</span></h5>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="DeleteProduct">Yes! Delete</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No! Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="ProductId" />
+

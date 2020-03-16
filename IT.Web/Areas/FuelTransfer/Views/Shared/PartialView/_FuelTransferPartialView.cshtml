@@ -1,0 +1,110 @@
+﻿
+<div class="modal fade" id="FuelTransferModel" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content" style="padding:50px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                    <div class="form-group">
+                        <label class="form-control" style="text-align:center">Fuel Transfer</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <input type="radio" value="SiteToVehicle" name="FuelTransfer" /> Site To Vehicle
+                    </div>
+                    <div class="col-md-4">
+                        <input type="radio" value="VehicleToVehicle" name="FuelTransfer" /> Vehicle To Vehicle
+                    </div>
+                    <div class="col-md-4">
+                        <input type="radio" value="VehicleToSite" name="FuelTransfer" /> Vehicle To Site
+                    </div>
+                </div>
+                <hr />
+
+                
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                        <div class="form-group">
+                            <label id="lblSite">Site:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="SiteId" class="chosen" data-placeholder="Choose a Site..." id="SiteId">
+                                    @foreach (var Site in ViewBag.siteViewModels)
+                                    {
+                                        <option value="@Site.Id" @(Site.Id == Model.VehicleId ? "selected='selected'" : "")>@Site.SiteName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                        <div class="form-group">
+                            <label id="lblVehicle">Vehicle:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="VehicleId" class="chosen" data-placeholder="Choose a Vehicle..." id="VehicleId">
+                                    @foreach (var vehicle in ViewBag.VehicleViewModels)
+                                    {
+                                        <option value="@vehicle.Id" @(vehicle.Id == Model.VehicleId ? "selected='selected'" : "")>@vehicle.TraficPlateNumber</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>               
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                        <div class="form-group">
+                            <label>Quantity<small> (in Gallon)</small>:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Quantity" name="Quantity" placeholder="Enter Quantity">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                        <div class="form-group">
+                            <label>Select Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control FuelTransferDate" id="FuelTransferDate" name="FuelTransferDate" value="@System.DateTime.Now.ToLongDateString()" title="Licence Fuel Transfer Date">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               
+                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                    <div class="form-group">
+                        <label>Description:</label>
+                        <div class="form-group">
+                            <div class="nk-int-st">
+                                <input type="text" class="form-control" id="Description" name="Description" placeholder="Enter Description">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          
+
+                <div id="Res">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:0px !important; padding-right:0px!important">
+                        <div class="form-group">
+                            <label>Reason:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Reason" name="Reason" placeholder="Enter Reason">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="SaveFuelTransfer">Save Changes</button>
+                <button type="button" class="btn btn-info" id="UpdateFuelTransfer">Update Changes</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,0 +1,527 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Reports</h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="ReceiveAmount"><i class="fa fa-plus"></i> Receive</button>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label class="form-control">Purchase</label>
+
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/PurchaseAllReport">All Purchase</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PurchaseFromDateToDate">Purchase from Date to Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PurchaseByDates">Purchase By Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PurchaseByVender">Purchase By Vender</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PurchaseByDatesAndVender">Purchase By Date & Vender</a>
+                                </li>
+                            </ul>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-control">Sale</label>
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/SaleAllReport">All Sale</a>
+                                    @*<a href="/BillAllReport">All Sale</a>*@
+                                </li>
+                                <li>
+                                    @*<a href="#"  id="BillFromDateToDate">Sale from Date to Date</a>*@
+                                    <a href="#" id="SalesFromDateToDate">Sale from Date to Date</a>
+
+                                </li>
+                                <li>
+                                    @*<a href="#" id="BillAllByDate">Sale By Date</a>*@
+                                    <a href="#" id="SalesAllByDate">Sale By Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="SalesByCustomer">Sale By Customer</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="SaleByCustomerAndDate">Sale By Date & Customer</a>
+                                    @*<a href="#" id="SaleByCustomerAndDate">Sale By Date & Customer</a>*@
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-control">Expense</label>
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/ExpenseAllReport">All Expense</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="ExpenseReportByDateRange">Expense from Date to Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="ExpenseByDate">Expense By Date</a>
+                                </li>
+                                @*<li>
+                                        <a href="#">Expense By Vender</a>
+                                    </li>*@
+                                <li>
+                                    <a href="#" id="ExpenseByEmployee">Expense By Employee</a>
+                                </li>
+                            </ul>
+
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-control">Invoice</label>
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="#">All Pending Invoice</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PendingInvoicesByCustomer">Pending Invoices By Customer</a>
+                                </li>
+                                @*<li>
+                                        <a href="#">All Balances</a>
+                                    </li>
+                                    <li>
+                                        <a href="#">Libilities</a>
+                                    </li>*@
+                                <li>
+                                    <a href="#" id="InvoiceByDateRange">Invoice By Date Range</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PendingInvoiceByDate">Pending Invoice By Date</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-3"></div>
+                        <div class="col-md-3">
+                            <label class="form-control">LPO</label>
+
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/LPOAllReport">All LPO</a>
+                                </li>
+                                <li>
+                                    <a href="/LPOAllNotConverted">LPO Pending</a>
+                                </li>
+                                <li>
+                                    <a href="/LPOReportNotConverted">LPO Pending with Quantity</a>
+                                </li>
+                                <li>
+                                    <a href="/LPOAllConverted">All Converted LPO</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="LPOByDate">All LPO BY Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="LPOFromDateToDate"> All LPO BY Date Range</a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-control">Bill</label>
+
+                            <ul style="list-style-type:circle;">
+                                <li>
+                                    <a href="/BillAllReport">All Bill</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="BillFromDateRange"> All Bill from Date to Date</a>
+                                </li>
+                                @*<li><a href="#">Bill Pending</a></li>*@
+                                <li>
+                                    <a href="#" id="BillReportByDate">All Bill By Date</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="BillReportByVender"> All Bill By Vender</a>
+                                </li>
+                                <li>
+                                    <a href="#" id="PendingBillByVender">Pending Bill By Vender</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="col-md-3"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelFromDateToDate" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportFormDateToDate" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>From Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control FromDate" id="FromDate" name="FromDate" value="03/19/2019" title="From Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control ToDate" id="ToDate" name="ToDate" value="03/19/2019" title="To Date">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="LoadReportFromDateToDate">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelFromByDate" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportByDate" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>select Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control FromDate" id="FromDates" name="FromDate" value="03/19/2019" title="From Date" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-info" id="LoadReportByDate">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelFromDateToDateVender" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control lblHeadingFromDateToDate" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportFormDateToDateVender" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>From Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control From" id="From" name="FromDate" value="03/19/2019" title="From Date">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>To Date:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control ToDate" id="To" name="ToDate" value="03/19/2019" title="To Date">
+                                </div>
+                            </div>
+                        </div>
+                        @Html.Partial("~/Areas/Report/Views/Shared/ReportVenderPartialView.cshtml")
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" id="LoadReportFromDateToDateVender">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="ReportModelByPerson" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:40px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <label id="lblHeadingFromDateToDate" class="form-control lblHeadingFromDateToDate" style="text-align:center; color:skyblue">Hello</label>
+            </div>
+            <form id="reportByPerson" method="post">
+                <div class="modal-body">
+
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        @Html.Partial("~/Areas/Report/Views/Shared/ReportVenderPartialView.cshtml")
+                    </div>
+                </div>
+                <hr />
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" id="LoadReportByPerson">Load Report</button>
+                    <button type="button" class="btn btn-danger" id="CancelloadReport" data-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            var Url = "";
+
+            $('#PurchaseFromDateToDate').click(function () {
+
+                Url = "/PurchaseFromDateToDate";
+                $('#lblHeadingFromDateToDate').text('Purchase');
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#LoadReportFromDateToDate').click(function (e) {
+                e.preventDefault();
+                // $("#reportFormDateToDate").attr('target', '_blank');
+                $('#reportFormDateToDate').attr('action', Url).submit();
+
+                $('#ReportModelFromDateToDate').modal('hide');
+            });
+
+            $('#PurchaseByDates').click(function () {
+                Url = "";
+                Url = "/PurchaseAllByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#LoadReportByDate').click(function (e) {
+
+                if ($('#FromDates').val().trim() == "" || $('#FromDates').val().trim() == "03/19/2019") {
+
+                    alert('Please select Date');
+                }
+                else {
+
+                    e.preventDefault();
+                    $('#reportByDate').attr('action', Url).submit();
+                    $('#ReportModelFromByDate').modal('hide');
+                }
+            });
+
+            $('#PurchaseByDatesAndVender').click(function () {
+                $('.lblHeadingFromDateToDate').text('Purchase');
+                Url = "";
+                Url = "/PurchaseByVenderANDDateRang";
+                $('#ReportModelFromDateToDateVender').modal('show');
+            });
+
+            $('#LoadReportFromDateToDateVender').click(function (e) {
+
+                if ($('#From').val().trim() == "03/19/2019" || $('#From').val().trim() == "") {
+                    alert('select From Date');
+                }
+                else if ($('#To').val().trim() == "03/19/2019" || $('#To').val().trim() == "") {
+                    alert('select From To');
+                }
+                else if ($('#Id').val() == 0) {
+                    alert('Please Select Vender');
+                }
+                else {
+
+                    e.preventDefault();
+                    $('#reportFormDateToDateVender').attr('action', Url).submit();
+                    $('#ReportModelFromDateToDateVender').modal('hide');
+                }
+            });
+
+            $('#PurchaseByVender').click(function () {
+                $('.lblHeadingFromDateToDate').text('Purchase');
+                Url = "";
+                Url = "/PurchaseByVenderReport";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#LoadReportByPerson').click(function (e) {
+
+                //if ($('.Id').val() == 0) {
+                //    alert('Please Select Vender');
+                //}
+                //else {
+
+                e.preventDefault();
+                $('#reportByPerson').attr('action', Url).submit();
+                $('#reportByPerson').modal('hide');
+                $('#ReportModelByPerson').modal('hide');
+                //}
+            })
+
+            $('#BillFromDateToDate').click(function () {
+
+                Url = "/BillFromDateToDate";
+                $('#lblHeadingFromDateToDate').text('Bill');
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#BillAllByDate').click(function () {
+                Url = "";
+                Url = "/BillAllByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#SaleByCustomerAndDate').click(function () {
+                $('.lblHeadingFromDateToDate').text('Sale');
+                Url = "";
+                Url = "/SaleAllReportByCustomerAndDate";
+                $('#ReportModelFromDateToDateVender').modal('show');
+            });
+
+            $('#SalesAllByDate').click(function () {
+                Url = "";
+                Url = "/SaleAllReportByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#SalesByCustomer').click(function () {
+                $('.lblHeadingFromDateToDate').text('Sales');
+                Url = "";
+                Url = "/SaleAllReportByCustomer";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#SalesFromDateToDate').click(function () {
+                $('.lblHeadingFromDateToDate').text('Sales');
+                Url = "";
+                Url = "/SaleReportByDateRang";
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#ExpenseReportByDateRange').click(function () {
+                Url = "/ExpenseAllReportDateRange";
+                $('#lblHeadingFromDateToDate').text('Expense');
+                $('#ReportModelFromDateToDate').modal('show');
+
+            });
+
+            $('#ExpenseByEmployee').click(function () {
+                $('.lblHeadingFromDateToDate').text('Expense');
+                Url = "";
+                Url = "/ExpenseAllReportByEmployee";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#ExpenseByDate').click(function () {
+                Url = "";
+                Url = "/ExpenseAllReportByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#BillFromDateRange').click(function () {
+                Url = "/BillFromDateToDate";
+                $('#lblHeadingFromDateToDate').text('Expense');
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#BillReportByDate').click(function () {
+                Url = "";
+                Url = "/BillAllByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#BillReportByVender').click(function () {
+                $('.lblHeadingFromDateToDate').text('Bill');
+                Url = "";
+                Url = "/BillAllByVender";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#LPOByDate').click(function () {
+                Url = "";
+                Url = "/LPOAllByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#LPOFromDateToDate').click(function () {
+                Url = "/LPOFromDateToDate";
+                $('#lblHeadingFromDateToDate').text('LPO');
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+            $('#PendingBillByVender').click(function () {
+                $('.lblHeadingFromDateToDate').text('Bill');
+                Url = "";
+                Url = "/UnpadBillByVender";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#PendingInvoicesByCustomer').click(function () {
+                $('.lblHeadingFromDateToDate').text('Invoice');
+                Url = "";
+                Url = "/UnpadInvoiceReport";
+                $('#ReportModelByPerson').modal('show');
+            });
+
+            $('#PendingInvoiceByDate').click(function () {
+                Url = "";
+                Url = "/UnpadInvoiceReportByDate";
+                $('#ReportModelFromByDate').modal('show');
+            });
+
+            $('#InvoiceByDateRange').click(function () {
+                Url = "/UnpadInvoiceReportFromDateToDate";
+                $('#lblHeadingFromDateToDate').text('LPO');
+                $('#ReportModelFromDateToDate').modal('show');
+            });
+
+        });
+    </script>
+
+}
+

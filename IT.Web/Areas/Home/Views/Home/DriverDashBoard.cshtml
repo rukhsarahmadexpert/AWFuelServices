@@ -1,0 +1,42 @@
+﻿
+@{
+    ViewBag.Title = "DriverDashBoard";
+    //  Layout = "~/Views/Shared/_LayoutDriver.cshtml";
+
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+}
+
+
+
+@Html.Partial("~/Areas/AWFDriver/Views/Shared/Partial/_DriverNotificationView.cshtml")
+
+<input type="hidden" id="CID" />
+<input type="hidden" id="OrdId" />
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+        var Id = localStorage.getItem('DriverId');
+
+        $(function () {
+
+            var notifications = $.connection.driverHub;
+
+            notifications.client.SendNotification = function () {
+
+                GetMessagesesDriver(Id)
+            };
+
+            $.connection.hub.start().done(function () {
+                GetMessagesesDriver(Id)
+            }).fail(function (e) {
+                alert(e);
+            });             
+            
+        });
+        
+    </script>
+
+}

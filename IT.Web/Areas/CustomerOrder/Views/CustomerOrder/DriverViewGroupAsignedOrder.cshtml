@@ -1,0 +1,172 @@
+﻿
+@{
+    ViewBag.Title = "DriverViewGroupAsignedOrder";
+    // Layout = "~/Views/Shared/_LayoutDriver.cshtml";
+
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+
+    IT.Core.ViewModels.CustomerOrderGroupViewModel customerOrderGroupViewModel = new IT.Core.ViewModels.CustomerOrderGroupViewModel();
+    customerOrderGroupViewModel = ViewBag.CustomerOrderGroupViewModel as IT.Core.ViewModels.CustomerOrderGroupViewModel;
+
+
+    List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModels = new List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>();
+    customerGroupOrderDetailsViewModels = ViewBag.customerGroupOrderDetailsViewModel;
+
+}
+
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-title">
+                <h3><i class="fa fa-table"></i>View Asigned Orders Details</h3>
+                <div class="box-tool">
+                    <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                Order ID: <label id="CId">@customerOrderGroupViewModel.Id</label><br />
+                Order No: <label id="CustomerOrderId">@customerOrderGroupViewModel.CustomerOrderId</label><br />
+                Requested QTY: <label>@customerOrderGroupViewModel.RequestedQuantity</label><br />
+                Company Name: <label>@customerOrderGroupViewModel.Name</label><br />
+                Order Progress: <label>@customerOrderGroupViewModel.OrderProgress</label><br />
+                <input type="hidden" id="OrderId" value="@customerOrderGroupViewModel.OrderId" />
+                @{
+                    if (customerOrderGroupViewModel.OrderProgress == "Asigned to Driver")
+                    {
+                        <input type="button" id="AcceptOrder" class="btn btn-info pull-right" value="Accept Order" />
+                    }
+                }
+                
+                <br /><br />
+                <div class="clearfix"></div>
+                <div class="table-responsive" style="border:0">
+                    <table class="table table-advance" id="UnreadOrderList">
+                        <thead>
+                            <tr>
+                                <th>Id #</th>
+                                <th>Traffic Plate Number</th>
+                                <th>Color</th>
+                                <th>Dreiver Name</th>
+                                <th>Requested Quantity</th>
+                                <th>Deliverd Quantity</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in customerGroupOrderDetailsViewModels)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.Id <input type="hidden" value="@item.OdrderDetailsId" />
+                                    </td>
+                                    <td>
+                                        @item.TraficPlateNumber
+                                    </td>
+                                    <td>
+                                        @item.Color
+                                    </td>
+                                    <td>
+                                        @item.Name
+                                    </td>
+                                    <td>
+                                        @item.RequestedQuantity
+                                    </td>
+                                    <td>
+                                        @item.DeliverdQuantity
+                                    </td>
+                                    <td>
+                                        @if (Convert.ToInt32(item.DeliverdQuantity) < 1)
+                                        {
+                                            if (item.CurrentStatus == "Asigned")
+                                            {
+                                                <span>Asigned</span>
+                                            }
+                                            else if (item.CurrentStatus == "Accepted")
+                                            {
+                                                <input type="button" class="btn btn-info" onclick="Deliverd(@item.OdrderDetailsId)" value="On Deliverd" />
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <label>Deliverd</label>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_DriverOrderDeliverPartialView.cshtml")
+
+@Html.Partial("~/Areas/AWFDriver/Views/Shared/Partial/_DriverNotificationView.cshtml")
+
+@section Scripts{
+       
+    <script>
+
+        $('#AcceptOrder').click(function () {
+
+            var Data = JSON.stringify({
+
+                Id: $('#CId').text(),
+                OrderId: $('#OrderId').val()
+            });
+
+            ajaxRequest("POST", "/CustomerOrderAccepted", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    swal("Success!", "Order accept successfully!", "success");
+
+                }
+            });
+
+        })
+
+        function Deliverd(Id) {
+            $('#DeliverQuantity').val('');
+            $('#OrderIdNowToDeliver').val(Id);
+            $('#DriverOrderDeliverdModel').modal('show');
+        }
+
+        $('#DeliverdProcess').click(function () {
+
+            if ($('#DeliverQuantity').val().trim() == '') {
+                $('#DeliverQuantity').css({ "border-color": "red" });
+            }
+            else {
+                var Data = JSON.stringify({
+                    Id: $('#OrderIdNowToDeliver').val(),
+                    Quantity: $('#DeliverQuantity').val(),
+                    OrderAsignId: $('#CId').text()
+                })
+                ajaxRequest("POST", "/CustomerOrderDetailsGroupUpDelQTY", Data, "json").then(function (result) {
+
+                    if (result = 'Success') {
+
+                        swal("Success!", "Order Deliver Successfully!", "success");
+
+                        $('#DeliverQuantity').val('');
+                        $('#DriverOrderDeliverdModel').modal('hide');
+                        window.location.reload();
+                    }
+                })
+            }
+        });
+
+
+
+    </script>
+
+
+}

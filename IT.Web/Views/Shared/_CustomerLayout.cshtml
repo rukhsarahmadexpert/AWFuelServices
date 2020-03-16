@@ -1,0 +1,194 @@
+﻿@{
+    IT.Core.ViewModels.UserCompanyViewModel userCompanyViewModel = new IT.Core.ViewModels.UserCompanyViewModel();
+
+    if (Session["userCompanyViewModel"] != null)
+    {
+        userCompanyViewModel = Session["userCompanyViewModel"] as IT.Core.ViewModels.UserCompanyViewModel;
+    }
+}
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <title>AWFuel | @ViewBag.Title </title>
+    <link rel="shortcut icon" type="image/x-icon" href="~/img/Icon/favicon.png">
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/fonts/FontFamily.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.theme.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.transitions.css" rel="stylesheet" />
+    <link href="~/Content/css/meanmenu/meanmenu.min.css" rel="stylesheet" />
+    <link href="~/Content/css/animate.css" rel="stylesheet" />
+    <link href="~/Content/css/normalize.css" rel="stylesheet" />
+    <link href="~/Content/css/scrollbar/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link href="~/Content/css/jvectormap/jquery-jvectormap-2.0.3.css" rel="stylesheet" />
+    <link href="~/Content/css/notika-custom-icon.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/waves.min.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/button.css" rel="stylesheet" />
+    <link href="~/Content/Toast.css" rel="stylesheet" />
+    <link href="~/Content/jquery.toast.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap-select/bootstrap-select.css" rel="stylesheet" />
+    <link href="~/Content/css/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/Content/css/chosen/chosen.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/css/main.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="~/Content/css/responsive.css" rel="stylesheet" />
+    <link href="~/Content/fonts/notika-icon.woff" rel="stylesheet" />
+    <link href="~/Content/fonts/notika-icon.ttf" rel="stylesheet" />
+
+    <link href="~/Scripts/sweetalart/sweetalert.css" rel="stylesheet" />
+
+
+</head>
+<body>
+
+    @Html.Partial("~/Views/Shared/_PartialView/_HeaderTopCustomerPartialView.cshtml")
+    @Html.Partial("~/Views/Shared/_PartialView/_MenuCustomerPartialView.cshtml")
+
+    @Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerResponsePartialView.cshtml")
+
+
+    @RenderBody();
+
+    <input type="hidden" id="CompanyId" value="@userCompanyViewModel.CompanyId" />
+
+    <!-- End Footer area-->
+    <!-- jquery-->
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+    @*<script src="~/Scripts/js/vendor/jquery-1.12.4.min.js"></script>
+        <script src="~/Scripts/jquery-{version}.js"></script>*@
+    @*<script src="~/Scripts/js/wow.min.js"></script>
+    <script src="~/Scripts/js/jquery-price-slider.js"></script>
+    <script src="~/Scripts/js/owl.carousel.min.js"></script>
+    <script src="~/Scripts/js/jquery.scrollUp.min.js"></script>
+    <script src="~/Scripts/js/meanmenu/jquery.meanmenu.js"></script>
+    <script src="~/Scripts/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/Scripts/js/sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/Scripts/js/sparkline/sparkline-active.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.resize.js"></script>
+    <script src="~/Scripts/js/flot/curvedLines.js"></script>
+    <script src="~/Scripts/js/flot/flot-active.js"></script>
+    <script src="~/Scripts/js/knob/jquery.knob.js"></script>
+    <script src="~/Scripts/js/knob/jquery.appear.js"></script>
+    <script src="~/Scripts/js/knob/knob-active.js"></script>
+    <script src="~/Scripts/js/wave/waves.min.js"></script>
+    <script src="~/Scripts/js/todo/jquery.todo.js"></script>
+    <script src="~/Scripts/js/plugins.js"></script>
+    <script src="~/Scripts/js/chat/moment.min.js"></script>
+    <script src="~/Scripts/js/chat/jquery.chat.js"></script>
+    <script src="~/Scripts/js/data-table/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/js/data-table/data-table-act.js"></script>
+    <script src="~/Scripts/js/datapicker/bootstrap-datepicker.js"></script>
+    <script src="~/Scripts/js/datapicker/datepicker-active.js"></script>
+    <script src="~/Scripts/js/bootstrap-select/bootstrap-select.js"></script>
+    <script src="~/Scripts/js/chosen/chosen.jquery.js"></script>
+    <script src="~/Scripts/js/wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="~/Scripts/js/wizard/wizard-active.js"></script>
+    <script src="~/Scripts/js/tawk-chat.js"></script>
+    <script src="~/Scripts/js/main.js"></script>
+    <script src="~/Scripts/jquery.toast.js"></script>
+    <script src="~/Scripts/Common-Scripts/common-script.js"></script>
+    <script src="~/Scripts/Common-Scripts/massageAlert.js"></script>
+    <script src="~/Scripts/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/sweetalart/sweetalert.min.js"></script>*@
+
+    @*"~/Scripts/Common-Scripts/GetUnreadCount.js",
+        "~/Scripts/jquery.signalR-2.4.1.js"*@
+
+    <script>
+        $(document).ready(function () {
+            var IsOutSdie = "False";
+            
+            $('#Ok').click(function () {
+
+                var Dats = JSON.stringify({
+                    Id: $('#OrderIdNow').val()
+                })
+                ajaxRequest("POST", "/ViewedNotifyCustomer", Dats, "json").then(function (result) {
+
+                    if (result == "Success") {
+                        AlertCustomerOk();
+                        $('#CustomerResponseModel').modal('hide');
+
+                        var OrderNo = $('#OrderIdNow').val();
+
+                        window.location.href = "/CustomerOrderGroupByOrderId/" + OrderNo;
+                    }
+                });
+            });
+            
+            $('#YesDeliverd').click(function () {
+
+                var Id = $('#OrderIdNow').val();
+
+                ajaxRequest("POST", "/CusOrderDelUpdateCusConfirmed/" + Id, "", "json").then(function (result) {
+
+
+                    if (result != "Failed") {
+                        $('#CustomerOrderDeliverModel').modal('hide');
+                        AlertCustomerOk();
+
+                    }
+
+                });
+            });
+        });
+
+        function GetAcceptedOrderInfo(Id) {
+
+            ajaxRequest("GET", "/MsgFromDriverOnAccept/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    if (parseInt(result) > 0) {
+                        ViewDeliveryInfo(Id);
+
+                        $('#CustomerResponseModel').modal('show');
+
+                    }
+                }
+
+            });
+
+
+            function ViewDeliveryInfo(Id) {
+
+                var Data = JSON.stringify({
+                    Id: Id
+                })
+                ajaxRequest("POST", "/ViewDeliveryInfo", Data, "json").then(function (result) {
+
+                    $('#OrderIdNow').val(result.Id);
+
+                    $('#CustomerResponseModel').modal('show');
+                });
+            }
+        }
+
+        function OrderDeliveryMessage(Id) {
+            ajaxRequest("GET", "/MessagesesDriverAdmin/" + Id, "", "json").then(function (result) {
+
+                $('#OrderIdNow').val(result);
+                if (parseInt(result) > 0) {
+                    $('#CustomerOrderDeliverModel').modal('show');
+                }
+                else {
+                    $('#CustomerOrderDeliverModel').modal('hide');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

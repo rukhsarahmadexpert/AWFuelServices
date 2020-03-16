@@ -1,0 +1,204 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Product-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewProdcut"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="ProductTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Unit</th>
+                                    <th>UserName</th>
+                                    <th>IsActive</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Product/Views/Shared/Partial/_ProductPartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+
+            $('#createNewProdcut').click(function () {
+                $('#updateProduct').hide();
+                $('#saveProduct').show();
+
+                $('#ProductModel').modal('show');
+            });
+
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#ProductTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/ProductAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "Name" },
+                    { "mData": "Description" },
+                    { "mData": "UnitName" },
+                    { "mData": "UserName" },
+                    { "mData": "IsActive" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditProduct(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="DeletePro(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        function DeletePro(Id) {
+            $('#spanId').text(Id);
+            $('#ModelDeleteProduct').modal('show');
+        }
+
+        $('#DeleteProduct').click(function () {
+            var Id = $('#spanId').text();
+            DeleteProduct(Id);
+        });
+
+        $('#saveProduct').click(function () {
+            if (IsValidProduct()) {
+                var Data = JSON.stringify({
+                    Name: $('#Name').val(),
+                    Unit: $('#unitId').val(),
+                    Description: $('#Description').val()
+                })
+                ajaxRequest("POST", "/Product-Create", Data, "Json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#ProductTable').DataTable().ajax.reload();
+                        sucessAdd();
+                        ClearProduct();
+                        $('#ProductModel').modal('hide');
+                    }
+                    else {
+                        alert('Failed');
+                    }
+                });
+            }
+        });
+
+        $('#CancelProduct').click(function () {
+            ClearProduct();
+        });
+
+        function EditProduct(Id) {
+            ajaxRequest("GET", "/Product-Edit/" + Id, "", "json").then(function (result) {
+                if (result != "Failed") {
+                    $('select').chosen();
+                    $('#Name').val(result.Name);
+                    $('#ProductId').val(result.Id);
+                    $('#Description').val(result.Description);
+                    $('select').trigger("chosen:updated");
+                    $('#saveProduct').hide();
+                    $('#updateProduct').show();
+
+                    $('#ProductModel').modal('show');
+                }
+
+            });
+        }
+
+        $('#updateProduct').click(function () {
+            if (IsValidProduct()) {
+                var Data = JSON.stringify({
+                    Id: $('#ProductId').val(),
+                    Name: $('#Name').val(),
+                    Unit: $('#unitId').val(),
+                    Description: $('#Description').val()
+                })
+                ajaxRequest("POST", "/Product-Update", Data, "Json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#ProductTable').DataTable().ajax.reload();
+                        sucessUpdate();
+                        $('#ProductModel').modal('hide');
+                        ClearProduct();
+                    }
+                    else {
+                        alert('Failed');
+                    }
+                });
+            }
+        });
+
+        function ClearProduct() {
+            $('select').chosen();
+            var arlene1 = [];
+            $('#Name').css('border-color', 'lightgrey').val('');
+            $('#Description').css('border-color', 'lightgrey').val('');
+            $('#unitId').css('border-color', 'lightgrey').val(arlene1);
+            $('select').trigger("chosen:updated");
+        }
+
+        function DeleteProduct(Id) {
+            ajaxRequest("POST", "/Product-Delete/" + Id, "", "json").then(function (result) {
+                if (result != "Failed") {
+                    $('#ModelDeleteProduct').modal('hide');
+                    $('#ProductTable').DataTable().ajax.reload();
+                    sucessDelete();
+                }
+
+            });
+        }
+
+        function IsValidProduct() {
+            var isValid = true;
+            if ($('#Name').val().trim() == "") {
+                $('#Name').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Name').css('border-color', 'lightgrey');
+            }
+            return isValid;
+        }
+    </script>
+}
+

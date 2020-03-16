@@ -1,0 +1,157 @@
+﻿@model IT.Core.ViewModels.VehicleViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<input type="hidden" value="@Model.Id" id="VehicleId" />
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Vehicle Details AW</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-info btn-sm" id="createNewVehicle"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table id="vehicleTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Vehicle Type</th>
+                                    <th>Plate Number</th>
+                                    <th>Color</th>
+                                    <th>Brand</th>
+                                    <th>Mulkia Expiry</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="ModelDeleteVehicle" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure ?</h3><br />
+                <h5>You want to delete this record   <span id="spanId" class="badge badge-light">101</span></h5>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="DeleteVehicle">Yes! Delete</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No! Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/AWFVehicle/Views/Shared/Partial/_VehicleParitalView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            BindDataTable();
+
+            $('#createNewVehicle').click(function () {
+                IsOutSdie = "False";
+                $('#updateVehicle').hide();
+                $('#saveVehicle').show();
+                $('#VehicleModel').modal('show');
+            });
+
+
+            $('#DeleteVehicle').click(function () {
+
+                var Data = JSON.stringify({
+                    Id: $('#spanId').text()
+                });
+                ajaxRequest("POST", "/AWFVehicle-Delete", Data, "json").then(function (result) {
+                    if (result == "Success") {
+
+                        alert("Success");
+
+                        $('#vehicleTable').DataTable().ajax.reload();
+                        $('#ModelDeleteVehicle').modal('hide');
+                    }
+                    else {
+                        $('#left-panel').html(result);
+                    }
+                });
+            });
+
+
+        });
+
+        var BindDataTable = function (response) {
+            $('#vehicleTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/AWFVehicleAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "VehicleTypeName" },
+                    { "mData": "TraficPlateNumber" },
+                    { "mData": "Color" },
+                    { "mData": "Brand" },
+                    { "mData": "MulkiaExpiry" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="Edit(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + '  |  ' + '<a href="#" onclick="View(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a> ' + '  |  ' + '<a href="#" onclick="Delete(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        function View(Id) {
+            IsOutSdie = "True";
+
+            window.location.href = '/AWFVehicle-Details/' + Id;
+        }
+
+        function Delete(Id) {
+
+            $('#spanId').text(Id);
+            $('#ModelDeleteVehicle').modal('show');
+        }
+
+    </script>
+    <script src="~/Areas/AWFVehicle/Script/Vehicle.js"></script>
+    @*<script src="~/signalr/hubs"></script>*@
+}
+

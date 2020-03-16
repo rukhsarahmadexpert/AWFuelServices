@@ -1,0 +1,158 @@
+﻿
+@{
+    ViewBag.Title = "DriverAsignedOrder";
+    //  Layout = "~/Views/Shared/_LayoutDriver.cshtml";
+
+    Layout = "~/Views/Shared/_DriverLayout.cshtml";
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="box">
+            <div class="box-title">
+                <h3><i class="fa fa-table"></i> Asigned Order</h3>
+                <div class="box-tool">
+                    <a data-action="collapse" href="#"><i class="fa fa-chevron-up"></i></a>
+                    <a data-action="close" href="#"><i class="fa fa-times"></i></a>
+                </div>
+            </div>
+            <div class="box-content">
+                <div class="btn-toolbar pull-right clearfix">
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Add new record" href="#"><i class="fa fa-plus"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Edit selected" href="#"><i class="fa fa-edit"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Delete selected" href="#"><i class="fa fa-trash-o"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Print" href="#"><i class="fa fa-print"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to PDF" href="#"><i class="fa fa-file-text-o"></i></a>
+                        <a class="btn btn-circle show-tooltip" title="Export to Exel" href="#"><i class="fa fa-table"></i></a>
+                    </div>
+                    <div class="btn-group">
+                        <a class="btn btn-circle show-tooltip" title="Refresh" href="#"><i class="fa fa-repeat"></i></a>
+                    </div>
+                </div>
+                <br /><br />
+                <div class="clearfix"></div>
+                <div class="table-responsive" style="border:0">
+                    <table class="table table-advance" id="CustomerOrderDriverAsigned">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Driver</th>
+                                <th>Vehicle </th>
+                                <th>Order Quantity</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_DriverOrderDeliverPartialView.cshtml")
+@Html.Partial("~/Areas/AWFDriver/Views/Shared/Partial/_DriverNotificationView.cshtml")
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#CustomerOrderDriverAsigned').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/GetAsignedOrderByDriver",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "CreateDates" },
+                    { "mData": "CreatedTime" },
+                    { "mData": "DriverName" },
+                    { "mData": "VehicleNumber" },
+                    { "mData": "OrderQuantity" },
+                    { "mData": "OrderProgress" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="Deliverd(' + Id + ')"><i class="glyphicon glyphicon-check"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function Deliverd(Id) {
+
+            $('#OrderIdNowToDeliver').val(Id);
+            $('#DriverOrderDeliverdModel').modal('show');
+        }
+
+
+        $('#DeliverdProcess').click(function () {
+
+            if ($('#DeliverQuantity').val().trim() == '') {
+                $('#DeliverQuantity').css({ "border-color": "red" });
+            }
+            else {
+
+                var Data = JSON.stringify({
+                    Id: $('#OrderIdNowToDeliver').val(),
+                    Quantity: $('#DeliverQuantity').val()
+                })
+                ajaxRequest("POST", "/CustomerOrderDeliverdUpdate", Data, "json").then(function (result) {
+
+                    if (result = 'Success') {
+                        $.toast({
+                            heading: 'Success',
+                            text: 'your order deliverd success fully, thank you!',
+                            icon: 'info',
+                            loader: true,        // Change it to false to disable loader
+                            loaderBg: '#9EC600'  // To change the background
+                        });
+
+                        $('#DeliverQuantity').val('');
+                        $('#DriverOrderDeliverdModel').modal('hide');
+                        $('#CustomerOrderDriverAsigned').DataTable().ajax.reload();
+                    }
+                })
+            }
+        });
+
+
+        $('#DeliverQuantity').keyup(function () {
+
+            $('#DeliverQuantity').css({ "border-color": "Green" });
+        });
+
+    </script>
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/DriverScript.js"></script>
+}
+
+

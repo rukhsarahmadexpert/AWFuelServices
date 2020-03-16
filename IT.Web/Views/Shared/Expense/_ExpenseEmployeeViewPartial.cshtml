@@ -1,0 +1,45 @@
+﻿
+
+
+@{
+    IT.Core.ViewModels.EmployeeViewModel employeeViewModel = new IT.Core.ViewModels.EmployeeViewModel();
+
+    employeeViewModel = ViewBag.Employee as IT.Core.ViewModels.EmployeeViewModel;
+
+    IT.Core.ViewModels.ExpenseViewModel expenseViewModel = new IT.Core.ViewModels.ExpenseViewModel();
+
+    expenseViewModel = ViewBag.ExpenseViewModel as IT.Core.ViewModels.ExpenseViewModel;
+}
+
+
+
+<div class="row">
+    <h1 class="text-center"><u>@ViewBag.titles</u></h1>
+    <div class="col-md-4">
+        <div class="form-group">
+            Issue To:
+            <div class="form-control">
+                <label>@employeeViewModel.Name</label>
+            </div>
+            <p style="margin-top:10px">
+            </p>
+            <p><i class="glyphicon glyphicon-briefcase"> : </i> <span id="EmployeeDesignation">@employeeViewModel.Designation</span></p>
+            <p><i class="glyphicon glyphicon-envelope"> : </i> <span id="EmployeeEmail">@employeeViewModel.Email</span></p>
+            <p> <i class="glyphicon glyphicon-phone"> : </i> <span id="EmployeeContact">@employeeViewModel.Contact</span></p>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div>
+            @*<p class="pull-right">Exp NO# : <label id="RefrenceNumber">@expenseViewModel.ExpenseNumber</label></p>*@
+            <p class="pull-right">Exp #: <input type="text" disabled="disabled" id="RefrenceNumber" value="@expenseViewModel.ExpenseNumber" /></p>
+            <p class="pull-right" style="margin-top:5px">Ref #: <input type="text" disabled="disabled" id="ExpensePadNumber" value="@expenseViewModel.ExpensePadNumber" /></p>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

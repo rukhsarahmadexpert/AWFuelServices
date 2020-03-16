@@ -1,0 +1,297 @@
+﻿@model IT.Core.ViewModels.AWFuelSalaryViewModel
+
+@{
+    ViewBag.Title = "EmployeeAllowansis";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <label>Employee Allowances:</label>
+</div>
+
+<div class="container" style="background-color:white">
+    
+
+
+  
+
+        <div class="form-horizontal">
+
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+            <div class="row" style="margin-top:10px">
+                <div class="col-md-6">
+                    Project:
+                    <div class="form-group">
+                        <div class="chosen-select-act fm-cmp-mg">
+                            <select class="chosen" data-placeholder="Project" name="ProjectId" id="ProjectId" title="Select Project">
+                                @foreach (var Project in ViewBag.projectViewModels)
+                                {
+
+                                    <option value="@Project.Id">@Project.ProjectTitle</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+
+                </div>
+                <div class="col-md-6">
+                    Employee:
+                    <div class="form-group">
+                        <div class="chosen-select-act fm-cmp-mg">
+                            <select class="chosen" data-placeholder="Employee" name="EmployeeId" id="Employee" title="Select Employee"></select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-4">
+                    Allowance Ammount:
+                    @Html.EditorFor(model => model.Received, new { htmlAttributes = new { @class = "form-control", @id = "Received" } })
+                    @Html.ValidationMessageFor(model => model.Received, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-4">
+                    Select Date:
+                    @Html.EditorFor(model => model.IssuedDate, new { htmlAttributes = new { @class = "form-control", @id = "IssuedDate" } })
+                    @Html.ValidationMessageFor(model => model.IssuedDate, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        Allownace:
+                        <select class="form-control" name="PaymentType" id="PaymentType">
+                            <option value="0">Select Allowance Type</option>
+                            <option value="Allowance One">Allowance One</option>
+                            <option value="Allowance Two">Allowance Two</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-1" style="margin-top:19px" >
+                    <div class="btn-group"  >                        
+                        <button  class="btn btn-success" style="margin-left:26px" id="AddNewAllowance">ADD</button>
+                    </div>
+                </div>
+
+                </div>
+
+            <div class="row" style="margin-top:10px">
+                <div class="col-md-4">
+                    Vouchar N0:
+                    @Html.EditorFor(model => model.VoucharNo, new { htmlAttributes = new { @class = "form-control", @id = "VoucharNo" } })
+                    @Html.ValidationMessageFor(model => model.VoucharNo, "", new { @class = "text-danger" })
+                </div>
+                <div class="col-md-8">
+                    Description:
+                    @Html.EditorFor(model => model.UpdateReason, new { htmlAttributes = new { @class = "form-control", id = "UpdateReason" } })
+                    @Html.ValidationMessageFor(model => model.UpdateReason, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <hr />
+            <div class="row">
+                <div class="col-md-12">
+                    <label style="color:skyblue; font-weight:bold"> Previous Records:</label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-bordered" id="EmployeeStatistics">
+                        <thead>
+                            <tr>
+                                <th>Receivable</th>
+                                <th>Received</th>
+                                <th>Deduction</th>
+                                <th>Allowance</th>
+                                <th>Loan Issued</th>
+                                <th>Loan Returnd</th>
+                                <th>Balance</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                                <td>
+                                    0.00
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-12">
+                    <input type="button" value="Create" id="SaveAllowance" class="btn btn-success" />
+                </div>
+            </div>
+        </div>
+    
+
+</div>
+
+
+<div class="modal fade" id="AddAllowancies" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content" style="padding:30px 30px">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="normal-table-list" style="padding:0 !important">
+                            <div class="basic-tb-hd">
+                               <div class="form-group">
+                                   Allowance:
+                                   <input type="text" id="AllowanceName"  class="form-control"/>
+                               </div>
+                            </div>
+                            <div class="bsc-tbl-bdr" style="text-align:center">
+                                <hr />
+                                <a href="#" class="btn btn-primary" id="SaveNewAllowance">Save</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#ProjectId').change(function () {
+
+                var Id = $(this).val();
+
+                ajaxRequest("GET", "/EmployeeByProjectId/" + Id, "", "json").then(function (result) {
+
+                    if (result != "Failed") {
+
+                        $('select').chosen();
+                        $("#Employee").empty();
+
+                        $('#Employee').append($('<option></option>').val(0).html('Select Employee'));
+                        $.each(result, function (key, item) {
+                            $('#Employee').append($('<option></option>').val(item.Id).html(item.Name));
+                        });
+                        $('select').trigger("chosen:updated");
+
+
+                    }
+
+                });
+
+            });
+
+            
+            $('#SaveAllowance').click(function () {
+
+                var Data = JSON.stringify({
+
+                    ProjectId: $('#ProjectId').val(),
+                    EmployeeId: $('#Employee').val(),
+                    Received: $('#Received').val(),
+                    IssuedDate: $('#IssuedDate').val(),
+                    VoucharNo: $('#VoucharNo').val(),
+                    UpdateReason: $('#UpdateReason').val(),
+                    PaymentType: $('#PaymentType').val()
+                })
+
+                ajaxRequest("POST", "/EmployeeAllowanceSaved", Data, "json").then(function (result) {
+
+                    if (result != "Failed") {
+
+                        sucessAdd();
+                    }
+                    else {
+                        alert('Opration Failed')
+                    }
+
+                });
+
+            });
+
+            $('#Employee').change(function () {
+
+                var Id = $(this).val();
+
+                EmployeeStatistics(Id);
+            });
+
+        });
+
+
+        function EmployeeStatistics(Id) {
+
+            ajaxRequest("POST", "/EmployeeStatistics/" + Id, "", "json").then(function (result) {
+
+
+                if (result != "Failed") {
+
+                    $('#EmployeeStatistics tbody').empty();
+
+                    var Bal = parseFloat(result.Receivable) - parseFloat(result.Received) - parseFloat(result.Deduction) - parseFloat(result.LoanIssued) + parseFloat(result.LoanReturn) + parseFloat(result.Allowance);
+
+                    $('#EmployeeStatistics tbody').append('<tr><td>' + result.Receivable + '</td><td>' + result.Received + '</td><td>' + result.Deduction + '</td><td>' + result.Allowance + '</td><td>' + result.LoanIssued + '</td><td>' + result.LoanReturn + '</td><td>' + Bal + '</td></tr>')
+
+                }
+                else {
+                    alert('failed to fitch employee data');
+                }
+
+            });
+        }
+        
+        $('#AddNewAllowance').click(function () {
+
+            $('#AddAllowancies').modal('show');
+
+        });
+
+        $('#SaveNewAllowance').click(function () {
+
+            var Data = JSON.stringify({
+
+                Name: $('#AllowanceName').val()
+            })
+
+            ajaxRequest("POST", "/AllowanceAdd", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+
+                    window.location.reload();
+                }
+
+            })
+
+        });
+
+
+    </script>
+
+}

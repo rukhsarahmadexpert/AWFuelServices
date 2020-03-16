@@ -1,0 +1,56 @@
+﻿
+<div class="row">
+    <h1 class="text-center"><u>@ViewBag.titles</u></h1>
+    <div class="col-md-4">
+        <div class="form-group">
+            @*<label>Cu Address:</label>*@
+            <div class=" fm-cmp-mg">
+
+                <div class="form-group">
+                    <label>Vender Name:</label>
+                    <div class="form-group">
+                        <div class="nk-int-st">
+                            <input type="text" class="form-control" id="Venders" name="Venders" placeholder="Vender Name">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top:10px">
+            </p>
+
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div class="form-group">
+            <div class="form-group">
+                <div class="nk-int-st">
+                    PO Number: <input type="text" class="form-control" readonly id="PONo" name="PONo" placeholder="PO Number" value="@ViewBag.PO">
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" class="form-control" id="RefrenceNo" name="RefrenceNo" value="00" placeholder="RefrenceNo">
+
+        <div class="form-group">
+            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                <div class="input-group date nk-int-st">
+                    <span class="input-group-addon"></span>
+                    From Date: <input type="text" class="form-control FromDate" id="FromDate" name="FromDate" value="@System.DateTime.Now.ToLongDateString()" title="Licence Expiry">
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                <div class="input-group date nk-int-st">
+                    <span class="input-group-addon"></span>
+                    Due Date:<input type="text" class="form-control DueDate" id="DueDate" name="DueDate" value="@System.DateTime.Now.ToLongDateString()" title="Licence Expiry">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

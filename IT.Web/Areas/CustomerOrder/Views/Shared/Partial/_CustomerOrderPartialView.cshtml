@@ -1,0 +1,81 @@
+﻿
+<div class="modal fade" id="CustomerOrderModel" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Driver:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="DriverId" class="chosen" data-placeholder="Choose a Country..." id="DriverId">
+                                    @foreach (var driver in ViewBag.Driver)
+                                    {
+                                        <option value="@driver.Id">@driver.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Vehicle:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="VehicleId" class="chosen" data-placeholder="Select Vehicle..." id="VehicleId">
+                                    @foreach (var vehicle in ViewBag.Vehicle)
+                                    {
+                                        <option value="@vehicle.Id">@vehicle.TraficPlateNumber</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Order Quantity:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="OrderQuantity" name="OrderQuantity" placeholder="Order Quantity">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Comments:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Comments" name="Comments" placeholder="Comments/Note">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="SaveOrder">Submit Order</button>
+                <button type="button" class="btn btn-danger" id="CancelOrder" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+

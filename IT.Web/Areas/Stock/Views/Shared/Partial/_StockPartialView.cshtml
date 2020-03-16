@@ -1,0 +1,153 @@
+﻿
+<div class="modal fade" id="StockModel" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <h3 style="text-align:center; color:deepskyblue">Stock</h3>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Site:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="SiteId" class="chosen" data-placeholder="Choose a Country..." id="SiteId">
+                                    @foreach (var site in ViewBag.Site)
+                                    {
+                                        <option value="@site.Id">@site.SiteName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>LPO:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="BillNo" class="chosen" data-placeholder="Choose a LPO..." id="BillNo">
+                                    @foreach (var lpo in ViewBag.LPO)
+                                    {
+                                        <option value="@lpo.Id">@lpo.PONumber</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Item:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select name="ProductId" class="chosen" data-placeholder="Choose a Product..." id="ProductId">
+                                    @foreach (var Product in ViewBag.Product)
+                                    {
+                                        <option value="@Product.Id">@Product.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="well">
+
+                    <div class="row">
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                Rate:
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <label class="form-control" id="Rate" name="Rate" placeholder="Rate"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                VAT:
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <label type="text" class="form-control" id="VAT" name="VAT" placeholder="VAT"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                Total:
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <label type="text" class="form-control" id="Total" name="Total" placeholder="Total"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                Total Quantity:
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <label class="form-control" id="TotalQTY" name="TotalQTY"> Gallon</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                            <div class="form-group">
+                                Availible QTY:
+                                <div class="form-group">
+                                    <div class="nk-int-st">
+                                        <label class="form-control" id="AvailbleQTY" name="AvailbleQTY"> Gallon</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Delivery Note No:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="RefrenceNo" name="RefrenceNo" placeholder="Delivery Note No">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Quantity:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="number" class="form-control" id="Quantity" name="Quantity" placeholder="Please Enter Required Quantity">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="updateStock">Save changes</button>
+                <button type="button" class="btn btn-success" id="saveStock">Save changes</button>
+                <button type="button" class="btn btn-danger" id="CancelStock" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="StockId" />
+

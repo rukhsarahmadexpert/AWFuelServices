@@ -1,0 +1,226 @@
+﻿
+@{
+    ViewBag.Title = "ManageOrders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Managing Orders</h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="createNewEmployee"><i class="fa fa-plus"></i> New</button>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="UnreadOrderList" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order No#</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Company Name</th>
+                                    <th>Driver</th>
+                                    <th>Vehicle Number</th>
+                                    <th>GL</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<input type="hidden" id="CurrentDriverID" />
+<input type="hidden" id="CurrentOrderId" />
+<input type="hidden" id="CurrentCompanyId" />
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_ViewCustomerOrderPartialView.cshtml")
+
+
+
+@section Scripts{
+    <script>
+
+        $(document).ready(function () {
+            BindDataTable();
+
+            $('#ss').click(function () {
+
+                var Data = JSON.stringify({
+                    Id: $('#spanId').text()
+                });
+                ajaxRequest("POST", "/Employee-Delete", Data, "json").then(function (result) {
+                    if (result == "Success") {
+                        sucessDelete();
+                        $('#EmployeeTable').DataTable().ajax.reload();
+                        $('#ModelDeleteEmployee').modal('hide');
+                    }
+                    else {
+                        $('#left-panel').html(result);
+                    }
+                });
+            });
+
+            $('#AcceptOrder').click(function () {
+
+                ajaxRequest("POST", "/DriverAllOnline", "", "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#ViewDriverOnline tbody').empty();
+                        $.each(result, function (index, value) {
+                            if (value.IsActive == true) {
+                                $('#ViewDriverOnline').append('<tr><td><input type="radio" id="Id" name="DriverR"/></td><td><input type="hidden" class="ID" value="' + value.Id + '"/></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-success" style="background-color:green">Online</span></td></tr>')
+
+                            }
+                            else {
+                                $('#ViewDriverOnline').append('<tr><td><input type="radio" disabled name="DriverR" id="Id"/></td><td><input type="hidden" class="ID" value="' + value.Id + '" /></td><td>' + value.Name + '</td><td>' + value.Contact + '</td><td><span class="badge badge-danger" style="background-color:red">Offline</span></td></tr>')
+
+                            }
+                        });
+                    }
+                });
+
+                $('#ViewDriverModel').modal('show');
+                $('#ViewCustomerOrderModel').modal('hide');
+            });
+
+
+            $('#LockOrderToShipment').click(function () {
+
+                $('#ViewDriverOnline tbody tr').each(function () {
+
+                    if ($(this).find('input[type="radio"]').is(':checked')) {
+                        var row = $(this).find('.ID').val();
+                        $('#CurrentDriverID').val(row);
+                    }
+                });
+                OrderShipment();
+            });
+        });
+
+
+        var BindDataTable = function (response) {
+            $('#UnreadOrderList').DataTable({
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/GetUnreadOrderAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "OrderId" },
+                    { "mData": "Date" },
+                    { "mData": "Time" },
+                    { "mData": "Company" },
+                    { "mData": "DriverName" },
+                    { "mData": "TraficPlateNumber" },
+                    { "mData": "OrderQuantity" },
+                    {
+                        "mData": "OrderId",
+                        "render": function (id, type, full, meta) {
+                            return '<a href="#" onclick="Process(' + id + ')" onmouseover="View(' + id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        function Process(id) {
+
+            var Data = JSON.stringify({
+
+                OrderId: id
+            })
+            ajaxRequest("POST", "/OrderById", Data, "json").then(function (result) {
+                $('#CurrentOrderId').val(id);
+                $('#CompanyName').text(result.Company);
+                $('#CompanyContact').text(result.Cell);
+                $('#DriverName').text(result.DriverName);
+                $('#DriverContact').text(result.Contact);
+                $('#VehicleNumber').text(result.TraficPlateNumber);
+                $('#Quantity').text(result.OrderQuantity + ' GALLON');
+                $('#CurrentCompanyId').val(result.CompanyId);
+
+
+                $('#ViewCustomerOrderModel').modal('show');
+            });
+        }
+
+        function View(id) {
+
+            var Data = JSON.stringify({
+
+                OrderId: id
+            })
+            ajaxRequest("POST", "/OrderViewed", Data, "json").then(function (result) {
+
+                // $('#UnreadOrderList').DataTable().ajax.reload();
+            });
+
+        }
+
+
+        function OrderShipment() {
+
+            var Data = JSON.stringify({
+                OrderId: $('#CurrentOrderId').val(),
+                DriverId: $('#CurrentDriverID').val(),
+                LocationLink: "www.google.com"
+            })
+            ajaxRequest("POST", "/CustomerOrderAsignToDriver", Data, "json").then(function (result) {
+                if (result == "Success") {
+                    AsignToDriver();
+                    $('#ViewDriverModel').modal('hide');
+
+                }
+                else {
+                    $('#left-panel').html(result);
+                }
+            });
+
+        }
+
+        $('#ViewCustomerCompanyProfile').click(function () {
+
+            var Id = $('#CurrentCompanyId').val();
+            window.location.href = "/CustomerProfile/"+Id;
+            //var Data = JSON.stringify({
+            //    Id: 1
+
+            //})
+
+            //ajaxRequest("GET", "/CustomerProfile", Data, "json").then(function (result) {
+
+            //    if (result == "Success") {
+            //        window.location.href = "/CustomerProfile";
+            //    }
+            //})
+
+        });
+
+
+    </script>
+    @*<script src="~/Areas/Employee/Script/Employee.js"></script>*@
+    <script src="~/Scripts/Common-Scripts/GetUnreadCount.js"></script>
+    @*<script src="~/signalr/hubs"></script>*@
+
+    }

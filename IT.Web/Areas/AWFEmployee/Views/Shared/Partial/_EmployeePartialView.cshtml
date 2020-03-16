@@ -1,0 +1,165 @@
+﻿
+<div class="modal fade" id="EmployeeModel" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <h3 style="text-align:center; color:deepskyblue">Employee-Info</h3>
+                <hr />
+                <div class="row">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Project:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Project" name="Project" id="Project" title="Select Project">                                   
+                                    @foreach (var Project in ViewBag.projectViewModels)
+                                    {
+
+                                        <option value="@Project.Id" @(Project.Id == Model.ProjectId ? "selected='selected'" : "")>@Project.ProjectTitle</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Full Name:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Employee Full Name">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Nationality:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Nationality" name="Nationality" id="Nationality" title="Employee Nationality">
+                                    <option value="0">Select Country...</option>
+                                    @foreach (var country in ViewBag.CountryList)
+                                    {
+
+                                        <option value="@country.CountryName" @(country.CountryName == Model.Nationality ? "selected='selected'" : "")>@country.CountryName</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Contact:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Contact" name="Contact" placeholder="Employee Contact">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Email" name="Email" placeholder="Employee Email">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Designation:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Emloyee Designation" name="Designation" id="Designation" title="Employee Designation">
+                                    <option value="0">Select Designation...</option>
+                                    @foreach (var Desig in ViewBag.DesignationList)
+                                    {
+
+                                        <option value="@Desig.Id" @(Desig.Id == Model.Designation ? "selected='selected'" : "")>@Desig.Designation</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Basic Salary:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="BasicSalary" name="BasicSalary" placeholder="Employee Basic Salry">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                @*<div class="row">
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label>Mulkiya Expiry:</label>
+                    <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                        <div class="input-group date nk-int-st">
+                            <span class="input-group-addon"></span>
+                            <input type="text" class="form-control MulkiaExpiry" id="MulkiaExpiry" name="MulkiaExpiry" value="03/19/2018" title="Mulkia Expiry">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label>Insurance Expiry:</label>
+                    <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                        <div class="input-group date nk-int-st">
+                            <span class="input-group-addon"></span>
+                            <input type="text" class="form-control InsuranceExpiry" id="InsuranceExpiry" name="InsuranceExpiry" value="03/19/2018" title="Insurance Expiry">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>*@
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Employee Facebook:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Facebook" name="Facebook" placeholder="Employee Facebook">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Note:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Comments" name="Comments" placeholder="Comments/Note..">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="updateEmployee">Save changes</button>
+                        <button type="button" class="btn btn-default" id="saveEmployee">Save changes</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+</div>

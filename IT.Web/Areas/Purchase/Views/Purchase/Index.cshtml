@@ -1,0 +1,134 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Purchase-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewPurchase"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="PurchaseTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>LPO #</th>
+                                    <th>Vender</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Total</th>
+                                    <th>VAT</th>
+                                    <th> Grand Amount</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Html.Partial("~/Areas/Purchase/Views/Shared/Partial/_ParchasePartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $('#createNewPurchase').click(function () {
+
+            $('#PurchaseModel').modal('show');
+
+
+            $('#CreatePurchase').click(function () {
+
+                var Id = $('#VenderId').val();
+
+                if (Id == 0) {
+                    alert('Please Select LPO');
+                }
+                else {
+                    window.location.href = "/CreateFromLPO/" + Id;
+                }
+
+            });
+
+
+            $('#CreatePurchaseDirect').click(function () {
+
+                window.location.href = "/Purchase-Create";
+            });
+
+        });
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#PurchaseTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/PurchaseAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "PONumber" },
+                    { "mData": "Name" },
+                    { "mData": "FDate" },
+                    { "mData": "DDate" },
+                    { "mData": "Total" },
+                    { "mData": "VAT" },
+                    { "mData": "GrandTotal" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditPurchase(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewPurchase(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>' + ' | ' + '<a href="#" onclick="DeletePurchase(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        function EditPurchase(Id) {
+
+            window.location.href = "/Purchase-Edit/" + Id;
+        }
+
+        function ViewPurchase(Id) {
+
+            window.location.href = "/Purchase-Details/" + Id;
+        }
+
+    </script>
+
+}
+
+

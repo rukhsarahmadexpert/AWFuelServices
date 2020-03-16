@@ -1,0 +1,151 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Designation</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewDesignation"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="DesignationTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Designation</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Designation/Views/Shared/Partial/_DesignationPartialView.cshtml")
+
+@section Scripts{
+    <script src="~/Areas/Designation/Script/Designation.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $('#createNewEmployee').click(function () {
+                $('#updateEmployee').hide();
+                $('#saveEmployee').show();
+                $('#EmployeeModel').modal('show');
+            });
+
+            BindDataTable();
+
+            $('#DeleteDesigation').click(function () {
+
+                var Data = JSON.stringify({
+                    Id: $('#spanId').text()
+                });
+                ajaxRequest("POST", "/DesignationDelete", Data, "json").then(function (result) {
+                    if (result == "Success") {
+                        $('#ModelDesignationDelete').modal('hide');
+                        $('#DesignationTable').DataTable().ajax.reload();
+                        sucessDelete();   
+                    }
+                    else {
+                        $('#left-panel').html(result);
+                    }
+                });
+            });
+        });
+
+        var BindDataTable = function (response) {
+            $('#DesignationTable').DataTable({
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/DesignationAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "Id" },
+                    { "mData": "Designation" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="Edit(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="Delete(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+        
+        function Edit(Id) {
+            
+            ajaxRequest("GET", "/Designation-Edit/"+Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#DesignationId').val(result.Id);
+                    $('#Designation').val(result.Designation);
+                    $('#saveDesignation').hide();
+                    $('#updateDesignation').show();
+                    $('#DesignationModel').modal('show');
+                }
+                else {
+                    alert("Failed to load Data");
+                }
+
+            });
+
+        }
+        
+        function Delete(Id) {
+            $('#spanId').text(Id);
+            $('#ModelDesignationDelete').modal('show');
+        }
+
+
+        $('#updateDesignation').click(function () {
+
+            var Data = JSON.stringify({
+                Id: $('#DesignationId').val(),
+                Designation: $('#Designation').val()
+            })
+
+            ajaxRequest("POST", "/DesignationUpdate", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#DesignationModel').modal('hide');
+                    $('#DesignationTable').DataTable().ajax.reload();
+                    sucessUpdate();
+
+                }
+                else {
+                    alert('Opration Failed');
+                }
+            });
+        });
+
+    </script>
+
+}

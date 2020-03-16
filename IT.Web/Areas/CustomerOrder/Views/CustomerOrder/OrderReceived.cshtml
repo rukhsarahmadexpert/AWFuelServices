@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "OrderReceived";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Manage Order</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewOrder"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table id="CustomerOrderAccepted" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Driver</th>
+                                    <th>Vehicle </th>
+                                    <th>Order Quantity</th>
+                                    <th>Created By</th>
+                                    <th>Status</th>
+                                    <th>View</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#CustomerOrderAccepted').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/CustomerOrderReceived",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "CreateDates" },
+                    { "mData": "CreatedTime" },
+                    { "mData": "DriverName" },
+                    { "mData": "VehicleNumber" },
+                    { "mData": "OrderQuantity" },
+                    { "mData": "UserName" },
+                    { "mData": "OrderProgress" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="ViewReceivedOrder(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function ViewReceivedOrder(Id) {
+            localStorage.setItem('OrderDetailsId', Id);
+            window.location.href = "/CustomerReceivedOrderDetails";
+        }
+
+    </script>
+
+}
+

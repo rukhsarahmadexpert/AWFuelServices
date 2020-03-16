@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "CustomerGroupOrder";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+
+    List<IT.Core.ViewModels.VehicleViewModel> vehicleViewModels = new List<IT.Core.ViewModels.VehicleViewModel>();
+    vehicleViewModels = ViewBag.Vehicle as List<IT.Core.ViewModels.VehicleViewModel>;
+
+    IT.Core.ViewModels.CustomerOrderGroupViewModel customerOrderGroupViewModel = new IT.Core.ViewModels.CustomerOrderGroupViewModel();
+    customerOrderGroupViewModel = ViewBag.CustomerOrderGroupViewModel as IT.Core.ViewModels.CustomerOrderGroupViewModel;
+
+    List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModel = new List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>();
+    customerGroupOrderDetailsViewModel = ViewBag.customerGroupOrderDetailsViewModel as List<IT.Core.ViewModels.CustomerGroupOrderDetailsViewModel>;
+
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-9">
+                                <h2>Create Group Order</h2>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="pull-right">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="CustomerGroupOrderTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="AllCheck" /> All</th>
+                                    <th></th>
+                                    <th>Vehicle</th>
+                                    <th>Driver</th>
+                                    <th>Quantity</th>
+                                    <th>Description<small> (short)</small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @if (vehicleViewModels.Count > 0)
+                                {
+                                    foreach (var item in vehicleViewModels)
+                                    {
+                                        <tr>
+                                            <td><input type="checkbox" name="IsChecked" /></td>
+                                            <td><input type="hidden" value="@item.Id" class="Id" /></td>
+                                            <td id="TraficPlateNumber" class="TraficPlateNumber">@item.TraficPlateNumber</td>
+                                            <td>
+                                                <div class="form-group" style="width:250px">
+                                                    <select name="DriverId" class="chosen DriverId" data-placeholder="Choose a Driver..." id="DriverId">
+                                                        @foreach (var driver in ViewBag.Driver)
+                                                        {
+                                                            <option value="@driver.Id">@driver.Name</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td><input type="number" class="form-control OrderQuantity" placeholder="0" style="width:90px" /></td>
+                                            <td><input type="text" class="form-control Comments" style="width:400px" /></td>
+                                        </tr>
+                                    }
+                                }
+
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6">
+                                        <textarea class="form-control" id="CustomerNote" rows="2" placeholder="Note / Description (Optional)"></textarea>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td colspan="6">
+                                        <div class="pull-right">
+                                            <input type="button" class="btn btn-success" id="SaveGroupOrder" value="Save" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="OrderConfirmOrder" data-backdrop="static" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                @*<button type="button" class="close" data-dismiss="modal">&times;</button>*@
+            </div>
+            <div class="modal-body">
+                <h3>Are you sure ?</h3><br />
+                <h5>Please check and confirm, your order request is corrrectly enterd !!!</h5>
+            </div>
+            <hr />
+            <div class="modal-footer">
+                <button type="button" class="btn btn-info" id="DeleteDriver">Send Order Request</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel and check</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/CustomerScript.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+            $('#AllCheck').click(function () {
+
+                if ($('#AllCheck').is(':checked') == true) {
+                    $('#CustomerGroupOrderTable tbody tr').each(function () {
+                        ($(this).find('input:checkbox[name=IsChecked]').prop("checked", true));
+                    })
+                }
+                else {
+                    $('#CustomerGroupOrderTable tbody tr').each(function () {
+                        ($(this).find('input:checkbox[name=IsChecked]').prop("checked", false));
+                    })
+                }
+            });
+
+            $('#SaveGroupOrder').click(function () {
+
+                CreateGroupOrder("/CustomerGroupOrder");
+            });
+        });
+
+
+        function CreateGroupOrder(Url) {
+
+            var list = [], orderItem, CurrentRow;
+            var formData = new FormData();
+
+            var TotalQuantity = 0;
+
+            $('#CustomerGroupOrderTable tbody tr').each(function () {
+                if ($(this).find('input:checkbox[name=IsChecked]').is(':checked') == true) {
+
+                    CurrentRow: $(this).closest("tr");
+
+                    TotalQuantity = parseInt(TotalQuantity) + parseInt($(this).find('.OrderQuantity').val());
+
+                    orderItem = {
+                        VehicleId: $(this).find('.Id').val(),
+                        DriverId: $(this).find('.DriverId').val(),
+                        OrderQuantity: $(this).find('.OrderQuantity').val(),
+                        Comments: $(this).find('.Comments').val(),
+                    }
+                    list.push(orderItem);
+                }
+            });
+
+            for (var k = 0; k < list.length; k++) {
+                var count = countInArray(list, list[k].DriverId);
+
+                if (count > 1) {
+
+                    var Id = list[k].DriverId;
+
+                    ajaxRequest("GET", "/Driver-EditCustomer/" + Id, "json").then(function (result) {
+
+                        if (result != "Failed") {
+                            swal("Warning", result.Name + ", Added Multiple Time", "warning");
+
+                            //alert(result.Name + " Added Multiple Time");
+                        }
+                    });
+
+                    return true;
+                }
+                else {
+                    count = 0;
+                }
+            }
+            var empObj = {
+                RequestedQuantity: TotalQuantity,
+                CustomerNote: $('#CustomerNote').val(),
+            };
+
+            for (var key in empObj) {
+                formData.append(key, empObj[key]);
+            }
+
+            for (var i = 0; i < list.length; i++) {
+                formData.append('customerOrderViewModels[' + i + '][VehicleId]', list[i].VehicleId),
+                    formData.append('customerOrderViewModels[' + i + '][DriverId]', list[i].DriverId),
+                    formData.append('customerOrderViewModels[' + i + '][OrderQuantity]', list[i].OrderQuantity),
+                    formData.append('customerOrderViewModels[' + i + '][Comments]', list[i].Comments)
+            }
+            if (list.length > 0) {
+
+                $.ajax({
+                    url: Url,
+                    type: "POST",
+                    data: formData,
+                    dataType: 'json',
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        if (result != "Failed") {
+
+                            list = [];
+                            //swal("Good job!", "You clicked the button!", "success").dela;
+
+                            swal({
+                                title: "Succeeded",
+                                text: "Your order is Created!",
+                                type: "success",
+                                showCancelButton: false,
+                                confirmButtonClass: "btn-info",
+                                confirmButtonText: "Proceed to view order",
+                                closeOnConfirm: false
+                            },
+                                function () {
+                                    window.location.href = "CustomerOrderDetails/" + result;
+                                    // swal("Deleted!", "Your imaginary file has been deleted.", "success");
+                                });
+
+                        }
+                        else {
+                            alert(result);
+                        }
+                    },
+                    error: function (errormessage) {
+                        alert(errormessage);
+                    }
+                });
+            }
+            else {
+                alert('Please Add item to list');
+            }
+        }
+
+
+        //function ZeroRemove() {
+
+        //    $(this)('input:text').click(
+        //        function () {
+        //            $(this).val('');
+        //        });
+        //}
+
+
+        function countInArray(array, what) {
+            var count = 0;
+            for (var i = 0; i < array.length; i++) {
+                if (array[i].DriverId == what) {
+                    count++;
+                }
+            }
+            return count;
+        }
+    </script>
+
+}

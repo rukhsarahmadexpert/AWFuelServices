@@ -1,0 +1,164 @@
+﻿@model IT.Core.ViewModels.VehicleViewModel
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<input type="hidden" id="EntityName" value="Vehicle" />
+<input type="hidden" id="VehicleId" value="@Model.Id" />
+<input type="hidden" id="UID" value="@Model.UID" />
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="data-table-list">
+                <div class="basic-tb-hd">
+                    <div class="row">
+                        <div class="col-md-11">
+                            <h2>Vehicle Details</h2>
+                        </div>
+                        <div class="col-md-1">
+                            @*<button class="btn btn-primary btn-sm" onclick="Edit(@Model.Id)"> Edit</button>*@
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <div class="widget-content nopadding">
+                            <div class="widget-box">
+                                <div class="widget-content">
+                                    <table class="table table-bordered table-striped with-check">
+                                        <thead>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+
+                                                <td>Vehicle Type:</td>
+                                                <td id="CompanyName">@Model.VehicleTypeName</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Trafic Plate Number:</td>
+                                                <td>@Model.TraficPlateNumber</td>
+                                            </tr>
+                                            <tr>
+                                                <td>TC Number:</td>
+                                                <td>@Model.TCNumber</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Model:</td>
+                                                <td>@Model.Model</td>
+
+                                            </tr>
+                                            <tr>
+                                                <td>Color:</td>
+                                                <td>@Model.Color</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Brand:</td>
+                                                <td>@Model.Brand</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Registered Regione:</td>
+                                                <td>@Model.RegisteredRegion</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Mulkia Expiry:</td>
+                                                <td>@Model.MulkiaExpiry</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Insurance Expiry:</td>
+                                                <td>@Model.InsuranceExpiry</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Oprater:</td>
+                                                <td>@Model.Oprater</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Comments:</td>
+                                                <td>@Model.Comments</td>
+                                            </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="widget-box">
+                            <div class="widget-content">
+                                @*<ul class="thumbnails">
+                                        @{
+                                            foreach (var k in ViewBag.Images)
+                                            {
+                                                var UR = "";
+
+                                                if (k.ImagesUrl != "NULL")
+                                                {
+
+                                                    UR = "/Uploads/uploads/Driver-" + Model.UID + "/" + k.ImagesUrl;
+
+                                                    <li class="span4">
+                                                        <input type="hidden" class="ImageName" value="@k.ImagesUrl" />
+                                                        <a href="@UR" target="_blank"> <img src="@UR" /></a>
+                                                        <div style="background-color:darkgrey; text-align:center; color:white"> <a href="#" onclick="ImageEdit('@UR');"><i class="icon-pencil icon-white"></i></a> | <a href="#" onclick="ImageDelete('@UR')"><i class="icon-remove icon-white"></i></a></div>
+                                                    </li>
+                                                }
+                                            }
+                                        }
+                                    </ul>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/AWFVehicle/Views/Shared/Partial/_VehicleParitalView.cshtml")
+
+<div id="partialViewHolder"></div>
+@Html.Partial("~/Views/Shared/_PartialView/_EditImagePartialView.cshtml");
+
+@*@Html.Action("ImagePreview","Commons")*@
+
+
+@section Scripts{
+    <script src="~/Areas/AWFVehicle/Script/Vehicle.js"></script>
+    <script>
+
+
+        $(document).ready(function () {
+
+            $('#DelImage').click(function () {
+
+                var data = JSON.stringify({
+                    ImagesUrl: $('#ImagesUrl').val(),
+                    Id: $('#Id').val()
+                })
+                ajaxRequest("POST", "/Vehicle/Vehicle/DeleteImage", data, "JSON").then(function (result) {
+                    if (result == 202) {
+                        window.location.reload();
+                        alert('Delete Success');
+                        window.location.reload();
+                    }
+                    else {
+                        $('#left-panel').html(result);
+                    }
+                });
+
+            });
+        });
+
+         //$(window).load(function () {
+         //    ajaxRequest("GET", "/Common/Common/ImagePreview", "", "text").then(function (result) {
+         //        $('#partialViewHolder').html(result);
+         //        $('#left-panel').html(result);
+         //    })
+         //});
+        
+    </script>
+}
+

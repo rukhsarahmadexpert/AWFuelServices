@@ -1,0 +1,46 @@
+﻿@model IT.Core.ViewModels.AccountViewModel
+
+@{
+    List<IT.Core.ViewModels.AccountDetailsViewModel> accountDetailsViewModels = new List<IT.Core.ViewModels.AccountDetailsViewModel>();
+
+    accountDetailsViewModels = Model.accountDetailsViewModels;
+}
+
+
+<div class="table-responsive">
+    <table id="AccountTable" class="table table-striped">
+        <thead>
+            <tr>
+                <th>Invoice #</th>
+                <th>Receivable</th>
+                <th>Received</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (accountDetailsViewModels.Count > 0)
+            {
+                foreach (var item in accountDetailsViewModels)
+                {
+                    <tr>
+                        <td>
+                            @item.InvoiceId
+                        </td>
+                        <td>
+                            @Math.Round(item.GrandTotal, 2)
+                        </td>
+                        <td>
+                            @Math.Round(item.ReceivedAmount, 2)
+                        </td>
+                        <td>
+                            @Math.Round(item.Balance, 2)
+                        </td>
+                    </tr>
+                }
+            }
+
+        </tbody>
+    </table>
+</div>
+

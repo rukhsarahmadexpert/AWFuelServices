@@ -1,0 +1,186 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Product Unit-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewProdcutUnit"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="ProductUnitTable" class="table table-striped" style="width: 100% !important">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>UserName</th>
+                                    <th>IsActive</th>
+                                    <th class="pull-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Html.Partial("~/Areas/ProductUnit/Views/Shared/Partial/_ProductUnitPartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            BindDataTable();
+
+            $('#createNewProdcutUnit').click(function () {
+                $('#updateProductUnit').hide();
+                $('#saveProductUnit').show();
+
+                $('#ProductModelUnit').modal('show');
+            });
+
+        });
+
+
+        var BindDataTable = function (response) {
+            $('#ProductUnitTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/UnitAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "Name" },
+                    { "mData": "UserName" },
+                    { "mData": "IsActive" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<div class="pull-right"><a href="#" onclick="EditProductUnit(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="DeleteUnit(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a></div>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        $('#saveProductUnit').click(function () {
+            if (IsValidProductUnit()) {
+                var Data = JSON.stringify({
+                    Name: $('#Name').val()
+                })
+                ajaxRequest("POST", "/ProductUnit-Create", Data, "JSON").then(function (result) {
+
+                    if (result != "Failed") {
+                        ClearProductUnit();
+                        sucessAdd();
+                        $('#ProductModelUnit').modal('hide');
+                        $('#ProductUnitTable').DataTable().ajax.reload();
+                    }
+                });
+            }
+        });
+
+        $('#updateProductUnit').click(function () {
+            if (IsValidProductUnit()) {
+                var Data = JSON.stringify({
+                    Name: $('#Name').val(),
+                    Id: $('#UnitId').val()
+                })
+                ajaxRequest("POST", "/UnitUpdate", Data, "JSON").then(function (result) {
+                    if (result != "Failed") {
+                        ClearProductUnit();
+                        sucessUpdate();
+                        $('#ProductModelUnit').modal('hide');
+                        $('#ProductUnitTable').DataTable().ajax.reload();
+                    }
+                });
+            }
+
+        });
+
+        function EditProductUnit(Id) {
+
+            ajaxRequest("GET", "/Unit-Edit/" + Id, "", "json").then(function (result) {
+                if (result != "Failed") {
+                    $('#Name').val(result.Name);
+                    $('#UnitId').val(Id);
+
+                    $('#saveProductUnit').hide();
+                    $('#updateProductUnit').show();
+
+                    $('#ProductModelUnit').modal('show');
+                }
+            });
+        }
+
+        function DeleteUnit(Id) {
+
+            $('#spanId').text(Id);
+            $('#ModelDeleteProductUnit').modal('show');
+        }
+
+        $('#DeleteProductUnit').click(function () {
+            var Id = $('#spanId').text();
+            ajaxRequest("POST", "/Unit-Delete/" + Id, "", "json").then(function (result) {
+                if (result != "Failed") {
+                    sucessDelete();
+                    $('#ModelDeleteProductUnit').modal('hide');
+                    $('#ProductUnitTable').DataTable().ajax.reload();
+                }
+            });
+
+        });
+
+        function IsValidProductUnit() {
+            var isValid = true;
+            if ($('#Name').val().trim() == "") {
+                $('#Name').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#Name').css('border-color', 'lightgrey');
+            }
+            return isValid;
+        }
+
+        function ClearProductUnit() {
+
+            $('#Name').css('border-color', 'lightgrey').val('');
+        }
+
+        $('#CancelProductUnit').click(function () {
+            ClearProductUnit();
+
+        })
+    </script>
+
+}
+

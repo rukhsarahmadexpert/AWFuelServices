@@ -1,0 +1,85 @@
+﻿
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<link href="~/Content/css/Common/LPOInvoiceTable.css" rel="stylesheet" />
+<link href="~/Content/css/Common/Common-LPO.css" rel="stylesheet" />
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2></h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="createNewEmployee"><i class="fa fa-plus"></i> New</button>*@
+                            </div>
+                        </div>
+                        @*@Html.Partial("~/Views/Shared/Invoice_LPO PartialView/_HeaderLPOInvoicePartialView.cshtml")*@
+
+                        @Html.Partial("~/Views/Shared/Expense/_ExpenseEmployeeViewPartial.cshtml")
+                    </div>
+                    <div class="table-responsive">
+                        @Html.Partial("~/Views/Shared/Expense/_MainExpenseTablePartialView.cshtml")
+                        @Html.Partial("~/Views/Shared/Expense/_FooterPartialView.cshtml")
+                    </div>
+                    <p></p>
+                    @Html.Partial("~/Views/Shared/LPOInvoieDetailsPartialViews/_BillButtonPartialView.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts{
+  
+    <script src="~/Areas/Expense/Scripts/Expense.js"></script>
+    <script>
+        $('#BillSave').click(function () {
+
+            CreateExpense("/ExpenseUpdate");
+
+        });
+
+        $(document).on('click', '.BtnRemove', function () {
+            var row = $(this).closest('tr');
+            deleteQuatation(row, "/DeleteExpDetailsRow");
+
+        });
+
+
+        function deleteQuatation(currentRow, routeurl) {
+
+            debugger;
+
+
+            var data = JSON.stringify({
+                Id: $('#ExpId').val(),
+                detailId: currentRow.find('.DetId').val(),
+                VAT: parseFloat(currentRow.find('.vat').val()),
+                RowTotal: parseFloat(currentRow.find('.RowSubTotal').val()),
+            })
+            ajaxRequest("POST", routeurl, data, "json").then(function (result) {
+              
+                if (result == "Success") {
+                    sucessUpdate();
+                    window.location.reload();
+                }
+                else {
+                    alert('Opration Failed');
+                }
+            });
+
+        }
+
+
+    </script>
+}

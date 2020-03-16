@@ -1,0 +1,43 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<h2>Index</h2>
+
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerResponsePartialView.cshtml")
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+
+        $(function () {
+            
+            var Id = $("#CompanyId").val();
+            // Declare a proxy to reference the hub.
+            var notifications = $.connection.myHub;
+
+            // Create a function that the hub can call to broadcast messages.
+            notifications.client.sendNotifyMasseges = function () {
+                GetAcceptedOrderInfo(Id);
+            };
+
+            notifications.client.sendDeliveryNotifyMasseges = function () {
+                OrderDeliveryMessage(Id);
+            };
+            
+            $.connection.hub.start().done(function () {
+                GetAcceptedOrderInfo(Id);
+
+               OrderDeliveryMessage(Id);
+            }).fail(function (e) {
+                alert(e);
+            });
+        });
+
+    </script>
+}

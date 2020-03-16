@@ -1,0 +1,64 @@
+﻿
+
+@{
+    IT.Core.ViewModels.ExpenseViewModel expenseViewModel = new IT.Core.ViewModels.ExpenseViewModel();
+
+    expenseViewModel = ViewBag.ExpenseViewModel as IT.Core.ViewModels.ExpenseViewModel;
+
+}
+    
+<div class="row">
+    <h1 class="text-center"><u>@*@ViewBag.titles*@</u></h1>
+    <div class="col-md-4">
+        <div class="form-group">
+            <label>Issue To:</label>
+            <div class="chosen-select-act fm-cmp-mg">
+                <select data-placeholder="Employee" class="chosen" name="Vender" id="EmployeeId" title="select Employee">
+
+                    @foreach (var emp in ViewBag.employee)
+                    {
+                        <option value="@emp.Id">@emp.Name</option>
+                    }
+                </select>
+            </div>
+            <p style="margin-top:10px">
+            </p>
+            <p><i class="glyphicon glyphicon-briefcase"> : </i> <span id="EmployeeDesignation"></span></p>
+            <p><i class="glyphicon glyphicon-envelope"> : </i> <span id="EmployeeEmail">someone@yahoo.com</span></p>
+            <p> <i class="glyphicon glyphicon-phone"> : </i> <span id="EmployeeContact">0092 44 1234567</span></p>
+        </div>
+    </div>
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <div>
+            <div class="form-group">
+                @*<label>Expense For:</label>*@
+                <div class="chosen-select-act fm-cmp-mg">
+                    @*<select data-placeholder="select Expense For" class="chosen" name="Vender" id="ExpenseFor" title="select Expense For">
+                            @foreach (var expfor in ViewBag.ExpenseFor)
+                            {
+                                <option value="@expfor.ExpenseFor">@expfor.ExpenseFor</option>
+                            }
+                        </select>*@
+                </div>
+            </div>
+            <div class="form-group" id="ChosenSelect">
+                @*<label>Choice:</label>*@
+                <div class="chosen-select-act fm-cmp-mg">
+                    @*<select data-placeholder="select your choice" class="chosen" name="Choice" id="ChoiceBox" title="select choice">
+
+                        </select>*@
+                </div>
+            </div>
+            @*<p class="pull-right">Exp NO# : <label id="RefrenceNumber">@expenseViewModel.ExpenseNumber</label></p>*@
+            <p class="pull-right">Exp NO# : <input type="text" disabled="disabled" id="RefrenceNumber" value="@expenseViewModel.ExpenseNumber" /></p>
+            <p class="pull-right" style="margin-top:5px">Ref NO# : <input type="text" id="ExpensePadNumber" value="@expenseViewModel.ExpensePadNumber" /></p>
+
+        </div>
+    </div>
+</div>
+
+
+
+
+

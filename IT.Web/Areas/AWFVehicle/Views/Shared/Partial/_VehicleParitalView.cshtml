@@ -1,0 +1,148 @@
+﻿
+
+<div class="modal fade" id="VehicleModel" role="dialog">
+    <div class="modal-dialog modals-default">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Vehicle Type:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Vehicle Type" name="VehicleType" id="VehicleType" title="VehicleType Type" required>
+                                    <option value="0">Select Vehicle Type...</option>
+                                    @foreach (var Types in ViewBag.vehicleType)
+                                    {
+                                        <option value="@Types.Id">@Types.VehicleType</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Trafic Plate Number:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="TraficPlateNumber" name="TraficPlateNumber" placeholder="Trafic Plate Number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>TC Number:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="TCNumber" name="TCNumber" placeholder="TC Number">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Model:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Model" name="Model" placeholder="Model">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Brand:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Brand" name="Brand" placeholder="Brand">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Color:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Vehicle Color" name="Color" id="Color" title="Vehicle Color">
+                                    <option class="text-light" value="White">White</option>
+                                    <option class="text-secondary" value="Black">Black</option>
+                                    <option class="text-danger" value="Red">Red</option>
+                                    <option class="text-success" value="Green">Green</option>
+                                    <option class="text-primary" value="Blue">Blue</option>
+                                    <option class="text-warning" value="Gold">Gold</option>
+                                    <option value="0">Other Please specify...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Mulkiya Expiry:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control MulkiaExpiry" id="MulkiaExpiry" name="MulkiaExpiry" value="@System.DateTime.Now.ToLongDateString()" title="Mulkia Expiry">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Insurance Expiry:</label>
+                            <div class="nk-datapk-ctm form-elet-mg" id="data_2">
+                                <div class="input-group date nk-int-st">
+                                    <span class="input-group-addon"></span>
+                                    <input type="text" class="form-control InsuranceExpiry" id="InsuranceExpiry" name="InsuranceExpiry" value="@System.DateTime.Now.ToLongDateString()" title="Insurance Expiry">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Registration Region:</label>
+                            <div class="chosen-select-act fm-cmp-mg">
+                                <select class="chosen" data-placeholder="Place of Registration" name="RegisteredRegion" id="RegisteredRegion" title="Place of Registration">
+                                    <option>Select Place of Issue</option>
+                                    <option>Abu Dhabi</option>
+                                    <option>Dubai</option>
+                                    <option>Sharja</option>
+                                    <option>Ajman</option>
+                                    <option>Fujairah</option>
+                                    <option>Ras Al Khaimah</option>
+                                    <option>Umm Al Quwain</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+                        <div class="form-group">
+                            <label>Note:</label>
+                            <div class="form-group">
+                                <div class="nk-int-st">
+                                    <input type="text" class="form-control" id="Comments" name="Comments" placeholder="Comments/Note..">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="updateVehicle">Save changes</button>
+                <button type="button" class="btn btn-default" id="saveVehicle">Save changes</button>
+                <button type="button" class="btn btn-default" id="CancelVehicle" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

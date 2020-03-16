@@ -1,0 +1,103 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Expense-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewExpense"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="CustomerExpenseListTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Expense #</th>
+                                    <th>Employee</th>
+                                    <th>Sub Total</th>
+                                    <th>VAT Amount</th>
+                                    <th>Net Total</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/CustomerOrder/Views/Shared/Partial/_CustomerResponsePartialView.cshtml")
+
+@section Scripts{
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/CustomerScript.js"></script>
+
+
+    <script>
+        $('#createNewExpense').click(function () {
+            window.location.href = "/CustomerExpensesCreate";
+        })
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#CustomerExpenseListTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/CustomerExpenseAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "CreatedDates" },
+                    { "mData": "ExpenseNumber" },
+                    { "mData": "EmployeeName" },
+                    { "mData": "Total" },
+                    { "mData": "VAT" },
+                    { "mData": "GrandTotal" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditExpense(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewExpense(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function EditExpense(Id) {
+            window.location.href = "/CustomerExpenseEdit/" + Id;
+        }
+
+        function ViewExpense(Id) {
+            window.location.href = "/ExpenseCustomer-Details/" + Id;
+        }
+    </script>
+}

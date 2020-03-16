@@ -1,0 +1,74 @@
+﻿
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<link href="~/Content/css/Common/LPOInvoiceTable.css" rel="stylesheet" />
+<link href="~/Content/css/Common/Common-LPO.css" rel="stylesheet" />
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h5 style="color:green">@ViewBag.Success</h5>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="createNewEmployee"><i class="fa fa-plus"></i> New</button>*@
+                            </div>
+                        </div>
+                        @*@Html.Partial("~/Views/Shared/Invoice_LPO PartialView/_HeaderLPOInvoicePartialView.cshtml")*@
+
+                        @Html.Partial("~/Views/Shared/Expense/_ExpenseEmployeeViewPartial.cshtml")
+                    </div>
+                    <div class="table-responsive">
+                        @Html.Partial("~/Views/Shared/Expense/_MainTableViewPartialView.cshtml")
+                        @Html.Partial("~/Views/Shared/Expense/_FooterPartialView.cshtml")
+                    </div>
+                    <p></p>
+                    @Html.Partial("~/Views/Shared/Expense/FooterEditButtonPartialView.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+    <script>
+        $('#ExpenseEdit').click(function () {
+            var Id = $('#ExpId').val();
+            window.location.href = "/CustomerExpenseEdit/" + Id;
+        });
+
+
+        $('#DownloadExpensenvoice').click(function () {
+            var Id = $('#ExpId').val();
+            window.location.href = "/PrintExpenseCustomer/" + Id;
+        });
+
+
+        $('#SendEmail').click(function () {
+
+            var data = JSON.stringify({
+                 Id : $('#ExpId').val()
+            })
+            ajaxRequest("POST", "/CheckIExpenseExistCustomerExpense", data, "json").then(function (result) {
+
+                if (result == "Exist") {
+                    window.location.href = "/Email";
+                }
+                else {
+                    alert('Failed to Send email');
+                }
+            });
+        });
+
+    </script>
+}
+
+

@@ -1,0 +1,150 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Bill-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewBill"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="BillTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Bill #</th>
+                                    <th>Reference</th>
+                                    <th>Vender</th>
+                                    <th>Date</th>
+                                    <th>Due Date</th>
+                                    <th>Total</th>
+                                    <th>VAT</th>
+                                    <th> Grand Amount</th>
+
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@Html.Partial("~/Areas/Bill/Views/Shared/Partial/_BillPartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $('#createNewBill').click(function () {
+
+            $('#BillModel').modal('show');
+
+            //  window.location.href = "/Invoice-Create";
+        });
+
+        $('#CreateBillFromLPO').click(function () {
+
+            if ($('#LPONumber').val() > 0) {
+
+                var Id = $('#LPONumber').val();
+
+                window.location.href = "/Bill-Create/" + Id;
+            }
+            else {
+                alert('Please select LPO Number first');
+            }
+
+        });
+
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#BillTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/BillAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "PONumber" },
+                    { "mData": "RefrenceNumber" },
+                    { "mData": "Name" },
+                    { "mData": "FDate" },
+                    { "mData": "DDate" },
+                    { "mData": "Total" },
+                    { "mData": "VAT" },
+                    { "mData": "GrandTotal" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="ViewBill(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>' + ' | ' + '<a href="#" onclick="DeleteBill(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function ViewBill(Id) {
+            window.location.href = "/Bill-Details/" + Id;
+        }
+
+
+        function DeleteBill(Id) {
+
+
+            $('#BillId').val(Id);
+            $('#ModelDeleteBill').modal('show');
+        }
+
+        $('#DeleteBill').click(function () {
+
+            var Id = $('#BillId').val();
+
+            ajaxRequest("POST", "/Bill-Delete/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    sucessDelete();
+                    $('#BillTable').DataTable().ajax.reload();
+                    $('#ModelDeleteBill').modal('hide');
+                }
+                else {
+                    alert('Opration falied');
+                }
+            });
+
+        });
+    </script>
+
+}

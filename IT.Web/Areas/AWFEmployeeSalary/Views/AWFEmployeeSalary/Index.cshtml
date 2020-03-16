@@ -1,0 +1,272 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<label> Generate Employee Salary:</label>
+
+
+    <div class="container" style="background-color:white">
+        <p></p>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="chosen-select-act fm-cmp-mg">
+                        <select class="chosen" data-placeholder="Project" name="Project" id="Project" title="Select Project">
+                            @foreach (var Project in ViewBag.projectViewModels)
+                            {
+
+                                <option value="@Project.Id">@Project.ProjectTitle</option>
+                            }
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6"></div>
+        </div>
+        <hr />
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped" id="EmployeeTable">
+                    <thead>
+                        <tr>
+                            <th>
+                                <input type="checkbox" id="CheckAll" />All
+                            </th>
+                            <th>
+                                EmployeeID
+                            </th>
+                            <th>
+                                Name
+                            </th>
+                            <th>
+                                Designation
+                            </th>
+                            <th>
+                                Basic Salary
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <hr />
+        <div class="row">
+
+            <div class="col-md-6">
+                <label style="color:red" id="AlreadyGenerated"></label>
+            </div>
+            <div class="col-md-3">
+                <select class="form-control" id="SalayMonth">
+                    <option value="Select Month">Select Month</option>
+                    <option value="January">January</option>
+                    <option value="Febuary">Febuary</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="Auguest">Auguest</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+
+                @{
+                    int YearNext = System.DateTime.Now.Year;
+                    YearNext = YearNext + 1;
+
+                    int YearSecond = YearNext + 1;
+                }
+
+                <select class="form-control" id="SalayYear">
+                    <option value="Select Year">Select Year</option>
+                    <option value="@System.DateTime.Now.Year">@System.DateTime.Now.Year</option>
+                    <option value="@YearNext">@YearNext</option>
+                    <option value="@YearSecond">@YearSecond</option>
+                    <option></option>
+                </select>
+            </div>
+
+         </div>
+        <hr />
+
+        <div class="row pull-right">
+            <div class="col-md-12">
+                <input type="button" value="Generate Salary" id="GenerateSalary" class="btn btn-success" />
+            </div>
+        </div>
+    </div>   
+
+    @section Scripts{
+
+        <script>
+
+            $(document).ready(function () {
+
+                $('#Project').change(function () {
+
+                    var Id = $(this).val();
+
+                    ajaxRequest("GET", "/EmployeeByProjectId/" + Id, "", "json").then(function (result) {
+
+                        if (result != "Failed") {
+                            $('#EmployeeTable tbody').empty();
+
+                            $.each(result, function (value, item) {
+
+                                $('#EmployeeTable tbody').append('<tr><td><input type="checkbox" class="check" name="IsChecked"/></td><td class="Id">' + item.Id + '</td><td>' + item.Name + '</td><td>' + item.DesignationName + '</td><td><input type="number" class="BasicSalary form-control" value="' + item.BasicSalary + '"' + +'/></td></tr>')
+
+                            })
+                        }
+                    });
+                });
+
+
+                $('#CheckAll').click(function () {
+
+                    if ($('#CheckAll').is(':checked') == true) {
+                        $('#EmployeeTable tbody tr').each(function () {
+                            ($(this).find('input:checkbox[name=IsChecked]').prop("checked", true));
+                        })
+                    }
+                    else {
+                        $('#EmployeeTable tbody tr').each(function () {
+                            ($(this).find('input:checkbox[name=IsChecked]').prop("checked", false));
+                        })
+                    }
+                });
+
+            })
+                       
+            $('#GenerateSalary').click(function () {
+
+                IsSalaryGenerated();
+
+            });
+            
+            function GeneratSalry(Url) {
+
+                var list = [], orderItem, CurrentRow;
+                var formData = new FormData();
+
+                $('#EmployeeTable tbody tr').each(function () {
+                    if ($(this).find('input:checkbox[name=IsChecked]').is(':checked') == true) {
+
+                        CurrentRow: $(this).closest("tr");
+
+                        orderItem = {
+                            InvoiceId: $(this).find('.Id').text(),
+                            ReceivedAmount: $(this).find('.BasicSalary').val(),
+                        }
+                        list.push(orderItem);
+                    }
+
+                });
+
+                var empObj = {
+                    Id: $('#Project').val(),
+                    SalayYear: $('#SalayYear').val(),
+                    SalaryMonth: $('#SalayMonth').val()
+
+                };
+
+                for (var key in empObj) {
+                    formData.append(key, empObj[key]);
+                }
+
+                for (var i = 0; i < list.length; i++) {
+                    formData.append('accountDetailsViewModels[' + i + '][InvoiceId]', list[i].InvoiceId),
+                        formData.append('accountDetailsViewModels[' + i + '][ReceivedAmount]', list[i].ReceivedAmount)
+                }
+                if (list.length > 0) {
+
+                    $.ajax({
+                        url: Url,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+                            if (result != "Failed") {
+
+                                list = [];
+                                sucessAdd();
+                                $('#AlreadyGenerated').css('color', 'Green').text('Salary generated, successfully');
+                            }
+                            else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+                else {
+                    alert('Please Add item to list');
+                }
+            }
+            
+            function IsSalaryGenerated() {
+
+                if (IsValidate()) {
+
+                    var Data = JSON.stringify({
+
+                        Id: $('#Project').val(),
+                        SalayYear: $('#SalayYear').val(),
+                        SalaryMonth: $('#SalayMonth').val()
+                    })
+                    ajaxRequest("POST", "/IsSalaryGenerated", Data, "json").then(function (result) {
+
+                        if (result != "Failed") {
+
+                            if (parseInt(result) == 0) {
+
+                                GeneratSalry("/GeneratSalary");
+                            }
+                            else {
+                                $('#AlreadyGenerated').css('color', 'Red').text('Salary already generated, you cannot generate for another time');
+                            }
+                        }
+                        else {
+                            alert("Failed, Please try Again");
+                        }
+
+                    });
+                }
+
+            }
+
+            function IsValidate() {
+
+                var IsValid = true;
+
+                if ($('#Project').val() < 1) {
+
+                    IsValid = false;
+                    alert('please select Project');
+                }
+                else if ($('#SalayMonth').val() == "Select Month") {
+                    IsValid = false;
+                    alert('please select Month');
+                }
+               else if ($('#SalayYear').val() == "Select Year") {
+                    IsValid = false;
+                    alert('please select Year');
+                }
+
+                return IsValid;
+            }
+
+
+        </script>
+
+    }

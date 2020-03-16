@@ -1,0 +1,314 @@
+﻿
+@{
+    ViewBag.Title = "CreateFromLPO";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Content/css/Common/LPOInvoiceTable.css" rel="stylesheet" />
+<link href="~/Content/css/Common/Common-LPO.css" rel="stylesheet" />
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h5 style="color:green">@ViewBag.Success</h5>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="createNewEmployee"><i class="fa fa-plus"></i> New</button>*@
+                            </div>
+                        </div>
+                        @*@Html.Partial("~/Views/Shared/Invoice_LPO PartialView/_HeaderLPOInvoicePartialView.cshtml")*@
+                        @Html.Partial("~/Views/Shared/LPOInvoieDetailsPartialViews/_LPOInvoiceVenderPartialView.cshtml")
+
+                    </div>
+                    <div class="table-responsive">
+                        @Html.Partial("~/Views/Shared/Purchase/_MianTableRowPurchasePartialView.cshtml")
+                        @Html.Partial("~/Views/Shared/Invoice_LPO PartialView/_FooterTotalPartialView.cshtml")
+                    </div>
+
+                    <p></p>
+                    @Html.Partial("~/Views/Shared/LPOInvoieDetailsPartialViews/_BillButtonPartialView.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        $('#BillSave').click(function () {
+
+            if (IsBillValid()) {
+                CreateLPOInvoice("CreateFromLPO");
+            }
+        });
+
+
+        $(document).on('click', '.BtnRemove', function () {
+            var Current = $(this).closest('tr');
+
+            if ($('#orderdetailsitems .tbodyGood tr').length < 2) {
+                $('#TotalVAT').text('0.00');
+                $('#SubTotal').text('0.00');
+                $('#gtotal').text('0.00');
+            }
+
+            else {
+                CountTotalVat();
+            }
+
+            Current.remove();
+        });
+
+
+
+        $(document).on("keyup", '.quantity', function (e) {
+
+            var Currentrow = $(this).closest("tr");
+            var QTY = $(this).val();
+
+            if (parseInt(QTY) >= 0) {
+
+                var Total = parseInt(QTY) * parseFloat(Currentrow.find('.rate').val());
+
+                Currentrow.find('.RowSubTotal').val(Total);
+            }
+            var vat = Currentrow.find('.vat').val();
+            RowSubTalSubtotal(vat, Currentrow);
+            CountTotalVat();
+        });
+
+        function IsBillValid() {
+
+                var IsValid = true;
+
+                if ($('#RefrenceNumber').text().trim() == "") {
+                    $('#RefrenceNumber').css('border-color', 'Red');
+                    IsValid = false;
+                }
+                else if ($('#PONumber').text() == "") {
+                    $('#PONumber').css('border-color', 'Red');
+                    IsValid = false;
+                }
+                else  if ($('#FromDate').val().trim() == "03/19/2018") {
+                    $('#FromDate').css('border-color', '1px solid #BDC7BC');
+                    IsValid = false;
+                    alert('select From Date');
+                }
+                else if ($('#DueDate').val().trim() == "03/19/2018") {
+                    $('#DueDate').css('border-color', '1px solid #BDC7BC');
+                    IsValid = false;
+                    alert('select Due Date');
+                }
+
+                return IsValid;
+        }
+
+        function CountTotalVat() {
+
+            var TotalVAT = 0.00;
+            var GTotal = 0.00;
+            var ToatWTVAT = 0.00;
+
+
+
+            $('#orderdetailsitems .tbodyGood tr').each(function () {
+
+                GTotal = parseFloat(GTotal) + parseFloat($(this).find(".rownettotal").val());
+                ToatWTVAT = parseFloat(ToatWTVAT) + parseFloat($(this).find(".RowSubTotal").val());
+                TotalVAT = parseFloat(GTotal) - parseFloat(ToatWTVAT);
+
+            });
+
+            $('#TotalVAT').text(TotalVAT);
+            $('#SubTotal').text(ToatWTVAT);
+            $('#gtotal').text(GTotal);
+        }
+
+        function RowSubTalSubtotal(vat, CurrentRow) {
+
+            Total = 0;
+            Total = CurrentRow.find('.RowSubTotal').val();
+            if (parseInt(vat) == 0 && typeof (vat) != "undefined" && vat != "") {
+                if (!isNaN(Total) && typeof (Total) != "undefined") {
+                    CurrentRow.find('.rownettotal  ').val(Total);
+                    CurrentRow.find('.rownettotal  ').val(parseFloat(Total).toFixed(2));
+                    return;
+                }
+            }
+
+            if (!isNaN(Total) && Total != "" && typeof (vat) != "undefined") {
+                var InputVatValue = parseFloat((Total / 100) * vat);
+                var ValueWTV = parseFloat(InputVatValue) + parseFloat(Total);
+                CurrentRow.find('.rownettotal').val(parseFloat(ValueWTV).toFixed(2));
+            }
+        }
+
+        function validateRow(currentRow) {
+
+            var isvalid = true;
+            var productId = 0, quantityG = 0, varrateG = 0;
+            productId = currentRow.find('.product').val();
+            quantity = currentRow.find('.quantity ').val();
+            rate = currentRow.find('.rate ').val();
+            if (parseInt(productId) == 0 || productId == "") {
+                isvalid = false;
+            }
+            if (parseInt(quantity) == 0 || quantity == "") {
+                isvalid = false;
+            }
+            if (parseInt(rate) == 0 || rate == "") {
+                isvalid = false;
+            }
+            return isvalid;
+        }
+
+        function ValidLPO() {
+
+            var IsValid = true;
+
+            if ($('#Venders').val() == 0) {
+
+                $('#Venders').css('border-color', '1px solid #BDC7BC');
+                alert('Please select Vender');
+
+                IsValid = false;
+            }
+
+            else if ($('#FromDate').val().trim() == "03/19/2018") {
+                $('#FromDate').css('border-color', '1px solid #BDC7BC');
+                IsValid = false;
+                alert('select From Date');
+            }
+
+            else if ($('#DueDate').val().trim() == "03/19/2018") {
+                $('#DueDate').css('border-color', '1px solid #BDC7BC');
+                IsValid = false;
+                alert('select Due Date');
+            }
+
+            return IsValid;
+        }
+
+        function CreateLPOInvoice(Url) {
+            if (1 == 1) {
+
+                var list = [], orderItem, CurrentRow;
+                var formData = new FormData();
+
+                $('#orderdetailsitems .tbodyGood tr').each(function () {
+                    CurrentRow = $(this).closest("tr");
+                    if (validateRow(CurrentRow)) {
+                        if (1 == 1) {
+                            orderItem = {
+                                ItemId: parseInt($(this).find('.product').val()),
+                                Description: $(this).find('.Description').val(),
+                                UnitId: parseInt($(this).find('.Unit').val()),
+                                UnitPrice: parseFloat($(this).find('.rate').val()),
+                                Qunatity: parseInt($(this).find('.quantity').val()),
+                                Total: parseFloat($(this).find('.RowSubTotal').val()),
+                                VAT: parseInt($(this).find('.vat').val()),
+                                SubTotal: parseInt($(this).find('.rownettotal').val()),
+                            }
+                            list.push(orderItem);
+                        }
+                    }
+                });
+
+
+                if (list.length == 0) {
+                    $('#SubTotal').text('');
+                    $('#TotalVAT').text('');
+                    $('#gtotal').text('');
+                }
+
+                var empObj = {
+                    PONumber: $('#PONumber').text(),
+                    RefrenceNumber: $('#RefrenceNumber').text(),
+                    FDate: $('#FromDate').val(),
+                    DDate: $('#DueDate').val(),
+                    Total: $('#SubTotal').text(),
+                    VAT: $('#TotalVAT').text(),
+                    GrandTotal: $('#gtotal').text(),
+                    TermCondition: $('#TermCondition').val(),
+                    CustomerNote: $('#CustomerNote').val(),
+                    VenderId: $('#VenderId').val(),
+                    LPOId: $('#LPOId').val(),
+
+                };
+
+                for (var key in empObj) {
+                    formData.append(key, empObj[key]);
+                }
+
+                for (var i = 0; i < list.length; i++) {
+                    formData.append('lPOInvoiceDetailsList[' + i + '][ItemId]', list[i].ItemId)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][Qunatity]', list[i].Qunatity)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][UnitPrice]', list[i].UnitPrice)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][Total]', list[i].Total)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][VAT]', list[i].VAT)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][SubTotal]', list[i].SubTotal)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][Description]', list[i].Description)
+                    formData.append('lPOInvoiceDetailsList[' + i + '][UnitId]', list[i].UnitId)
+                }
+
+                if (list.length > 0) {
+
+                    $.ajax({
+                        url: Url,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+                            if (result != "Failed") {
+                                list = [];
+                                sucessAdd();
+                                //response(result, btnName, Message, returnulr, F)
+
+                                var SendEmail = localStorage.getItem("SendByEmail");
+
+                                if (SendEmail != null) {
+
+                                    localStorage.setItem("Id", result);
+                                    window.location.href = "/Email";
+                                }
+                                else {
+                                    window.location.href = "/Purchase-Details/" + result;
+                                }
+                            }
+                            else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+                else {
+
+                    alert('Please Add item to list');
+                }
+            }
+            else {
+
+                swal({
+                    title: 'Graag uw invoer controleren!',
+                    text: 'Graag contact slecteren',
+                    type: 'warning'
+                });
+            }
+        }
+
+    </script>
+
+}

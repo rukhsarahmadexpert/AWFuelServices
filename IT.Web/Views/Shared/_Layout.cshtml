@@ -1,0 +1,185 @@
+﻿@{
+    IT.Core.ViewModels.UserCompanyViewModel userCompanyViewModel = new IT.Core.ViewModels.UserCompanyViewModel();
+
+    if (Session["userCompanyViewModel"] != null)
+    {
+        userCompanyViewModel = Session["userCompanyViewModel"] as IT.Core.ViewModels.UserCompanyViewModel;
+    }
+}
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - AWFuel</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <link href="~/Content/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/site.css" rel="stylesheet" />
+    <link href="~/fonts/FontFamily.css" rel="stylesheet" />
+    <link href="~/Content/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.carousel.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.theme.css" rel="stylesheet" />
+    <link href="~/Content/css/owl.transitions.css" rel="stylesheet" />
+    <link href="~/Content/css/meanmenu/meanmenu.min.css" rel="stylesheet" />
+    <link href="~/Content/css/animate.css" rel="stylesheet" />
+    <link href="~/Content/css/normalize.css" rel="stylesheet" />
+    <link href="~/Content/css/scrollbar/jquery.mCustomScrollbar.min.css" rel="stylesheet" />
+    <link href="~/Content/css/jvectormap/jquery-jvectormap-2.0.3.css" rel="stylesheet" />
+    <link href="~/Content/css/notika-custom-icon.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/waves.min.css" rel="stylesheet" />
+    <link href="~/Content/css/wave/button.css" rel="stylesheet" />
+    <link href="~/Content/Toast.css" rel="stylesheet" />
+    <link href="~/Content/jquery.toast.css" rel="stylesheet" />
+    <link href="~/Content/css/bootstrap-select/bootstrap-select.css" rel="stylesheet" />
+    <link href="~/Content/css/datapicker/datepicker3.css" rel="stylesheet" />
+    <link href="~/Content/css/chosen/chosen.css" rel="stylesheet" />
+    <link href="~/Content/css/jquery.dataTables.min.css" rel="stylesheet" />
+    <link href="~/Content/css/main.css" rel="stylesheet" />
+    <link href="~/Content/style.css" rel="stylesheet" />
+    <link href="~/Content/css/responsive.css" rel="stylesheet" />
+    <link href="~/Scripts/sweetalart/sweetalert.css" rel="stylesheet" />
+
+</head>
+<body>
+
+    @{
+
+        if (userCompanyViewModel.Authority == "CustomerAdmin")
+        {
+            @Html.Partial("~/Views/Shared/_PartialView/_HeaderTopCustomerPartialView.cshtml")
+            @Html.Partial("~/Views/Shared/_PartialView/_MenuCustomerPartialView.cshtml")
+        }
+        else if (userCompanyViewModel.Authority == "Driver")
+        {
+            @Html.Partial("~/Views/Shared/_PartialView/_HeaderTopDriverAWFPartialView.cshtml")
+            @Html.Partial("~/Views/Shared/_PartialView/_MenuAWFuelDriverPartialView.cshtml")
+        }
+        else
+        {
+            @Html.Partial("~/Views/Shared/_PartialView/_HeaderTopAWFuelPartialView.cshtml")
+            @Html.Partial("~/Views/Shared/_PartialView/_MenuAWFuelPartialView.cshtml")
+        }
+    }
+
+
+
+    @RenderBody()
+    <hr />
+    <footer>
+        <p>&copy; @DateTime.Now.Year -<a href="https://itmolen.nl/"> IT MOLEN</a></p>
+    </footer>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+
+
+    @*<script src="~/Scripts/js/vendor/jquery-1.12.4.min.js"></script>*@
+    @*<script src="~/Scripts/jquery-{version}.js"></script>*@
+    @*<script src="~/Scripts/js/wow.min.js"></script>
+    <script src="~/Scripts/js/jquery-price-slider.js"></script>
+    <script src="~/Scripts/js/owl.carousel.min.js"></script>
+    <script src="~/Scripts/js/jquery.scrollUp.min.js"></script>
+    <script src="~/Scripts/js/meanmenu/jquery.meanmenu.js"></script>
+    <script src="~/Scripts/js/scrollbar/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="~/Scripts/js/sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/Scripts/js/sparkline/sparkline-active.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.js"></script>
+    <script src="~/Scripts/js/flot/jquery.flot.resize.js"></script>
+    <script src="~/Scripts/js/flot/curvedLines.js"></script>
+    <script src="~/Scripts/js/flot/flot-active.js"></script>
+    <script src="~/Scripts/js/knob/jquery.knob.js"></script>
+    <script src="~/Scripts/js/knob/jquery.appear.js"></script>
+    <script src="~/Scripts/js/knob/knob-active.js"></script>
+    <script src="~/Scripts/js/wave/waves.min.js"></script>
+    <script src="~/Scripts/js/todo/jquery.todo.js"></script>
+    <script src="~/Scripts/js/plugins.js"></script>
+    <script src="~/Scripts/js/chat/moment.min.js"></script>
+    <script src="~/Scripts/js/chat/jquery.chat.js"></script>
+    <script src="~/Scripts/js/data-table/jquery.dataTables.min.js"></script>
+    <script src="~/Scripts/js/data-table/data-table-act.js"></script>
+    <script src="~/Scripts/js/datapicker/bootstrap-datepicker.js"></script>
+    <script src="~/Scripts/js/datapicker/datepicker-active.js"></script>
+    <script src="~/Scripts/js/bootstrap-select/bootstrap-select.js"></script>
+    <script src="~/Scripts/js/chosen/chosen.jquery.js"></script>
+    <script src="~/Scripts/js/wizard/jquery.bootstrap.wizard.min.js"></script>
+    <script src="~/Scripts/js/wizard/wizard-active.js"></script>
+    <script src="~/Scripts/js/tawk-chat.js"></script>
+    <script src="~/Scripts/js/main.js"></script>
+    <script src="~/Scripts/jquery.toast.js"></script>
+    <script src="~/Scripts/bootstrap.min.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/Common-Scripts/common-script.js"></script>
+    <script src="~/Scripts/Common-Scripts/massageAlert.js"></script>
+    <script src="~/Scripts/js/vendor/modernizr-2.8.3.min.js"></script>
+
+    <script src="~/Scripts/sweetalart/sweetalert.min.js"></script>*@
+
+   
+
+    <script>
+
+        function GetOrderNotification() {
+
+            //alert('method caleed');
+            ajaxRequest("GET", "/GetMessageses", "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#MassageNotification').text(result);
+                }
+            });
+        }
+   
+        $('#NotificationBill').click(function () {
+            ajaxRequest("POST", "/CustomerOrderNote", "", "json").then(function (result) {
+                if (result != "") {
+                    $('#NotificationBody').empty();
+                    for (i = 0; i < 5; i++) {
+                        $('#NotificationBody').append('<div class="hd-message-info"><a href = "#" ><div class="hd-message-sn"><div class="hd-message-img"><img src="../../img/post/1.jpg" alt="" /></div><div class="hd-mg-ctn"><h3>' + result[i].Company + '</h3><p>' + result[i].statment + '</p></div></div></a ></div >')
+                    }
+                }
+            });
+        });
+
+
+        function GetInfoOnDelivery() {
+
+            ajaxRequest("GET", "/MessageToAdmonOnDelivery", "", "json").then(function (result) {
+                if (result != "Failed") {
+                    if (result > 0) {
+                        $('#DeliverOrderIdNow').val(result);
+
+                        $('#OrderDeliverModelAdmin').modal('show');
+                    }
+                }
+            })
+        }
+
+
+        $('#DeliverdSuccessClose').click(function () {
+
+            Id = $('#DeliverOrderIdNow').val();
+
+            CustomerDeliverdOrderUpdate(Id);
+        });
+
+
+        function CustomerDeliverdOrderUpdate(Id) {
+            ajaxRequest("GET", "/CustomerDeliverdOrderUpdate/"+Id, "", "json").then(function (res) {
+
+                if (res != "Failed") {
+                    $('#OrderDeliverModelAdmin').modal('hide');
+                    AlertCustomerOk();
+                }
+            });
+        }
+
+    </script>
+
+</body>
+</html>

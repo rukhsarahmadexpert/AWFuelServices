@@ -1,0 +1,278 @@
+﻿@model IT.Core.ViewModels.FuelTransferViewModel
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Fuel Transfer-Info</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewFuelTransfer"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="FuelTransferTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Site #</th>
+                                    <th>Vehicle</th>
+                                    <th>Quantity</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<input type="hidden" id="Id" />
+
+@Html.Partial("~/Areas/FuelTransfer/Views/Shared/PartialView/_FuelTransferPartialView.cshtml")
+
+
+@section scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+
+    <script>
+        $('#createNewFuelTransfer').click(function () {
+
+            $('#SaveFuelTransfer').show();
+            $('#UpdateFuelTransfer').hide();
+            $('#Res').hide();
+            $('#FuelTransferModel').modal('show');
+        })
+
+        $('#SaveFuelTransfer').click(function () {
+
+            var data = JSON.stringify({
+
+                SiteId: $('#SiteId').val(),
+                VehicleId: $('#VehicleId').val(),
+                Quantity: $('#Quantity').val(),
+                FuelTransferDate: $('#FuelTransferDate').val(),
+                Description: $('#Description').val()
+            })
+            ajaxRequest("POST", "/FuelTransferAdd", data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#FuelTransferTable').DataTable().ajax.reload();
+                    sucessAdd();
+                    $('#FuelTransferModel').modal('hide');
+                }
+
+            });
+
+        });
+
+
+        $(document).ready(function () {
+            BindDataTable();
+
+            $('input:radio[name=FuelTransfer]').change(function () {
+                var radioValue = $(this).val();
+                if (radioValue == "SiteToVehicle") {
+
+                    $('#lblSite').text("From Site:");
+                    $('#lblVehicle').text("To Vehicle:");
+                    ajaxRequest("POST", "/LoadVehicleFuelTransfer", "", "json").then(function (result) {
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#VehicleId").empty();
+                            $.each(result, function (key, item) {
+                                $('#VehicleId').append($('<option></option>').val(item.Id).html(item.TraficPlateNumber));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+                    });
+
+
+                    ajaxRequest("POST", "/LoadSiteFuelTransfer", "", "json").then(function (result) {
+
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#SiteId").empty();
+                            $.each(result, function (key, item) {
+                                $('#SiteId').append($('<option></option>').val(item.Id).html(item.SiteName));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+                    });
+
+
+                }
+                else if (radioValue == "VehicleToVehicle") {
+                    $('#lblSite').text("From Vehicle:");
+                    $('#lblVehicle').text("To Vehicle:");
+
+                    ajaxRequest("POST", "/LoadVehicleFuelTransfer", "", "json").then(function (result) {
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#VehicleId").empty();
+                            $("#SiteId").empty();
+                            $.each(result, function (key, item) {
+                                $('#VehicleId').append($('<option></option>').val(item.Id).html(item.TraficPlateNumber));
+                                $('#SiteId').append($('<option></option>').val(item.Id).html(item.TraficPlateNumber));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+                    });
+
+
+
+                }
+
+                else if (radioValue == "VehicleToSite") {
+                    $('#lblSite').text("From Vehicle:");
+                    $('#lblVehicle').text("To Site:");
+
+                    ajaxRequest("POST", "/LoadVehicleFuelTransfer", "", "json").then(function (result) {
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#SiteId").empty();
+                            $.each(result, function (key, item) {
+                                $('#SiteId').append($('<option></option>').val(item.Id).html(item.TraficPlateNumber));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+                    });
+
+                    ajaxRequest("POST", "/LoadSiteFuelTransfer", "", "json").then(function (result) {
+
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#VehicleId").empty();
+                            $.each(result, function (key, item) {
+                                $('#VehicleId').append($('<option></option>').val(item.Id).html(item.SiteName));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+                    });
+
+                }
+
+            });
+
+
+
+        });
+
+        var BindDataTable = function (response) {
+            $('#FuelTransferTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/FuelTransferAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "FuelTransferDate" },
+                    { "mData": "SiteName" },
+                    { "mData": "TraficPlateNumber" },
+                    { "mData": "Quantity" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditFuelTransfer(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewFuelTransfer(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+
+        function EditFuelTransfer(Id) {
+
+            ajaxRequest("GET", "/FuelTransferEdit/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('select').chosen();
+                    $('#SiteId').val(result.SiteId);
+                    $('#VehicleId').val(result.VehicleId);
+                    $('#Quantity').val(result.Quantity);
+                    $('#Id').val(result.Id);
+                    $('#FuelTransferDate').val(result.FuelTransferDate);
+                    $('select').trigger("chosen:updated");
+                    $('#Res').show();
+                    $('#SaveFuelTransfer').hide();
+                    $('#UpdateFuelTransfer').show();
+
+                    $('#FuelTransferModel').modal('show');
+                }
+                else {
+                    alert("Failed to load data");
+                }
+
+            });
+
+        }
+
+        $('#UpdateFuelTransfer').click(function () {
+
+            if ($('#Reason').val().trim() == "") {
+                alert('Please add reason');
+            }
+            else {
+
+                var data = JSON.stringify({
+                    Id: $('#Id').val(),
+                    SiteId: $('#SiteId').val(),
+                    VehicleId: $('#VehicleId').val(),
+                    Quantity: $('#Quantity').val(),
+                    FuelTransferDate: $('#FuelTransferDate').val(),
+                    Reason: $('#Reason').val()
+                })
+                ajaxRequest("POST", "/FuelTransferUpdate", data, "json").then(function (result) {
+
+                    if (result != "Failed") {
+                        $('#FuelTransferTable').DataTable().ajax.reload();
+                        sucessUpdate();
+                        $('#FuelTransferModel').modal('hide');
+                    }
+
+                });
+            }
+        });
+
+
+        function ViewFuelTransfer(Id) {
+
+            window.location.href = "FuelTransferDetails/" + Id;
+        }
+
+
+    </script>
+
+}
+
+

@@ -1,0 +1,243 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>All Stock</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="createNewStock"><i class="fa fa-plus"></i> New</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="StockTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date </th>
+                                    <th>LPO</th>
+                                    <th>Bill #</th>
+                                    <th>Vender</th>
+                                    <th>Quantity</th>
+                                    <th>Rate</th>
+                                    <th>Vate</th>
+                                    <th>Total</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@Html.Partial("~/Areas/Stock/Views/Shared/Partial/_StockPartialView.cshtml")
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+        $('#createNewStock').click(function () {
+
+            $('#updateStock').hide();
+            $('#saveStock').show();
+            $('#StockModel').modal('show');
+        });
+
+        $(document).ready(function () {
+            BindDataTable();
+
+            $('#ProductId').change(function () {
+
+                if ($(this).val() > 0) {
+
+                    var Date = JSON.stringify({
+                        Id: $('#BillNo').val(),
+                        ItemId: $(this).val()
+                    })
+                    ajaxRequest("POST", "GetAvailibleQuantity", Date, "json").then(function (result) {
+
+
+                        var AvailiblrQuantity = 0;
+                        AvailiblrQuantity = parseInt(result.Quantity) - parseInt(result.UsedQuantity);
+
+
+                        $('#Rate').text(result.Rate);
+                        $('#VAT').text(result.VAT);
+                        $('#Total').text(result.Total);
+                        $('#TotalQTY').text(result.Quantity + ' Gallon');
+                        $('#AvailbleQTY').text(AvailiblrQuantity + ' Gallon');
+                        $('#Total').val(result.Total);
+                    });
+                }
+                else {
+                    return true;
+                }
+            });
+
+            $('#BillNo').change(function () {
+
+                var Id = $(this).val();
+
+                if (Id > 0) {
+
+                    ajaxRequest("POST", "GetProdctFromLPODetailsByLPOID/" + Id, "", "json").then(function (result) {
+
+                        if (result != "Failed") {
+
+                            $('select').chosen();
+                            $("#ProductId").empty();
+                            $.each(result, function (key, item) {
+                                $('#ProductId').append($('<option></option>').val(item.Id).html(item.Name));
+                            });
+                            $('select').trigger("chosen:updated");
+                        }
+
+                    });
+                }
+                else {
+                    return true;
+                }
+
+            })
+
+        });
+
+
+
+
+        var BindDataTable = function (response) {
+            $('#StockTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/StockAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "CreatedDates" },
+                    { "mData": "BillNo" },
+                    { "mData": "BillNo" },
+                    { "mData": "VenderName" },
+                    { "mData": "Quantity" },
+                    { "mData": "Rate" },
+                    { "mData": "VAT" },
+                    { "mData": "Total" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditStock(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewSite(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        $('#saveStock').click(function () {
+
+            var Data = JSON.stringify({
+
+                SiteId: $('#SiteId').val(),
+                BillNo: $('#BillNo').val(),
+                RefrenceNo: $('#RefrenceNo').val(),
+                VenderId: $('#Venders').val(),
+                Quantity: $('#Quantity').val(),
+                Rate: $('#Rate').text(),
+                VAT: $('#VAT').text(),
+                Total: $('#Total').text(),
+                ItemId: $('#ProductId').val()
+            })
+            ajaxRequest("POST", "/Stock-Create", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    sucessAdd();
+                    $('#StockModel').modal('hide');
+                    $('#StockTable').DataTable().ajax.reload();
+                }
+                else {
+                    alert('Opration Failed');
+                }
+            });
+
+
+        });
+
+        function EditStock(Id) {
+            ajaxRequest("GET", "/Stock-Edit/" + Id, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('select').chosen();
+                    $('#SiteId').val(result.SiteId);
+                    $('#BillNo').val(result.BillNo);
+                    $('#RefrenceNo').val(result.RefrenceNo);
+                    $('#Venders').val(result.VenderId);
+                    $('#Quantity').val(result.Quantity);
+                    $('#Rate').val(result.Rate);
+                    $('#VAT').val(result.VAT);
+                    $('#Total').val(result.Total);
+                    $('#StockId').val(result.Id)
+                    $('select').trigger("chosen:updated");
+                    $('#saveStock').hide();
+                    $('#updateStock').show();
+                    $('#StockModel').modal('show');
+                }
+                else {
+                    alert('data not found');
+                }
+            });
+        }
+
+        $('#updateStock').click(function () {
+
+            var Data = JSON.stringify({
+
+                Id: $('#StockId').val(),
+                SiteId: $('#SiteId').val(),
+                BillNo: $('#BillNo').val(),
+                RefrenceNo: $('#RefrenceNo').val(),
+                VenderId: $('#Venders').val(),
+                Quantity: $('#Quantity').val(),
+                Rate: $('#Rate').val(),
+                VAT: $('#VAT').val(),
+                Total: $('#Total').val(),
+            })
+            ajaxRequest("POST", "/Stock-Update", Data, "json").then(function (result) {
+
+                if (result != "Failed") {
+                    sucessUpdate();
+                    $('#StockModel').modal('hide');
+                    $('#StockTable').DataTable().ajax.reload();
+                }
+            });
+        });
+
+
+
+    </script>
+}
+
+

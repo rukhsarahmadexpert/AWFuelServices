@@ -1,0 +1,49 @@
+﻿
+@{
+    ViewBag.Title = "Test";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+
+    //Layout = null;
+}
+
+<h2>Test</h2>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery-3.3.1.js"></script>
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script>
+
+        $(function () {
+
+              var notifications = $.connection.myHub;
+
+            notifications.client.updateMessages = function () {
+
+                GetMessagesesDriver();
+            };
+
+            $.connection.hub.start().done(function () {   
+                GetMessagesesDriver();
+            }).fail(function (e) {
+                alert(e);
+            });
+        });
+        
+
+        function GetMessagesesDriver() {
+            
+            ajaxRequest("GET", "/GetMessageses", "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#MassageNotification').text(result);
+                    }
+            });
+        }
+
+    </script>
+
+}

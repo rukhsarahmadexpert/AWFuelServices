@@ -1,0 +1,99 @@
+﻿
+@{
+    ViewBag.Title = "CustomerOrderRejectedAllAdmin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Rejected Orders </h2>
+                            </div>
+                            <div class="col-md-1">
+                                @*<button class="btn btn-primary btn-sm" id="createNewOrder"><i class="fa fa-plus"></i> New</button>*@
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="table-responsive">
+                        <table id="CustomerOrderGroupUnread" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Order No</th>
+                                    <th>Company</th>
+                                    <th>TRN </th>
+                                    <th>Order Quantity</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#CustomerOrderGroupUnread').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/AllRejectedOrderGroupAdmin",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+
+                "aoColumns": [
+                    { "mData": "CreateDates" },
+                    { "mData": "CustomerOrderId" },
+                    { "mData": "Company" },
+                    { "mData": "TRN" },
+                    { "mData": "OrderQuantity" },
+                    //{ "mData": "UserName" },
+                    { "mData": "OrderProgress" },
+                    {
+                        "mData": "OrderId",
+                        "render": function (id, type, full, meta) {
+                            return '<a href="#" onclick="Process(' + id + ')" /><i class="glyphicon glyphicon-eye-open"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        /*onmouseover="View(' + id + ')"*/
+
+        function Process(Id) {
+
+            window.location.href = "/CustomerOrderViewByAdmin/" + Id;
+        }
+    </script>
+
+}

@@ -1,0 +1,88 @@
+﻿
+@{
+    Layout = null;
+}
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Test</title>
+</head>
+<body>
+    <div class="row" style="margin-top:50px">
+        <div class="col-md-2">
+        </div>
+        <div class="col-md-8">
+            @*<form method="post" enctype="text/plain" id="form12">
+                <input type="text" name="Name" id="Name" /><br />
+                <input type="text" name="Contact" id="Contact" /><br />
+                <input type="Email" name="Email" id="Name" /><br />
+                <input type="file" name="DrivingLicenseFront" id="DrivingLicenseFront" />
+                <input type="submit" value="Submit" />
+            </form>*@
+
+            <form id="form2" method="post" action="/Driver/Driver/SendAsync" enctype = "multipart/form-data">
+                <div>
+                    <label for="status">Name</label>
+                </div>
+                <div>
+                    <input type="text" name="Name" id="Name" />
+                </div>
+                <div>
+                    <label for="date">Contact</label>
+                </div>
+                <div>
+                    <input type="text" name="Contact" id="Contact" />
+                </div>
+                <div>
+                    <label for="date">File</label>
+                </div>
+                <div>
+                    <input type="file" name="filePath" id="filePath" />
+                </div>
+                <input type="hidden" name="ClientDocs" id="ClientDocs" value="ClientDocs" />
+                <input type="hidden" name="CompanyId" id="CompanyId" value="1057" />
+                <input type="hidden" name="CreatedBy" id="CreatedBy" value="2099" />
+                <div>
+                    <input type="submit" value="save" />
+                </div>
+            </form>
+        </div>
+        <div class="col-md-2">
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+
+    $('#save').click(function () {
+
+        $('#form2').submit();
+
+        return window.location.href = "/Login";
+
+    })
+
+
+    $(document).ready(function () {
+        $("#form1").submit(function () {
+            var jqxhr = $.post('http://localhost:64299/api/Driver/Add', $('#form1').serialize())
+                .success(function (e) {
+                    alert(e.data);
+
+                })
+                .error(function (er) {
+                    alert(er.data);
+                });
+            return false;
+        });
+
+    })
+</script>

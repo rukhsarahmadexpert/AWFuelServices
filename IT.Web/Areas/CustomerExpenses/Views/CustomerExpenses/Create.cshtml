@@ -1,0 +1,69 @@
+﻿
+@{
+    ViewBag.Title = "Create";
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+}
+
+<link href="~/Content/css/Common/LPOInvoiceTable.css" rel="stylesheet" />
+<link href="~/Content/css/Common/Common-LPO.css" rel="stylesheet" />
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2></h2>
+                            </div>
+                            <div class="col-md-1">
+                            </div>
+                        </div>
+                        @Html.Partial("~/Views/Shared/Expense/ExpenseEmployeePartialView.cshtml")
+                    </div>
+                    <div class="table-responsive">
+                        @Html.Partial("~/Views/Shared/Expense/_MainExpenseTablePartialView.cshtml")
+                        @Html.Partial("~/Views/Shared/Invoice_LPO PartialView/_FooterTotalPartialView.cshtml")
+
+                    </div>
+                    <p></p>
+                    @Html.Partial("~/Views/Shared/LPOInvoieDetailsPartialViews/_BillButtonPartialView.cshtml")
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/Areas/CustomerExpenses/Scripts/CustomerExpense.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            
+            $('#BillSave').click(function () {
+                if (ExpenseValid()) {
+                    //  localStorage.clear();
+                    CreateExpense("/CustomerExpensesCreate");
+
+                    //alert('ok');
+                }
+            });
+
+            function ExpenseValid() {
+
+                var IsValid = true;
+
+                if ($('#EmployeeId').val() == 0) {
+
+                    $('#EmployeeId').css('border-color', '1px solid #BDC7BC');
+                    alert('Please select Employee');
+
+                    IsValid = false;
+                }
+
+                return IsValid;
+            }
+        });
+    </script>
+}
+

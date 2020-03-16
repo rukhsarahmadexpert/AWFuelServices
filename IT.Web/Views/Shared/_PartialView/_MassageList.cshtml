@@ -1,0 +1,37 @@
+﻿@model IEnumerable<Web.Interface.Models.CustomerOrder>
+
+
+<p>Notification</p>
+<table class="table">
+    <tr>
+        <th>ID</th>
+        <th>
+            QTY
+        </th>
+        <th>
+           Driver
+        </th>
+        <th>
+           Date
+        </th>
+
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.OrderQuantity)
+            </td>
+            <th>
+                @Html.DisplayFor(modelItem => item.DriverId)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+        </tr>
+    }
+</table>
+

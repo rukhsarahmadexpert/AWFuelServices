@@ -1,0 +1,667 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="data-table-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="data-table-list">
+                    <div class="basic-tb-hd">
+                        <div class="row">
+                            <div class="col-md-11">
+                                <h2>Account Received</h2>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary btn-sm" id="ReceiveAmount"><i class="fa fa-plus"></i> Receive</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="AccountTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>No #</th>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Received</th>
+                                    <th>payed By</th>
+                                    <th>Oprater</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@Html.Partial("~/Areas/Accounts/Views/Shared/PartialView/_PayementReceivingPartialView.cshtml")
+
+
+@section Scripts{
+
+    <script src="~/Scripts/jquery.signalR-2.4.1.js"></script>
+    <script src="~/signalr/hubs"></script>
+    <script src="~/Hubs/ScriptHub/AdminScript.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            $('#Hello').change(function () {
+
+                var Id = $(this).val()
+                if (parseInt(Id) > 0) {
+                    VenderStatistics(Id);
+                    GetUnpaidBillByCompanyId(Id);
+
+                }
+                else {
+                    $('#CustomerInvoicePayable tbody').empty();
+
+                    $('#VenderInvoicePayable').hide();
+                    $('#NoFoundMessagePurchase').text('No Vender Selected');
+                    $('#NoFoundMessagePurchase').css('display', 'block');
+                }
+            });
+
+            $('#customers').change(function () {
+
+                var Id = $(this).val()
+
+                if (parseInt(Id) > 0) {
+                    CustomerStatistics(Id);
+                    GetUnpaidInvoiceByCompanyId(Id);
+                }
+                else {
+                    $('#CustomerInvoicePayable tbody').empty();
+                    $('#CustomerInvoicePayable').hide();
+                    $('#NoFoundMessage').text('No Customer Selected');
+                    $('#NoFoundMessage').css('display', 'block');
+                }
+
+            });
+
+            $('#PaymentTermBill').change(function () {
+                var selectedValue = $(this).val();
+
+                if (selectedValue == "Cash") {
+                    $('#lblVoucharBill').text('Vouchar No');
+                    $('#lblVoucharBill').attr("placeholder", "Vouchar Number here");
+                    $('#BankCheckBill').hide();
+                    $('#PostDtBill').hide();
+                    $('#DiXcription1').hide();
+                }
+                else {
+                    $('#BankCheckBill').show();
+                    $('#PostDtBill').show();
+                    $('#DiXcription1').show();
+                    $('#lblVoucharBill').text('Account No');
+                    $('#VoucharBill').attr("placeholder", "Account Number here");
+                }
+
+            });
+
+            BindDataTable();
+        });
+
+        var BindDataTable = function (response) {
+            $('#AccountTable').DataTable({
+                "bRetrieve": true,
+                "bServerSide": true,
+                "processing": true,
+                "sAjaxSource": "/AccountAll",
+                "fnServerData": function (sSource, aoData, fnCallback) {
+                    $.ajax({
+                        type: "Get",
+                        data: aoData,
+                        url: sSource,
+                        success: fnCallback
+                    })
+                },
+                "aoColumns": [
+                    { "mData": "Id" },
+                    { "mData": "CreatedDates" },
+                    { "mData": "Name" },
+                    { "mData": "Received" },
+                    { "mData": "PayedPersonName" },
+                    { "mData": "UserName" },
+                    {
+                        "mData": "Id",
+                        "render": function (Id, type, full, meta) {
+                            return '<a href="#" onclick="EditLPO(' + Id + ')"><i class="glyphicon glyphicon-edit"></i></a>' + ' | ' + '<a href="#" onclick="ViewLPO(' + Id + ')"><i class="glyphicon glyphicon-eye-open"></i></a>' + ' | ' + '<a href="#" onclick="DeleteTran(' + Id + ')"><i class="glyphicon glyphicon-remove"></i></a>'
+                        }
+                    },
+                ]
+            })
+        }
+
+        $('#ReceiveAmount').click(function () {
+
+            $('#updateChanges').hide();
+            $('#saveChangesPaid').hide();
+            $('#saveChanges').show();
+            $('#BankCheck').hide();
+            $('#PostDt').hide();
+            $('#DiXcription').hide();
+            $('#DiXcription1').hide();
+            $('#PaymentReceivingModel1').modal('show');
+        });
+
+        function GetUnpaidInvoiceByCompanyId(Id) {
+
+            ajaxRequest("POST", "/UnpadInvoice/" + Id, "", "json").then(function (result) {
+
+                if (result.length == 0) {
+                    $('#CustomerInvoicePayable').hide();
+                    $('#NoFoundMessage').text('No unpaid invoice found against the select company');
+                    $('#NoFoundMessage').css('display', 'block');
+
+                }
+                if (result != "Failed" && result.length > 0) {
+                    $('#NoFoundMessage').css('display', 'none');
+                    $('#CustomerInvoicePayable').show();
+                    $('#CustomerInvoicePayable tbody').empty();
+                    $.each(result, function (i, item) {
+                        $('#CustomerInvoicePayable tbody').append('<tr><td><input type="checkbox" class="check" name="IsChecked"/></td>'
+                            + '<td class="Id"><a href="#" onclick="ViewDetails(' + item.Id + ');">' + item.Id + ' </a></td>'
+                            + '<td class="Total">' + item.Total + '</td>'
+                            + '<td class="VAT">' + item.VAT + '</td>'
+                            + '<td class="GrandTotal">' + item.GrandTotal + '</td>'
+                            + '<td class="ReceivedAmount">' + item.ReceivedAmount + '</td>'
+                            + '<td class="Balance">' + item.Balance + '</td></tr > '
+                        )
+                    })
+
+                }
+
+            })
+        }
+
+        function GetUnpaidBillByCompanyId(Id) {
+
+            ajaxRequest("POST", "/UnpadBill/" + Id, "", "json").then(function (result) {
+
+                if (result.length == 0) {
+                    $('#VenderInvoicePayable').hide();
+                    $('#NoFoundMessagePurchase').text('No unpaid Purchase invoice found against the select company');
+                    $('#NoFoundMessagePurchase').css('display', 'block');
+
+                }
+                if (result != "Failed" && result.length > 0) {
+                    $('#NoFoundMessagePurchase').css('display', 'none');
+                    $('#VenderInvoicePayable').show();
+                    $('#VenderInvoicePayable tbody').empty();
+                    $.each(result, function (i, item) {
+                        $('#VenderInvoicePayable tbody').append('<tr><td><input type="checkbox" class="check" name="IsChecked"/></td>'
+                            + '<td class="Id"><a href="#" onclick="ViewDetails(' + item.Id + ');">' + item.Id + ' </a></td>'
+                            + '<td class="Total">' + item.Total + '</td>'
+                            + '<td class="VAT">' + item.VAT + '</td>'
+                            + '<td class="GrandTotal">' + item.GrandTotal + '</td>'
+                            + '<td class="ReceivedAmount">' + item.ReceivedAmount + '</td>'
+                            + '<td class="Balance">' + item.Balance + '</td></tr > '
+                        )
+                    })
+
+                }
+
+            })
+        }
+
+        $('#Tab1').click(function () {
+            $('#saveChangesPaid').hide();
+            $('#saveChanges').show();
+
+        });
+
+        $('#Tab2').click(function () {
+            $('#saveChanges').hide();
+            $('#saveChangesPaid').show();
+        });
+
+        function ViewDetails(Id) {
+            alert(Id);
+        }
+
+        $('#saveChanges').click(function () {
+
+            if (IsValidateReceiveAmount()) {
+
+                var list = [], orderItem, CurrentRow;
+                var formData = new FormData();
+                var TotalReceived = 0.00;
+
+                TotalReceived = $('#AmountPayed').val();
+                var CHecked = false;
+
+                $('#CustomerInvoicePayable tbody tr').each(function () {
+
+
+                    var ReceivedInInvoice = 0.00;
+                    CurrentRow: $(this).closest("tr");
+
+                    if ($(this).find('input:checkbox[name=IsChecked]').is(':checked') == true) {
+
+                        var ReceivableInInvoice = $(this).find('.Balance').text();
+
+                        if (parseFloat(TotalReceived) > parseFloat(ReceivableInInvoice)) {
+                            TotalReceived = parseFloat(TotalReceived) - parseFloat(ReceivableInInvoice);
+
+                            ReceivedInInvoice = parseFloat(ReceivableInInvoice);
+                        }
+                        else if (parseFloat(TotalReceived) == parseFloat(ReceivableInInvoice)) {
+                            TotalReceived = parseFloat(TotalReceived) - parseFloat(ReceivableInInvoice);
+
+                            ReceivedInInvoice = parseFloat(ReceivableInInvoice);
+                        }
+                        else if (parseFloat(TotalReceived) < parseFloat(ReceivableInInvoice)) {
+
+                            ReceivedInInvoice = parseFloat(TotalReceived);
+
+                            TotalReceived = 0.00;
+                        }
+                        orderItem = {
+                            InvoiceId: $(this).find('.Id').text(),
+                            ReceivedAmount: ReceivedInInvoice,
+                        }
+                        list.push(orderItem);
+                    }
+                });
+
+                var empObj = {
+                    CustomerId: $('#customers').val(),
+                    Received: $('#AmountPayed').val(),
+                    PayedPersonName: $('#PayedBy').val(),
+                    BankName: $('#Bank').val(),
+                    //AccountNumber: $('').val(),
+                    CheckNumber: $('#ChequeNo').val(),
+                    PaymentTerm: $('#PaymentTerm').val(),
+                    PaymentTerms: $('#PaymentTerm').val(),
+                    Currency: $('#Currency').val(),
+                    Vouchar: $('#Vouchar').val(),
+                    PostedDates: $('#PostedDate').val(),
+                    Description: $('#Description').val(),
+                    AccountNumber: $('#AccountNumber').val()
+                };
+
+                for (var key in empObj) {
+                    formData.append(key, empObj[key]);
+                }
+
+                for (var i = 0; i < list.length; i++) {
+                    formData.append('accountDetailsViewModels[' + i + '][InvoiceId]', list[i].InvoiceId),
+                        formData.append('accountDetailsViewModels[' + i + '][ReceivedAmount]', list[i].ReceivedAmount)
+                }
+
+                var Url = "";
+                if ($('#PaymentTerm').val() == "Cheque") {
+                    Url = "ChequeReceived";
+                }
+                else {
+                    Url = "AmountReceived";
+                }
+                if (list.length > 0) {
+
+                    $.ajax({
+                        url: Url,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+                            if (result != "Failed") {
+
+                                list = [];
+                                sucessAdd();
+                                ClearAmounntReceived();
+                                CustomerStatistics(result);
+                                GetUnpaidInvoiceByCompanyId(result)
+                            }
+                            else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+                else {
+
+                    alert('Please Add item to list');
+                }
+            }
+        });
+
+        $('#saveChangesPaid').click(function () {
+
+            if (IsValidatePayedAmount()) {
+
+
+                var list = [], orderItem, CurrentRow;
+                var formData = new FormData();
+                var TotalReceived = 0.00;
+
+                TotalReceived = $('#AmountPayedBill').val();
+                var CHecked = false;
+
+                $('#VenderInvoicePayable tbody tr').each(function () {
+
+
+                    var ReceivedInInvoice = 0.00;
+                    CurrentRow: $(this).closest("tr");
+
+                    if ($(this).find('input:checkbox[name=IsChecked]').is(':checked') == true) {
+
+                        var ReceivableInInvoice = $(this).find('.Balance').text();
+
+                        if (parseFloat(TotalReceived) > parseFloat(ReceivableInInvoice)) {
+                            TotalReceived = parseFloat(TotalReceived) - parseFloat(ReceivableInInvoice);
+
+                            ReceivedInInvoice = parseFloat(ReceivableInInvoice);
+                        }
+                        else if (parseFloat(TotalReceived) == parseFloat(ReceivableInInvoice)) {
+                            TotalReceived = parseFloat(TotalReceived) - parseFloat(ReceivableInInvoice);
+
+                            ReceivedInInvoice = parseFloat(ReceivableInInvoice);
+                        }
+                        else if (parseFloat(TotalReceived) < parseFloat(ReceivableInInvoice)) {
+
+                            ReceivedInInvoice = parseFloat(TotalReceived);
+
+                            TotalReceived = 0.00;
+                        }
+                        orderItem = {
+                            InvoiceId: $(this).find('.Id').text(),
+                            ReceivedAmount: ReceivedInInvoice,
+                        }
+                        list.push(orderItem);
+                    }
+                });
+
+                var empObj = {
+                    VenderId: $('#Hello').val(),
+                    Received: $('#AmountPayedBill').val(),
+                    PayedPersonName: $('#PayedByBill').val(),
+                    BankName: $('#BankBill').val(),
+                    //AccountNumber: $('').val(),
+                    CheckNumber: $('#ChequeNoBill').val(),
+                    PaymentTerm: $('#PaymentTermBill').val(),
+                    Currency: $('#CurrencyBILL').val(),
+                    Vouchar: $('#VoucharBill').val(),
+                    PostedDates: $('#PostedDateBill').val(),
+                    Description: $('#DescriptionBill').val(),
+
+                };
+
+                for (var key in empObj) {
+                    formData.append(key, empObj[key]);
+                }
+
+                for (var i = 0; i < list.length; i++) {
+                    formData.append('accountDetailsViewModels[' + i + '][InvoiceId]', list[i].InvoiceId),
+                        formData.append('accountDetailsViewModels[' + i + '][ReceivedAmount]', list[i].ReceivedAmount)
+                }
+
+
+                var Url = "";
+                if ($('#PaymentTermBill').val() == "Cheque") {
+                    Url = "ChequeIssued";
+                }
+                else {
+                    Url = "AmountIssued";
+                }
+
+
+                if (list.length > 0) {
+
+                    $.ajax({
+                        url: Url,
+                        type: "POST",
+                        data: formData,
+                        dataType: 'json',
+                        contentType: false,
+                        processData: false,
+                        success: function (result) {
+                            if (result != "Failed") {
+
+                                list = [];
+                                sucessAdd();
+                                ClearAmounntIssued();
+                                VenderStatistics(result);
+                                GetUnpaidBillByCompanyId(result)
+                            }
+                            else {
+                                alert(result);
+                            }
+                        },
+                        error: function (errormessage) {
+                            alert(errormessage);
+                        }
+                    });
+                }
+                else {
+
+                    alert('Please Add item to list');
+                }
+            }
+        });
+
+        $('#PaymentTerm').change(function () {
+            var selectedValue = $(this).val();
+
+            if (selectedValue == "Cash") {
+                $('#lblVouchar').text('Vouchar No');
+                $('#Vouchar').attr("placeholder", "Vouchar Number here");
+                $('#BankCheck').hide();
+                $('#PostDt').hide();
+                $('#DiXcription').hide();
+            }
+            else {
+                $('#BankCheck').show();
+                $('#PostDt').show();
+                $('#DiXcription').show();
+                $('#lblVouchar').text('Account No');
+                $('#Vouchar').attr("placeholder", "Account Number here");
+            }
+        });
+
+        function DeleteTran(Id) {
+
+            $('#TransictionId').val(Id);
+            $('#ModelDeleteTransiction').modal('show');
+        }
+
+        $('#DeleteTransiction').click(function () {
+            var Id = $('#TransictionId').val();
+            DeleteTransiction(Id)
+        });
+
+        function DeleteTransiction(Id) {
+            ajaxRequest("POST", "/DeleteTransiction/" + Id, "", "json").then(function (result) {
+                sucessDelete();
+                $('#AccountTable').DataTable().ajax.reload();
+                $('#ModelDeleteTransiction').modal('hide');
+
+            });
+        }
+
+        function CustomerStatistics(Id) {
+            ajaxRequest("POST", "/AccountCustomerStatistics/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#Receivable').text(result.Receivable);
+                    $('#Received').text(result.Received);
+                    $('#Balance').text(result.Balance);
+                }
+                else {
+                    $('#Receivable').text('0.00');
+                    $('#Received').text('0.00');
+                    $('#Balance').text('0.00');
+                }
+            })
+        }
+
+        function InvoiceAmountReceived() {
+
+        }
+
+        function VenderStatistics(Id) {
+
+            ajaxRequest("POST", "/AccountVenderStatistics/" + Id, "", "json").then(function (result) {
+
+                if (result != "Failed") {
+                    $('#Receivable1').text(result.Receivable);
+                    $('#Received1').text(result.Received);
+                    $('#Balance1').text(result.Balance);
+                }
+                else {
+                    $('#Receivable1').text('0.00');
+                    $('#Received1').text('0.00');
+                    $('#Balance1').text('0.00');
+                }
+            })
+        }
+
+        function IsValidateReceiveAmount() {
+            var isValid = true;
+            if ($('#PaymentTerm').val() == 0) {
+                $('#PaymentTerm').css('border-color', 'Red');
+                alert('select Payment Term');
+                isValid = false;
+            }
+            else {
+                $('#PaymentTerm').css('border-color', 'lightgrey');
+            }
+
+            if ($('#PayedBy').val().trim() == "") {
+                $('#PayedBy').css('border-color', 'Red');
+                isValid = false
+            }
+            else {
+                $('#PayedBy').css('border-color', 'lightgrey');
+            }
+
+            if ($('#AmountPayed').val() == "") {
+                $('#AmountPayed').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#AmountPayed').css('border-color', 'lightgrey');
+            }
+
+            //if ($('#Contact').val().trim() == "") {
+            //    $('#Contact').css('border-color', 'Red');
+            //    isValid = false;
+            //}
+            //else {
+            //    $('#Contact').css('border-color', 'lightgrey');
+            //}
+
+
+            if (parseFloat($('#AmountPayed').val()) > parseFloat($('#Balance').text())) {
+
+                alert('receiving amount is greater than required amont');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function IsValidatePayedAmount() {
+            var isValid = true;
+            if ($('#PaymentTermBill').val() == 0) {
+                $('#PaymentTermBill').css('border-color', 'Red');
+                alert('select Payment Term');
+                isValid = false;
+            }
+            else {
+                $('#PaymentTermBill').css('border-color', 'lightgrey');
+            }
+
+            if ($('#PayedByBill').val().trim() == "") {
+                $('#PayedByBill').css('border-color', 'Red');
+                isValid = false
+            }
+            else {
+                $('#PayedByBill').css('border-color', 'lightgrey');
+            }
+
+            if ($('#AmountPayedBill').val() == "") {
+                $('#AmountPayedBill').css('border-color', 'Red');
+                isValid = false;
+            }
+            else {
+                $('#AmountPayedBill').css('border-color', 'lightgrey');
+            }
+
+            //if ($('#Contact').val().trim() == "") {
+            //    $('#Contact').css('border-color', 'Red');
+            //    isValid = false;
+            //}
+            //else {
+            //    $('#Contact').css('border-color', 'lightgrey');
+            //}
+
+
+            if (parseFloat($('#AmountPayedBill').val()) > parseFloat($('#Balance1').text())) {
+
+                alert('Enterd amount is greater than required amont');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function ClearAmounntReceived() {
+            $('select').chosen();
+            var arlene1 = [];
+            $('#PayedBy').css('border-color', 'lightgrey').val('');
+            $('#Bank').css('border-color', 'lightgrey').val(0);
+            $('#ChequeNo').css('border-color', 'lightgrey').val('');
+            $('#Currency').css('border-color', 'lightgrey').val(0);
+            $('#AmountPayed').css('border-color', 'lightgrey').val('');
+            $('#Vouchar').css('border-color', 'lightgrey').val('');
+            $('#PaymentTerm').css('border-color', 'lightgrey').val(0);
+            $('select').trigger("chosen:updated");
+        }
+
+        function ClearAmounntIssued() {
+            $('select').chosen();
+            var arlene1 = [];
+            $('#PayedByBill').css('border-color', 'lightgrey').val('');
+            //$('#Bank').css('border-color', 'lightgrey').val(0);
+            //$('#ChequeNo').css('border-color', 'lightgrey').val('');
+            $('#CurrencyBILL').css('border-color', 'lightgrey').val(0);
+            $('#AmountPayedBill').css('border-color', 'lightgrey').val('');
+            $('#VoucharBill').css('border-color', 'lightgrey').val('');
+            $('#PaymentTermBill').css('border-color', 'lightgrey').val(0);
+            $('select').trigger("chosen:updated");
+        }
+
+        $('#SelectAllInvoice').click(function () {
+            if ($(this).prop("checked") == true) {
+                $('#CustomerInvoicePayable tbody tr').each(function () {
+
+                });
+            }
+            else if ($(this).prop("checked") == false) {
+                $('#CustomerInvoicePayable tbody tr').each(function () {
+
+                });
+            }
+        });
+
+    </script>
+
+}
+
