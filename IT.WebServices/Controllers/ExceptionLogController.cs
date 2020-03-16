@@ -23,7 +23,6 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
                 var result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("LogException @ControllerName,@ActionName,@ExceptionType,@ExceptionDescription,@CompanyId,@userId,@ExceptionDatetime"
                     , new SqlParameter("ControllerName", System.Data.SqlDbType.VarChar) { Value = exceptionLogViewModel.ControllerName }
                     , new SqlParameter("ActionName", System.Data.SqlDbType.VarChar) { Value = exceptionLogViewModel.ActionName }

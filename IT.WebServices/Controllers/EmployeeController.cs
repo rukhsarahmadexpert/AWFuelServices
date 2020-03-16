@@ -1,12 +1,18 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Script.Serialization;
 
@@ -39,11 +45,92 @@ namespace IT.WebServices.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage Add(EmployeeViewModel employeeViewModel)
+        public async Task<HttpResponseMessage> Add()
         {
-
+            EmployeeViewModel employeeViewModel = new EmployeeViewModel();
             try
             {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                var provider = await Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(new InMemoryMultipartFormDataStreamProvider());
+                //access form data  
+                NameValueCollection formData = provider.FormData;
+
+                //access files  
+                IList<HttpContent> files = provider.Files;
+
+                Int32 unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                string DDTT = unixTimestamp.ToString();
+
+                for (int i = 0; i < files.Count; i++)
+                {
+
+                    HttpContent file1 = files[i];
+
+                    var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
+
+                    string filename = String.Empty;
+                    Stream input = await file1.ReadAsStreamAsync();
+                    string directoryName = String.Empty;
+                    string URL = String.Empty;
+                    string tempDocUrl = WebConfigurationManager.AppSettings["DocsUrl"];
+
+                    if (formData["ClientDocs"] == "ClientDocs")
+                    {
+                        var path = HttpRuntime.AppDomainAppPath;
+                        directoryName = System.IO.Path.Combine(path, "ClientDocument");
+                        filename = System.IO.Path.Combine(directoryName, thisFileName);
+
+                        //Deletion exists file  
+                        if (File.Exists(filename))
+                        {
+                            File.Delete(filename);
+                        }
+
+                        if (file1.Headers.ContentDisposition.Name == "\"PassportFront\"" || file1.Headers.ContentDisposition.DispositionType == "PassportFront")
+                        {
+                            employeeViewModel.PassportFront = thisFileName;
+                        }
+                        else if(file1.Headers.ContentDisposition.Name == "\"PassportBack\"" || file1.Headers.ContentDisposition.DispositionType == "PassportBack")
+                        {
+                            employeeViewModel.PassportBack = thisFileName;
+                        }
+                        string DocsPath = tempDocUrl + "/" + "ClientDocument" + "/";
+                        URL = DocsPath + thisFileName;
+
+                    }
+
+                    //Directory.CreateDirectory(@directoryName);  
+                    using (Stream file = File.OpenWrite(filename))
+                    {
+                        input.CopyTo(file);
+                        //close file  
+                        file.Close();
+                    }
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Headers.Add("DocsUrl", URL);
+                }
+
+                employeeViewModel.Name = HttpContext.Current.Request["Name"];
+                employeeViewModel.Designation = Convert.ToInt32(HttpContext.Current.Request["Designation"]);
+                employeeViewModel.Contact = HttpContext.Current.Request["Contact"];
+                employeeViewModel.Email = HttpContext.Current.Request["Email"];
+                employeeViewModel.Facebook = HttpContext.Current.Request["Facebook"];
+                employeeViewModel.Comments = HttpContext.Current.Request["Comments"];
+                employeeViewModel.CreatedBy = Convert.ToInt32(HttpContext.Current.Request["CreatedBy"]);
+                employeeViewModel.UID = HttpContext.Current.Request["UID"];
+                if (HttpContext.Current.Request["BasicSalary"] != null)
+                {
+                    employeeViewModel.BasicSalary = Convert.ToDecimal(HttpContext.Current.Request["BasicSalary"]);
+                }
+                if (HttpContext.Current.Request["CompanyId"] != null)
+                {
+                    employeeViewModel.CompanyId = Convert.ToInt32(HttpContext.Current.Request["CompanyId"]);
+                }
+
                 var employeeAdd = unitOfWork.GetRepositoryInstance<EmployeeViewModel>().WriteStoredProcedure("EmployeeAdd @Name,@Designation,@Contact,@Email,@Facebook,@Comments,@CreatedBy,@PassportFront,@PassportBack, @UID,@BasicSalary,@CompanyId",
                   new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = employeeViewModel.Name == null ? (object)DBNull.Value : employeeViewModel.Name }
                 , new SqlParameter("Designation", System.Data.SqlDbType.Int) { Value = employeeViewModel.Designation }
