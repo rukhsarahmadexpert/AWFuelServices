@@ -17,7 +17,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage Add([FromBody] LPOInvoiceViewModel lPOInvoiceViewModel)
@@ -134,6 +134,22 @@ namespace IT.WebServices.Controllers
                 var LPOData = unitOfWork.GetRepositoryInstance<LPOInvoiceViewModel>().ReadStoredProcedure("QuotationById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
+
+                var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("QuotationDetailsById @Id"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+               ).ToList();
+
+                var CompanyModel = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("CompanyById @CompanyId"
+                , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.VenderId }
+                ).ToList();
+
+                var AWFCompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("AWFCompanyById @CompanyId"
+                , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
+                ).ToList();
+
+                LPOData.lPOInvoiceDetailsList = LPODetailsData;
+                LPOData.compnays = AWFCompanyModel;
+                LPOData.venders = CompanyModel;
 
                 var Documents = unitOfWork.GetRepositoryInstance<UploadDocumentsViewModel>().ReadStoredProcedure("UploadDocumentsGetByRespectiveId @Id,@Flag"
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }

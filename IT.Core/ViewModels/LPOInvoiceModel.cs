@@ -33,7 +33,8 @@ namespace IT.Core.ViewModels
         public string Representative { get; set; }
         public int detailId { get; set; }
         public int CompanyId { get; set; }
-                
+        public bool IsForCustomer { get; set; }
+
         public List<LPOInvoiceDetails> lPOInvoiceDetailsList { get; set; }
         public List<CompnayModel> compnays { get; set; }
         public List<VenderViewModel> venders { get; set; }

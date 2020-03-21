@@ -16,7 +16,7 @@ namespace IT.WebServices.Controllers
     {
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel serviceResponseModel = new ServiceResponseModel();
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage AddException([FromBody] ExceptionLogViewModel exceptionLogViewModel)
@@ -42,5 +42,6 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.Conflict, serviceResponseModel, contentType);
             }
         }
+
     }
 }

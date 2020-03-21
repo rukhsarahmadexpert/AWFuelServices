@@ -28,6 +28,8 @@ namespace IT.Core.ViewModels
         public string Email { get; set; }
         public int TransferdQuantity { get; set; }
         public int OrderTransferRequestId { get; set; }
+        public int FromVehicleId { get; set; }
+        public int ToVehicleId { get; set; }
     }
 }
 

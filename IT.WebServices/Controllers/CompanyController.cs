@@ -26,7 +26,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         //UserViewModel userViewModel = new UserViewModel();
-        string contentType = "application/json";
+       readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage GetAll()
@@ -182,22 +182,22 @@ namespace IT.WebServices.Controllers
                 }
 
                 CustomerOrderController customerOrderController = new CustomerOrderController();
-                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel
+                { 
 
-                customerOrderListViewModel.NotificationCode = "ADM-006";
-                customerOrderListViewModel.Title = "New Company Registered";
-                customerOrderListViewModel.Message = companyViewModel.Name + " Is Registered as new company";
-                customerOrderListViewModel.RequestedQuantity = 0;
-               
+                    NotificationCode = "ADM-006",
+                    Title = "New Company Registered",
+                    Message = companyViewModel.Name + " Is Registered as new company",
+                    RequestedQuantity = 0
+                };
+
                 int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
-
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(CompanyAdd));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
             {
-
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }

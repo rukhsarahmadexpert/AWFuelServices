@@ -21,7 +21,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage Add([FromBody] FuelTransferViewModel fuelTransferViewModel)
@@ -185,6 +185,8 @@ namespace IT.WebServices.Controllers
         [HttpPost]
         public HttpResponseMessage OrderTransferRequestsAdd(OrderTransferRequestsViewModel orderTransferRequestsViewModel)
         {
+            List<StorageViewModel> storageViewModels = new List<StorageViewModel>();
+
             try
             {
                 var Result = unitOfWork.GetRepositoryInstance<OrderTransferRequestsViewModel>().ReadStoredProcedure("OrderTransferRequestsAdd @DriverId,@RequestType,@Description,@OrderId,@IsFullOrPartistial,@PartialQuantity,@CompanyId",
@@ -196,23 +198,71 @@ namespace IT.WebServices.Controllers
                      , new SqlParameter("PartialQuantity", System.Data.SqlDbType.Int) { Value = orderTransferRequestsViewModel.PartialQuantity }
                      , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = orderTransferRequestsViewModel.CompanyId }
                     ).FirstOrDefault();
-
+                
                 CustomerOrderController customerOrderController = new CustomerOrderController();
                 CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
                 //Send Notification
                 customerOrderListViewModel.NotificationCode = "ADM-007";
                 customerOrderListViewModel.Title = "Transfer Request";               
                 customerOrderListViewModel.Message = "Order Transfer Request Created ....";
-
-
+                
                 int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
 
+                if(Result.Id > 0)
+                { 
+                    var uniqueId = System.DateTime.UtcNow.ToString();
+                    for (int i = 0; i < 2; i++)
+                    {
+                        storageViewModels[i].CreatedBy = Result.Id;
+                        storageViewModels[i].Source = "admin vehicle";
+                        storageViewModels[i].SiteId = 0;
+                        storageViewModels[i].ClientVehicleId = 0;
+                        storageViewModels[i].LPOId = 0;
+                        storageViewModels[i].Decription = "Transfer From Vehcile";
+                        storageViewModels[i].ProductId = 1;
+                        storageViewModels[i].uniques = uniqueId;
+
+                        if (i == 0)
+                        {
+                            storageViewModels[i].Action = true;
+                            storageViewModels[i].StockOut = 0;
+                            storageViewModels[i].StockIn = Result.TransferdQuantity;
+                            storageViewModels[i].VehicleId = Result.ToVehicleId;
+                        }
+                        else
+                        {
+                            storageViewModels[i].Action = false;
+                            storageViewModels[i].StockOut = Result.TransferdQuantity;
+                            storageViewModels[i].StockIn = 0;
+                            storageViewModels[i].VehicleId = Result.FromVehicleId;
+                        }
+                    }
+                }
+                
                 if (Result.Description == "request already exist")
                 {
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize("request already exist"));
                 }
                 else
                 {
+                    foreach (var storageViewModel in storageViewModels)
+                    {
+                        var Res1 = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageAdd @StockIn,@StockOut,@VehicleId,@CreatedBy,@Source,@SiteId,@Action,@ClientVehicleId,@LPOId,@Decription,@ProductId,@uniques",
+                          new SqlParameter("StockIn", System.Data.SqlDbType.Float) { Value = storageViewModel.StockIn }
+                        , new SqlParameter("StockOut", System.Data.SqlDbType.Float) { Value = storageViewModel.StockOut }
+                        , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.VehicleId }
+                        , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = storageViewModel.CreatedBy }
+                        , new SqlParameter("Source", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Source == null ? (object)DBNull.Value : storageViewModel.Source }
+                        , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = storageViewModel.SiteId }
+                        , new SqlParameter("Action", System.Data.SqlDbType.Bit) { Value = storageViewModel.Action }
+                        , new SqlParameter("ClientVehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.ClientVehicleId }
+                        , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = storageViewModel.LPOId }
+                        , new SqlParameter("Decription", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Decription }
+                        , new SqlParameter("ProductId", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.ProductId }
+                        , new SqlParameter("uniques", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.uniques }
+                        ).FirstOrDefault();
+                    }
+                    
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 }
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -480,7 +530,7 @@ namespace IT.WebServices.Controllers
                             new SqlParameter("OrderTransferRequestId", System.Data.SqlDbType.Int) { Value = orderTransferRequestsViewModel.OrderTransferRequestId },
                             new SqlParameter("TransferdQuantity", System.Data.SqlDbType.Int) { Value = orderTransferRequestsViewModel.TransferdQuantity },
                             new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = orderTransferRequestsViewModel.DriverId }
-                    ).FirstOrDefault();
+                            ).FirstOrDefault();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result.Result));
 

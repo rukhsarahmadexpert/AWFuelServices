@@ -677,13 +677,14 @@ namespace IT.WebServices.Controllers
                     ).FirstOrDefault();
                                               
                     CustomerOrderController customerOrderController = new CustomerOrderController();
-                    CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                    CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel
+                    { 
+                        NotificationCode = "ADM-005",
+                        Title = "Driver Logout",
+                        Message = Result.FullName + " Is logOut"
+                     };
 
-                    customerOrderListViewModel.NotificationCode = "ADM-005";
-                    customerOrderListViewModel.Title = "Driver Logout";
-                    customerOrderListViewModel.Message = Result.FullName + " Is logOut";
-
-                  int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
+                    int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
 
                 //    customerOrderListViewModel.email = Result.Email;
                 //    customerOrderListViewModel.NotificationCode = "DRV-002";
@@ -856,12 +857,12 @@ namespace IT.WebServices.Controllers
 
 
                 CustomerOrderController customerOrderController = new CustomerOrderController();
-                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
-
-                customerOrderListViewModel.NotificationCode = "ADM-005";
-                customerOrderListViewModel.Title = "Driver Logout";
-                customerOrderListViewModel.Message = Result.FullName + " Is logOut";
-
+                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel
+                {
+                    NotificationCode = "ADM-005",
+                    Title = "Driver Logout",
+                    Message = Result.FullName + " Is logOut"
+                };
                 int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
 
                 customerOrderListViewModel.email = Result.Email;

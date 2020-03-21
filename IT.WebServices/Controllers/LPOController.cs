@@ -18,14 +18,14 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+       readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage LPOUnconvertedALL()
         {
             try
             {
-                var LpoList = unitOfWork.GetRepositoryInstance<LPOInvoiceViewModel>().ReadStoredProcedure("LPOUnconvertedALL"
+                var LpoList = unitOfWork.GetRepositoryInstance<UnconvertedLpoModel>().ReadStoredProcedure("LPOUnconvertedALL"
                     ).ToList();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LpoList));
@@ -162,9 +162,22 @@ namespace IT.WebServices.Controllers
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                ).ToList();
 
-                var CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
-               , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = 2 }
-               ).ToList();
+
+                var CompanyModel = new List<CompnayModel>();
+
+                if (LPOData.IsForCustomer == true)
+                {
+                     CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
+                       , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
+                       ).ToList();
+
+                }
+                else
+                {
+                     CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("AWFCompanyById @CompanyId"
+                   , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
+                   ).ToList();
+                }
 
                 var venderData = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("VenderById @Id"
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = LPOData.VenderId }
@@ -203,9 +216,21 @@ namespace IT.WebServices.Controllers
               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = lPOInvoiceModel.Id }
               ).ToList();
 
-                var CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
-               , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = lPOInvoiceModel.detailId }
-               ).ToList();
+                var CompanyModel = new List<CompnayModel>();
+
+                if (LPOData.IsForCustomer == true)
+                {
+                    CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
+                      , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
+                      ).ToList();
+
+                }
+                else
+                {
+                    CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("AWFCompanyById @CompanyId"
+                  , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
+                  ).ToList();
+                }
 
                 var venderData = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("VenderById @Id"
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = LPOData.VenderId }
@@ -268,7 +293,7 @@ namespace IT.WebServices.Controllers
                 DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
                 DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
                 
-                var LPOID = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("LPOUpdateAll @Id, @Total, @VAT, @GrandTotal, @TermCondition, @CustomerNote,@FromDate, @DueDate, @PONumber, @RefrenceNumber, @CreatedBy,@ReasonUpdated",
+                var LPOID = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("LPOUpdateAll @Id, @Total, @VAT, @GrandTotal, @TermCondition, @CustomerNote,@FromDate, @DueDate, @PONumber, @RefrenceNumber, @CreatedBy,@ReasonUpdated,@CustomerId",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.Id }
                     , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.Total }
                     , new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.VAT }
@@ -277,10 +302,11 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("CustomerNote", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.CustomerNote == null ? (object)DBNull.Value : lPOInvoiceViewModel.CustomerNote }
                     , new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate }
                     , new SqlParameter("DueDate", System.Data.SqlDbType.DateTime) { Value = DueDate }
-                    , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber }
+                    , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber ?? "Unknown" }
                     , new SqlParameter("RefrenceNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.RefrenceNumber == null ? (object)DBNull.Value : lPOInvoiceViewModel.RefrenceNumber }
                     , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.CreatedBy }
                     , new SqlParameter("ReasonUpdated", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.ReasonUpdated == null ? (object)DBNull.Value : lPOInvoiceViewModel.ReasonUpdated }
+                    , new SqlParameter("CustomerId", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.CustomerId }
                    ).FirstOrDefault();
 
                 int LPOId = Convert.ToInt32(LPOID.Result);

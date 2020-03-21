@@ -17,7 +17,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage All()
@@ -61,7 +61,7 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
+               
                 DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
                 DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
 
@@ -134,12 +134,18 @@ namespace IT.WebServices.Controllers
                 var LPOData = unitOfWork.GetRepositoryInstance<LPOInvoiceViewModel>().ReadStoredProcedure("InvoiceById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
-                
+
+                var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("InvoiceDetailsById @Id"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+               ).ToList();
+
+
                 var Documents = unitOfWork.GetRepositoryInstance<UploadDocumentsViewModel>().ReadStoredProcedure("UploadDocumentsGetByRespectiveId @Id,@Flag"
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Invoice" }
                ).ToList();
 
+                LPOData.lPOInvoiceDetailsList = LPODetailsData;
                 LPOData.uploadDocumentsViewModels = Documents;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOData));
@@ -160,9 +166,6 @@ namespace IT.WebServices.Controllers
                 var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("InvoiceDetailsById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).ToList();
-
-
-
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPODetailsData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -257,7 +260,7 @@ namespace IT.WebServices.Controllers
                 , new SqlParameter("Total", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.Total }
                 , new SqlParameter("VAT", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.VAT }
                 , new SqlParameter("GrandTotal", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.GrandTotal }
-                , new SqlParameter("@LPODetaiRowId", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.detailId }
+                , new SqlParameter("LPODetaiRowId", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.detailId }
                 ).FirstOrDefault();
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOData.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -333,7 +336,5 @@ namespace IT.WebServices.Controllers
             }
         }
 
-
-        
     }
 }

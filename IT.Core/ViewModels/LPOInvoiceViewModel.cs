@@ -56,7 +56,8 @@ namespace IT.Core.ViewModels
         public decimal ReceivedAmount { get; set; }
         public string BillNumber { get; set; }
         public bool IsForCustomer { get; set; }
-        
+        public bool IsFromLpo { get; set; }
+
         public List<LPOInvoiceDetails> lPOInvoiceDetailsList { get; set; }
         public List<CompnayModel> compnays { get; set; }
         public List<VenderViewModel> venders { get; set; }

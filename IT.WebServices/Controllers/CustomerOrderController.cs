@@ -22,7 +22,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
@@ -736,6 +736,12 @@ namespace IT.WebServices.Controllers
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                       ).ToList();
 
+                    var Documents = unitOfWork.GetRepositoryInstance<UploadDocumentsViewModel>().ReadStoredProcedure("UploadDocumentsGetByRespectiveId @Id,@Flag"
+                       , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+                       , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Order" }
+                       ).ToList();
+
+                    customerGroupOrder.uploadDocumentsViewModels = Documents;
                     customerGroupOrder.customerGroupOrderDetailsViewModels = customerGroupOrderDetails;
 
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerGroupOrder));
