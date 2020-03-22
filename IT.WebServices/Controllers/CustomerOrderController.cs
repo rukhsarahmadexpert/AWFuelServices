@@ -563,7 +563,7 @@ namespace IT.WebServices.Controllers
                         
                         StorageController storageController = new StorageController();
 
-                        var uniqueId = "sse1";
+                        var uniqueId = Guid.NewGuid().ToString();
                         for (int i = 0; i < 2; i++)
                         {
                             StorageViewModel storageViewModel = new StorageViewModel();
@@ -574,18 +574,19 @@ namespace IT.WebServices.Controllers
                             storageViewModel.ProductId = customerOrderListViewModel.customerOrderViewModels[0].ProductId;
                             storageViewModel.uniques = uniqueId;
 
-                            if (i == 1)
+                            if (i == 0)
                             {
+
                                 storageViewModel.Source = "client vehicle";
                                 storageViewModel.Action = true;
                                 storageViewModel.StockOut = 0;
                                 storageViewModel.StockIn = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
                                 storageViewModel.ClientVehicleId = customerOrderListViewModel.customerOrderViewModels[0].VehicleId;
                                 storageViewModel.VehicleId = 0;
+                                
                             }
                             else
                             {
-
                                 storageViewModel.Action = false;
                                 storageViewModel.StockOut = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
                                 storageViewModel.StockIn = 0;
@@ -601,6 +602,7 @@ namespace IT.WebServices.Controllers
                                     storageViewModel.VehicleId = 0;
                                     storageViewModel.SiteId = checkIfDriverLoginGetVehicleId.DriverLoginId;
                                 }
+
                             }
 
                             storageViewModels.Add(storageViewModel);

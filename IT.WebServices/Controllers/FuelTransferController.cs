@@ -211,8 +211,9 @@ namespace IT.WebServices.Controllers
                 StorageController storageController = new StorageController();
               
                 if (Result.Id > 0)
-                { 
-                    var uniqueId = System.DateTime.UtcNow.ToString();
+                {
+                    
+                    var uniqueId = Guid.NewGuid().ToString();
                     for (int i = 0; i < 2; i++)
                     {
                         StorageViewModel storageViewModel = new StorageViewModel();

@@ -28,6 +28,7 @@ namespace IT.Core.ViewModels
         public string PONumber { get; set; }
         public bool Action { get; set; }
         public string uniques { get; set; }
+        public string TrafficPlateNumberClient { get; set; }
 
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
     }
