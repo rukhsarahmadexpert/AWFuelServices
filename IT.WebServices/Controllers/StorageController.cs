@@ -82,7 +82,24 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var Res = new StorageViewModel();
+                var Result = StorageAddNew(storageViewModels);
+
+                userRepsonse.Success(new JavaScriptSerializer().Serialize(Result));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Exception((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
+        [NonAction]
+        public StorageViewModel StorageAddNew(List<StorageViewModel> storageViewModels)
+        {
+            var Res = new StorageViewModel();
+            try
+            {                
                 if (storageViewModels.Count > 0)
                 {
                     foreach (var storageViewModel in storageViewModels)
@@ -101,24 +118,20 @@ namespace IT.WebServices.Controllers
                         , new SqlParameter("ProductId", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.ProductId }
                         , new SqlParameter("uniques", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.uniques }
                         ).FirstOrDefault();
-                    }                                        
+                    }
                 }
                 else
                 {
                     Res.Decription = "No Data Received To Insert";
-                    userRepsonse.Success(new JavaScriptSerializer().Serialize(Res));
-                    return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+                    return Res;
                 }
-
-                userRepsonse.Success(new JavaScriptSerializer().Serialize(Res));
-                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+                return Res;
             }
-            catch (Exception ex)
+            catch(Exception ex)
             {
-                userRepsonse.Exception((new JavaScriptSerializer()).Serialize(ex));
-                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+                Res.Decription = "exception occured" + ex.Message;
+                return Res;
             }
-
         }
 
         [HttpPost]

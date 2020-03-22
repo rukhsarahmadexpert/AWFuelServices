@@ -208,34 +208,39 @@ namespace IT.WebServices.Controllers
                 
                 int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
 
-                if(Result.Id > 0)
+                StorageController storageController = new StorageController();
+              
+                if (Result.Id > 0)
                 { 
                     var uniqueId = System.DateTime.UtcNow.ToString();
                     for (int i = 0; i < 2; i++)
                     {
-                        storageViewModels[i].CreatedBy = Result.Id;
-                        storageViewModels[i].Source = "admin vehicle";
-                        storageViewModels[i].SiteId = 0;
-                        storageViewModels[i].ClientVehicleId = 0;
-                        storageViewModels[i].LPOId = 0;
-                        storageViewModels[i].Decription = "Transfer From Vehcile";
-                        storageViewModels[i].ProductId = 1;
-                        storageViewModels[i].uniques = uniqueId;
+                        StorageViewModel storageViewModel = new StorageViewModel();
+                        storageViewModel.CreatedBy = Result.Id;
+                        storageViewModel.Source = "admin vehicle";
+                        storageViewModel.SiteId = 0;
+                        storageViewModel.ClientVehicleId = 0;
+                        storageViewModel.LPOId = 0;
+                        storageViewModel.Decription = "Transfer From Vehcile";
+                        storageViewModel.ProductId = 1;
+                        storageViewModel.uniques = uniqueId;
 
                         if (i == 0)
                         {
-                            storageViewModels[i].Action = true;
-                            storageViewModels[i].StockOut = 0;
-                            storageViewModels[i].StockIn = Result.TransferdQuantity;
-                            storageViewModels[i].VehicleId = Result.ToVehicleId;
+                            storageViewModel.Action = true;
+                            storageViewModel.StockOut = 0;
+                            storageViewModel.StockIn = Result.TransferdQuantity;
+                            storageViewModel.VehicleId = Result.ToVehicleId;
                         }
                         else
                         {
-                            storageViewModels[i].Action = false;
-                            storageViewModels[i].StockOut = Result.TransferdQuantity;
-                            storageViewModels[i].StockIn = 0;
-                            storageViewModels[i].VehicleId = Result.FromVehicleId;
+                            storageViewModel.Action = false;
+                            storageViewModel.StockOut = Result.TransferdQuantity;
+                            storageViewModel.StockIn = 0;
+                            storageViewModel.VehicleId = Result.FromVehicleId;
                         }
+
+                        storageViewModels.Add(storageViewModel);
                     }
                 }
                 
@@ -245,24 +250,7 @@ namespace IT.WebServices.Controllers
                 }
                 else
                 {
-                    foreach (var storageViewModel in storageViewModels)
-                    {
-                        var Res1 = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageAdd @StockIn,@StockOut,@VehicleId,@CreatedBy,@Source,@SiteId,@Action,@ClientVehicleId,@LPOId,@Decription,@ProductId,@uniques",
-                          new SqlParameter("StockIn", System.Data.SqlDbType.Float) { Value = storageViewModel.StockIn }
-                        , new SqlParameter("StockOut", System.Data.SqlDbType.Float) { Value = storageViewModel.StockOut }
-                        , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.VehicleId }
-                        , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = storageViewModel.CreatedBy }
-                        , new SqlParameter("Source", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Source == null ? (object)DBNull.Value : storageViewModel.Source }
-                        , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = storageViewModel.SiteId }
-                        , new SqlParameter("Action", System.Data.SqlDbType.Bit) { Value = storageViewModel.Action }
-                        , new SqlParameter("ClientVehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.ClientVehicleId }
-                        , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = storageViewModel.LPOId }
-                        , new SqlParameter("Decription", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Decription }
-                        , new SqlParameter("ProductId", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.ProductId }
-                        , new SqlParameter("uniques", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.uniques }
-                        ).FirstOrDefault();
-                    }
-                    
+                    var Results = storageController.StorageAddNew(storageViewModels);   
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 }
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

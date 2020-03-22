@@ -461,15 +461,14 @@ namespace IT.WebServices.Controllers
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupDirectSaleAdd([FromBody] CustomerOrderListViewModel customerOrderListViewModel)
         {
-
             try
             {
+                
                 int OrderId = 0;
                 var number = OrderNumber();
                 if (number != null)
                 {
                     int NumberNew = Convert.ToInt32(number) + 1;
-
                     customerOrderListViewModel.CustomerOrderNumber = NumberNew.ToString();
                 }
                 else
@@ -480,12 +479,11 @@ namespace IT.WebServices.Controllers
                 try
                 {
                     var ResDriver = new DriverModel();
-                    if (customerOrderListViewModel.DriverId == 0)
+                    if (customerOrderListViewModel.customerOrderViewModels[0].DriverId == 0)
                     {
                         ResDriver = unitOfWork.GetRepositoryInstance<DriverModel>().ReadStoredProcedure("DirectSaleDriverAdd @DriverName, @ContactNumber",
                          new SqlParameter("DriverName", System.Data.SqlDbType.VarChar) { Value = customerOrderListViewModel.DriverName ?? (object)DBNull.Value }
-                        , new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }
-                       
+                        ,new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }                       
                        ).FirstOrDefault();
 
                         customerOrderListViewModel.customerOrderViewModels[0].DriverId = ResDriver.DriverId;
@@ -493,7 +491,7 @@ namespace IT.WebServices.Controllers
 
                     var OrderAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupDirectSaleAdd  @DeliverdQuantity, @CreatedBy,@CustomerNote,@CustomerOrderId,@CustomerOrderNumber,@RequestThrough",
                             //new SqlParameter("CustomerId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerId }
-                           new SqlParameter("DeliverdQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DeliverdQuantity }
+                            new SqlParameter("DeliverdQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DeliverdQuantity }
                           , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
                           , new SqlParameter("CustomerNote", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.CustomerNote ?? (object)DBNull.Value }
                           , new SqlParameter("CustomerOrderId", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.CustomerOrderNumber ?? (object)DBNull.Value }
@@ -530,9 +528,9 @@ namespace IT.WebServices.Controllers
                         }
 
                         //Send Notification
-                        customerOrderListViewModel.Title = "Order Created";
+                        customerOrderListViewModel.Title = "Direct Sale";
                         customerOrderListViewModel.NotificationCode = "ADM-001";
-                        customerOrderListViewModel.Message = "new Order Created.";
+                        customerOrderListViewModel.Message = "Direct Sale has been done.";
 
                         int Res = AdminNotificaton(customerOrderListViewModel);
 
@@ -551,11 +549,64 @@ namespace IT.WebServices.Controllers
                         OrderAdd.LocationFullUrl = Result.LocationFullUrl;
                         OrderAdd.PickingPoint = Result.PickingPoint;
                         
-                        var OrderAddedDetails = unitOfWork.GetRepositoryInstance<CustomerOrderViewModel>().ReadStoredProcedure("OrderAddedDetails @OrderId",
+                         var OrderAddedDetails = unitOfWork.GetRepositoryInstance<CustomerOrderViewModel>().ReadStoredProcedure("OrderAddedDetails @OrderId",
                          new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = OrderId }
                          ).ToList();
 
                         OrderAdd.customerOrderViewModels = OrderAddedDetails;
+
+                        var checkIfDriverLoginGetVehicleId = unitOfWork.GetRepositoryInstance<DriverLoginHistoryViewModelForAdmin>().ReadStoredProcedure("AWFDriverGetVehicleIdByLogin @CreatedBy",
+                            new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
+                         ).FirstOrDefault();
+
+                        List<StorageViewModel> storageViewModels = new List<StorageViewModel>();
+                        
+                        StorageController storageController = new StorageController();
+
+                        var uniqueId = "sse1";
+                        for (int i = 0; i < 2; i++)
+                        {
+                            StorageViewModel storageViewModel = new StorageViewModel();
+                            storageViewModel.CreatedBy = Result.CreatedBy;
+                            storageViewModel.SiteId = 0;
+                            storageViewModel.LPOId = 0;
+                            storageViewModel.Decription = "Direct Sale";
+                            storageViewModel.ProductId = customerOrderListViewModel.customerOrderViewModels[0].ProductId;
+                            storageViewModel.uniques = uniqueId;
+
+                            if (i == 1)
+                            {
+                                storageViewModel.Source = "client vehicle";
+                                storageViewModel.Action = true;
+                                storageViewModel.StockOut = 0;
+                                storageViewModel.StockIn = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
+                                storageViewModel.ClientVehicleId = customerOrderListViewModel.customerOrderViewModels[0].VehicleId;
+                                storageViewModel.VehicleId = 0;
+                            }
+                            else
+                            {
+
+                                storageViewModel.Action = false;
+                                storageViewModel.StockOut = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
+                                storageViewModel.StockIn = 0;
+                                storageViewModel.ClientVehicleId = 0;
+                                if (checkIfDriverLoginGetVehicleId.VehicleId > 0)
+                                {
+                                    storageViewModel.Source = "admin vehicle";
+                                    storageViewModel.VehicleId = checkIfDriverLoginGetVehicleId.VehicleId;
+                                }
+                                else
+                                {
+                                    storageViewModel.Source = "site";
+                                    storageViewModel.VehicleId = 0;
+                                    storageViewModel.SiteId = checkIfDriverLoginGetVehicleId.DriverLoginId;
+                                }
+                            }
+
+                            storageViewModels.Add(storageViewModel);
+                        }
+
+                        var Results = storageController.StorageAddNew(storageViewModels); 
 
                         userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAdd));
                         return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
