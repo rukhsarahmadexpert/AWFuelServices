@@ -80,6 +80,7 @@
     <Compile Include="ViewModels\CustomerOrderGroupViewModel.cs" />
     <Compile Include="ViewModels\CustomerOrderListViewModel.cs" />
     <Compile Include="ViewModels\CustomerOrderViewModel.cs" />
+    <Compile Include="ViewModels\CustomerRemainingBookingViewModel.cs" />
     <Compile Include="ViewModels\CustomerViewModel.cs" />
     <Compile Include="ViewModels\DailyTyreTestViewModel.cs" />
     <Compile Include="ViewModels\DataTablesParm.cs" />

@@ -10,5 +10,7 @@ namespace IT.Core.ViewModels
     {
        public List<CustomerBookingViewModel> Reserved { get; set; }
        public List<CustomerBookingViewModel> Remaining { get; set; }
+       public List<CustomerBookingViewModel> Pending { get; set; }
+       public CustomerBookingViewModel MostRecentBooking { get; set; }
     }
 }

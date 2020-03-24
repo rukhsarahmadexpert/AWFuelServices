@@ -22,8 +22,8 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        readonly string contentType = "application/json";
-        
+        readonly string contentType = "application/json"; 
+
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
         {          
@@ -768,6 +768,7 @@ namespace IT.WebServices.Controllers
             }
         }
         
+        //Remaining Booking can find here
         [HttpPost]
         public HttpResponseMessage CustomerGroupOrderById(int Id)
         {
@@ -794,6 +795,11 @@ namespace IT.WebServices.Controllers
                        , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Order" }
                        ).ToList();
 
+                    var customerRemainingBooking = unitOfWork.GetRepositoryInstance<CustomerRemainingBookingViewModel>().ReadStoredProcedure("CustomerBookingByCompanyId @CompanyId"
+                       , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerGroupOrder.CompanyId }
+                        ).ToList();
+
+                    customerGroupOrder.customerRemainingBookingViewModels = customerRemainingBooking;
                     customerGroupOrder.uploadDocumentsViewModels = Documents;
                     customerGroupOrder.customerGroupOrderDetailsViewModels = customerGroupOrderDetails;
 
@@ -1293,13 +1299,14 @@ namespace IT.WebServices.Controllers
             int Count =0;
             try
             {
-                var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber",
+                var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId",
                         new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                       , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
                       , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
                       , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
                       , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
-                      , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber == null ? (object)DBNull.Value : customerOrderListViewModel.DeliveryNoteNumber }
+                      , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
+                      , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.BookingId }
 
                       ).FirstOrDefault();
 
@@ -1329,11 +1336,8 @@ namespace IT.WebServices.Controllers
                             //customerOrderListViewModel.Message = "Admin Assign Order to Driver";
                             //customerOrderListViewModel.RequestedQuantity = 0;
                             //customerOrderListViewModel.CustomerId = Success.Result;
-
                             ////Send Notification
                             //CustomerNotification(customerOrderListViewModel);
-
-
                         }
                         catch (Exception ex)
                         {
@@ -1464,7 +1468,7 @@ namespace IT.WebServices.Controllers
             }
         }
 
-        //Customer Order Group Details  asign by Id
+        //Customer Order Group Details asign by Id
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupAsignedDetailsByOrderId(int Id)
         {

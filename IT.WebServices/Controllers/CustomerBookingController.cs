@@ -191,17 +191,31 @@ namespace IT.WebServices.Controllers
             try
             {
                 CustomerBookingReservedRemaining customerBookingReservedRemaining = new CustomerBookingReservedRemaining();
-
-
+                
                 if (customerBookingViewModel.CompanyId > 0)
                 {
                      var BookingReserved = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingReserved @CompanyId",
                         new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
                         ).ToList();
 
+                    var BookingDeliverd = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingDeliverd @CompanyId",
+                       new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                       ).ToList();
+
+                    var BookingPending = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingPending @CompanyId",
+                       new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                       ).ToList();
+
+                    var BookingMostRecent = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingRecentBooking @CompanyId",
+                       new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                       ).FirstOrDefault();
+
                     customerBookingReservedRemaining.Reserved = BookingReserved;
-                    customerBookingReservedRemaining.Remaining = BookingReserved;
-                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerBookingReservedRemaining));
+                    customerBookingReservedRemaining.Remaining = BookingDeliverd;
+                    customerBookingReservedRemaining.Pending = BookingPending;
+                    customerBookingReservedRemaining.MostRecentBooking = BookingMostRecent;
+
+                    userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerBookingReservedRemaining));
                 }
                 else
                 {
