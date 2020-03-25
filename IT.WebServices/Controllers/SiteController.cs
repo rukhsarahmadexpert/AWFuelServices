@@ -121,13 +121,15 @@ namespace IT.WebServices.Controllers
         }
         
         [HttpPost]
-        public HttpResponseMessage Delete(SiteViewModel siteViewModel)
+        public HttpResponseMessage ChangeStatus(SiteViewModel siteViewModel)
         {
             try
             {
-                var siteDate = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("DeleteSite @Id"
+                var siteDate = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("DeleteSite @Id,@IsActive"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = siteViewModel.Id }
+                , new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = siteViewModel.IsActive }
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(siteDate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

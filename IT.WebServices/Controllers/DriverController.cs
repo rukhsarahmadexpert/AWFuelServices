@@ -572,12 +572,13 @@ namespace IT.WebServices.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage Delete(DriverViewModel driverViewModel)
+        public HttpResponseMessage ChangeStatus(DriverViewModel driverViewModel)
         {
             try
             {
-                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("DeleteDriver @Id",
-                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
+                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("DeleteDriver @Id,@IsActive",
+                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id },
+                       new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = driverViewModel.IsActive }
                     );
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

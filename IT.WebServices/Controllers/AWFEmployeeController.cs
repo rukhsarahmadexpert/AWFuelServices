@@ -122,12 +122,13 @@ namespace IT.WebServices.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage Delete(EmployeeViewModel employeeViewModel)
+        public HttpResponseMessage ChangeStatus(EmployeeViewModel employeeViewModel)
         {
             try
             {
-                var employee = unitOfWork.GetRepositoryInstance<EmployeeViewModel>().ReadStoredProcedure("EmployeeDeleteAWFuel @Id",
-                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = employeeViewModel.Id }
+                var employee = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("EmployeeDeleteAWFuel @Id,@IsActive",
+                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = employeeViewModel.Id },
+                    new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = employeeViewModel.IsActive }
                     ).ToList();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(employee));

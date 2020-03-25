@@ -122,12 +122,13 @@ namespace IT.WebServices.Controllers
         }
         
         [HttpPost]
-        public HttpResponseMessage Delete(int Id)
+        public HttpResponseMessage ChangeStatus(VenderViewModel venderViewModel)
         {
             try
             {
-                var siteDate = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("VenderDisable @Id"
-                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+                var siteDate = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("VenderDisable @Id,@IsActive"
+                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = venderViewModel.Id }
+                , new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = venderViewModel.IsActive }
                 ).FirstOrDefault();
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(siteDate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

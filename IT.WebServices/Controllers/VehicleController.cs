@@ -489,12 +489,13 @@ namespace IT.WebServices.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage Delete(VehicleViewModel vehicleViewModel)
+        public HttpResponseMessage ChangeStatus(VehicleViewModel vehicleViewModel)
         {
             try
             {
-                var result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("VehcileDisable @Id",
-                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id }
+                var result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("VehcileDisable @Id,@IsActive",
+                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id },
+                    new SqlParameter("IsActive", System.Data.SqlDbType.Int) { Value = vehicleViewModel.IsActive }
                     ).FirstOrDefault();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(result));
