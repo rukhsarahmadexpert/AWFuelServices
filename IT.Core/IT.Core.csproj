@@ -48,6 +48,7 @@
     <Compile Include="ViewModels\AWDepartments.cs" />
     <Compile Include="ViewModels\AWFuelDepartmentDetailsViewModel.cs" />
     <Compile Include="ViewModels\BookingUpdateReason.cs" />
+    <Compile Include="ViewModels\BookLeftRemainingViewModel.cs" />
     <Compile Include="ViewModels\CompanyAboutUs.cs" />
     <Compile Include="ViewModels\CompanyContactUs.cs" />
     <Compile Include="ViewModels\CompanyModel.cs" />

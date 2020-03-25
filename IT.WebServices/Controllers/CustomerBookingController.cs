@@ -198,6 +198,10 @@ namespace IT.WebServices.Controllers
                         new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
                         ).ToList();
 
+                    var BookingLefted = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingLefted @CompanyId",
+                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                        ).ToList();
+
                     var BookingDeliverd = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingDeliverd @CompanyId",
                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
                        ).ToList();
@@ -210,10 +214,17 @@ namespace IT.WebServices.Controllers
                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
                        ).FirstOrDefault();
 
+                    var bookLeftRemaining = unitOfWork.GetRepositoryInstance<BookLeftRemainingViewModel>().ReadStoredProcedure("CustomerBookingLeftedRemainingQtyByCompanyId @CompanyId",
+                      new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                      ).FirstOrDefault();
+
+                    
                     customerBookingReservedRemaining.Reserved = BookingReserved;
+                    customerBookingReservedRemaining.Lefted = BookingLefted;
                     customerBookingReservedRemaining.Remaining = BookingDeliverd;
                     customerBookingReservedRemaining.Pending = BookingPending;
                     customerBookingReservedRemaining.MostRecentBooking = BookingMostRecent;
+                    customerBookingReservedRemaining.bookLeftRemainingViewModel = bookLeftRemaining;
 
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerBookingReservedRemaining));
                 }
@@ -236,10 +247,12 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var BookingAcceptReject = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingAcceptReject @Id,@IsAccepted,@IsActive",
+                var BookingAcceptReject = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingAcceptReject @Id,@IsAccepted,@IsActive,@Description,@CreatedBy",
                     new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id },
                     new SqlParameter("IsAccepted", System.Data.SqlDbType.Bit) { Value = customerBookingViewModel.IsAccepted },
-                    new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = customerBookingViewModel.IsActive }
+                    new SqlParameter("IsActive", System.Data.SqlDbType.Bit) { Value = customerBookingViewModel.IsActive },
+                    new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.Description ?? (object)DBNull.Value },
+                    new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy }
                     ).FirstOrDefault();
 
                 CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
