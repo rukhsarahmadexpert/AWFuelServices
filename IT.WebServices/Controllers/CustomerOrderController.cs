@@ -22,11 +22,11 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        readonly string contentType = "application/json"; 
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
-        {          
+        {
 
             try
             {
@@ -243,7 +243,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         //AWFuel Admin
         [HttpPost]
         public HttpResponseMessage GetDeliverdOrder(PagingParameterModel pagingparametermodel)
@@ -293,7 +293,7 @@ namespace IT.WebServices.Controllers
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
-               
+
             }
             catch (Exception ex)
             {
@@ -397,7 +397,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage GetDeliverOrderByDriver(int Id)
         {
@@ -416,7 +416,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderDeliverdUpdate(CustomerOrderDeliverVewModel customerOrderDeliverVewModel)
         {
@@ -436,7 +436,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CusOrderDelUpdateCusConfirmed(int Id)
         {
@@ -463,7 +463,7 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                
+
                 int OrderId = 0;
                 var number = OrderNumber();
                 if (number != null)
@@ -483,7 +483,7 @@ namespace IT.WebServices.Controllers
                     {
                         ResDriver = unitOfWork.GetRepositoryInstance<DriverModel>().ReadStoredProcedure("DirectSaleDriverAdd @DriverName, @ContactNumber",
                          new SqlParameter("DriverName", System.Data.SqlDbType.VarChar) { Value = customerOrderListViewModel.DriverName ?? (object)DBNull.Value }
-                        ,new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }                       
+                        , new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }
                        ).FirstOrDefault();
 
                         customerOrderListViewModel.customerOrderViewModels[0].DriverId = ResDriver.DriverId;
@@ -512,7 +512,7 @@ namespace IT.WebServices.Controllers
                                , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                                , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.DriverId }
                                , new SqlParameter("RequestedQuantity", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.OrderQuantity }
-                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value}
+                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                                , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.ProductId }
                                ).FirstOrDefault();
                             }
@@ -537,8 +537,8 @@ namespace IT.WebServices.Controllers
                         var Result = unitOfWork.GetRepositoryInstance<CustomerOrderLocationViewModel>().ReadStoredProcedure("CustomerOrderLocationAdd @OrderId,@longitude,@latitude,@LocationFullUrl,@PickingPoint,@CreatedBy",
                           new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = OrderId }
                         , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.longitude ?? (object)DBNull.Value }
-                        , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.latitude ?? (object)DBNull.Value  }
-                        , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.LocationFullUrl ?? ""  }
+                        , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.latitude ?? (object)DBNull.Value }
+                        , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.LocationFullUrl ?? "" }
                         , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.PickingPoint ?? "" }
                         , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
 
@@ -548,10 +548,10 @@ namespace IT.WebServices.Controllers
                         OrderAdd.longitude = Result.longitude;
                         OrderAdd.LocationFullUrl = Result.LocationFullUrl;
                         OrderAdd.PickingPoint = Result.PickingPoint;
-                        
-                         var OrderAddedDetails = unitOfWork.GetRepositoryInstance<CustomerOrderViewModel>().ReadStoredProcedure("OrderAddedDetails @OrderId",
-                         new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = OrderId }
-                         ).ToList();
+
+                        var OrderAddedDetails = unitOfWork.GetRepositoryInstance<CustomerOrderViewModel>().ReadStoredProcedure("OrderAddedDetails @OrderId",
+                        new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = OrderId }
+                        ).ToList();
 
                         OrderAdd.customerOrderViewModels = OrderAddedDetails;
 
@@ -560,7 +560,7 @@ namespace IT.WebServices.Controllers
                          ).FirstOrDefault();
 
                         List<StorageViewModel> storageViewModels = new List<StorageViewModel>();
-                        
+
                         StorageController storageController = new StorageController();
 
                         var uniqueId = Guid.NewGuid().ToString();
@@ -583,7 +583,7 @@ namespace IT.WebServices.Controllers
                                 storageViewModel.StockIn = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
                                 storageViewModel.ClientVehicleId = customerOrderListViewModel.customerOrderViewModels[0].VehicleId;
                                 storageViewModel.VehicleId = 0;
-                                
+
                             }
                             else
                             {
@@ -608,7 +608,7 @@ namespace IT.WebServices.Controllers
                             storageViewModels.Add(storageViewModel);
                         }
 
-                        var Results = storageController.StorageAddNew(storageViewModels); 
+                        var Results = storageController.StorageAddNew(storageViewModels);
 
                         userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAdd));
                         return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -664,8 +664,8 @@ namespace IT.WebServices.Controllers
                           , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
                           , new SqlParameter("CustomerOrderNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.CustomerOrderNumber ?? (object)DBNull.Value }
                           , new SqlParameter("RequestThrough", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.RequestThrough ?? (object)DBNull.Value }
-                          , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.SiteId  }
-                          , new SqlParameter("IsBulk", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsBulk  }
+                          , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.SiteId }
+                          , new SqlParameter("IsBulk", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsBulk }
                     ).FirstOrDefault();
 
                     OrderId = OrderAdd.Id;
@@ -737,12 +737,12 @@ namespace IT.WebServices.Controllers
                     return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
         }
-        
+
         [HttpPost]
         public string OrderNumber()
         {
@@ -767,7 +767,7 @@ namespace IT.WebServices.Controllers
                 throw ex;
             }
         }
-        
+
         //Remaining Booking can find here
         [HttpPost]
         public HttpResponseMessage CustomerGroupOrderById(int Id)
@@ -842,7 +842,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-                
+
         [HttpPost]
         public HttpResponseMessage CustomerGroupOrderDetailsByOrderId(int Id)
         {
@@ -881,7 +881,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderDetailsGroupAsignedByOrderId(int Id)
         {
@@ -900,7 +900,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-               
+
         [HttpPost]
         public HttpResponseMessage CustomerGroupOrderUpdate([FromBody] CustomerOrderListViewModel customerOrderListViewModel)
         {
@@ -956,12 +956,12 @@ namespace IT.WebServices.Controllers
                 }
 
                 var Result = unitOfWork.GetRepositoryInstance<CustomerOrderLocationViewModel>().ReadStoredProcedure("CustomerOrderLocationUpdate @OrderId,@longitude,@latitude,@LocationFullUrl,@PickingPoint",
-                     new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.Id  }
+                     new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.Id }
                    , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.longitude == null ? (object)DBNull.Value : customerOrderListViewModel.longitude }
                    , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.latitude == null ? (object)DBNull.Value : customerOrderListViewModel.latitude }
                    , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.LocationFullUrl == null ? (object)DBNull.Value : customerOrderListViewModel.LocationFullUrl }
                    , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.PickingPoint == null ? (object)DBNull.Value : customerOrderListViewModel.PickingPoint }
-                 
+
                   ).FirstOrDefault();
 
                 OrderAdd.latitude = Result.latitude;
@@ -1001,7 +1001,7 @@ namespace IT.WebServices.Controllers
                 throw ex;
             }
         }
-        
+
         //Admin CustomerOrder Api with Bragi
 
         #region Admin Section
@@ -1013,13 +1013,13 @@ namespace IT.WebServices.Controllers
             {
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerOrderGroupAll @OrderPrgress,@IsSend,@IsRead,@CompanyId,@IsTrue"
                       , new SqlParameter("OrderPrgress", System.Data.SqlDbType.NVarChar) { Value = customerOrderGroupViewModel.OrderProgress }
-                      ,new SqlParameter("IsSend", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsSend }
-                      ,new SqlParameter("IsRead", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsRead }
-                      ,new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerOrderGroupViewModel.CompanyId }
-                      ,new SqlParameter("IsTrue", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsTrue }
+                      , new SqlParameter("IsSend", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsSend }
+                      , new SqlParameter("IsRead", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsRead }
+                      , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerOrderGroupViewModel.CompanyId }
+                      , new SqlParameter("IsTrue", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsTrue }
                     ).ToList();
 
-                if(customerOrderGroupViewModel.serachKey != null && customerOrderGroupViewModel.serachKey != "" && customerOrderGroupViewModel.SearchFlage != "" && customerOrderGroupViewModel.SearchFlage != null)
+                if (customerOrderGroupViewModel.serachKey != null && customerOrderGroupViewModel.serachKey != "" && customerOrderGroupViewModel.SearchFlage != "" && customerOrderGroupViewModel.SearchFlage != null)
                 {
                     if (customerOrderGroupViewModel.SearchFlage == "ByCompanyName")
                     {
@@ -1050,7 +1050,7 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
-               
+
                 int count = CustomerUnreadOrderList.Count();
 
                 // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
@@ -1065,10 +1065,10 @@ namespace IT.WebServices.Controllers
                 // Calculating Totalpage by Dividing (No of Records / Pagesize)  
                 int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
 
-                
-                    // Returns List of Customer after applying Paging   
+
+                // Returns List of Customer after applying Paging   
                 var items = CustomerUnreadOrderList.OrderByDescending(x => x.Id).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
-               
+
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
 
@@ -1108,7 +1108,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage customerOrderGroupViewed(SearchViewModel searchViewModel)
         {
@@ -1117,7 +1117,7 @@ namespace IT.WebServices.Controllers
                 var Res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("customerOrderGroupViewed @Id",
                     new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
                     ).FirstOrDefault();
-                
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -1127,7 +1127,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderRejectAcceptByAdmin(CustomerOrderViewModel customerOrderViewModel)
         {
@@ -1135,9 +1135,9 @@ namespace IT.WebServices.Controllers
             {
                 var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderRejectByAdmin @Id,@Status,@Description,@CreatedBy"
                    , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
-                   ,new SqlParameter("Status", System.Data.SqlDbType.Bit) { Value = customerOrderViewModel.Status }
-                   ,new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
-                   ,new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.CreatedBy }
+                   , new SqlParameter("Status", System.Data.SqlDbType.Bit) { Value = customerOrderViewModel.Status }
+                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
+                   , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.CreatedBy }
                    ).FirstOrDefault();
 
                 CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
@@ -1174,7 +1174,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderAcceptRejectedOrderByAdmin(CustomerOrderViewModel customerOrderViewModel)
         {
@@ -1231,7 +1231,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         public HttpResponseMessage CustomerOrderRejectDetailsById(int Id)
         {
             try
@@ -1291,21 +1291,50 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupAsignedDriverAdd([FromBody] CustomerOrderListViewModel customerOrderListViewModel)
         {
+
+            var BookingId = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingTopOneOpen @OrderId",
+                               new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.OrderId }
+                               ).FirstOrDefault();
+
+            var checkQuantity = new SingleIntegerValueResult();
+            if (BookingId.Result > 0)
+            {
+                checkQuantity = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingQuantityToDeliver @OrderId",
+                              new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result },
+                              new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
+                              ).FirstOrDefault();
+
+                if (checkQuantity.Result != 0 && checkQuantity.Result != 1)
+                {
+
+                    var NewAutoBookingAndOrderCreation = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAddAuto @OrderId,@DeliveryQuantity,@DeliveryNoteNumber,@UnitPrice,@VAT,@TotalAmount",
+                               new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.OrderId },
+                               new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = checkQuantity.TotalCount },
+                               new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber },
+                               new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.UnitPrice },
+                               new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity },
+                               new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity }
+                               ).FirstOrDefault();
+
+                    // customerOrderListViewModel.RequestedQuantity = customerOrderListViewModel.RequestedQuantity - checkQuantity.TotalCount;
+
+                }
+            }
             int Count = 0;
             try
             {
                 var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId",
-                        new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
-                      , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
-                      , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
-                      , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
-                      , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
-                      , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
-                      , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.BookingId }
+                            new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
+                          , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
+                          , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
+                          , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
+                          , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
+                          , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
+                          , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result }
 
                       ).FirstOrDefault();
 
@@ -1321,14 +1350,14 @@ namespace IT.WebServices.Controllers
                              new SqlParameter("OrderDriverAsignId", System.Data.SqlDbType.Int) { Value = ResultId }
                            , new SqlParameter("CustomerOrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                            , new SqlParameter("CustomerOrderDetailId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
-                           , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId     }
+                           , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                             ).FirstOrDefault();
-                            
+
                             var Success = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderOrderProgresChange @OrderId",
                                 new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                                 ).FirstOrDefault();
 
-                             Count = Success.TotalCount;
+                            Count = Success.TotalCount;
 
                             //customerOrderListViewModel.NotificationCode = "CUS-003";
                             //customerOrderListViewModel.Title = "Admin Assign Order";
@@ -1345,7 +1374,7 @@ namespace IT.WebServices.Controllers
                         }
                     }
 
-                    if(Count == 0)
+                    if (Count == 0)
                     {
                         customerOrderListViewModel.Id = 0;
                     }
@@ -1354,7 +1383,7 @@ namespace IT.WebServices.Controllers
                         customerOrderListViewModel.Id = ResultId;
                     }
 
-                  //  CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                    //  CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
 
                     customerOrderListViewModel.NotificationCode = "DRV-001";
                     customerOrderListViewModel.Title = "Assigned Order";
@@ -1363,7 +1392,7 @@ namespace IT.WebServices.Controllers
                     customerOrderListViewModel.email = OrderAsignAdd.email;
 
                     //Send Notification
-                   int Res = DriverNotification(customerOrderListViewModel);
+                    int Res = DriverNotification(customerOrderListViewModel);
 
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAsignAdd));
                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -1376,8 +1405,9 @@ namespace IT.WebServices.Controllers
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
+
         }
-              
+
         #endregion
 
         #region Customer Order Group For Driver with Bragi
@@ -1390,7 +1420,7 @@ namespace IT.WebServices.Controllers
             {
                 var customerGroupOrder = unitOfWork.GetRepositoryInstance<CustomerOrderGroupViewModel>().ReadStoredProcedure("CustomerOrderGroupBYDriverAsignedId @Id,@OrderProgress",
                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = pagingparametermodel.Id },
-                   new SqlParameter("OrderProgress", System.Data.SqlDbType.NVarChar) { Value = pagingparametermodel.OrderProgress}
+                   new SqlParameter("OrderProgress", System.Data.SqlDbType.NVarChar) { Value = pagingparametermodel.OrderProgress }
                    ).ToList();
 
 
@@ -1409,7 +1439,7 @@ namespace IT.WebServices.Controllers
                 int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
 
                 // Returns List of Customer after applying Paging   
-                var items = customerGroupOrder.OrderByDescending(x=>x.CreatedDate).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+                var items = customerGroupOrder.OrderByDescending(x => x.CreatedDate).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
 
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
@@ -1429,8 +1459,8 @@ namespace IT.WebServices.Controllers
                 };
 
                 HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-                
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));            
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
@@ -1439,7 +1469,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         //Customer Order Group asign by Id
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupAsignedByOrderId(SearchViewModel searchViewModel)
@@ -1486,7 +1516,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderDetailsGroupDeliveryByDriver(CustomerOrderDeliverVewModel customerOrderDeliverVewModel)
         {
@@ -1520,7 +1550,7 @@ namespace IT.WebServices.Controllers
 
                     //Send Notification
                     AdminNotificaton(customerOrderListViewModel);
-                    
+
                     customerOrderListViewModel.NotificationCode = "CUS-005";
                     customerOrderListViewModel.Title = "Order Deliverd";
                     customerOrderListViewModel.Message = "Driver has deliverd order successfully";
@@ -1539,14 +1569,14 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-               
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderSend(SearchViewModel searchViewModel)
         {
             try
             {
                 var Result = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderSend @Id",
-                   new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }                 
+                   new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
                    ).FirstOrDefault();
 
                 if (Result != null)
@@ -1554,7 +1584,7 @@ namespace IT.WebServices.Controllers
                     CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
 
                     customerOrderListViewModel.NotificationCode = "ADM-001";
-                    customerOrderListViewModel.Title = "Order Created";                    
+                    customerOrderListViewModel.Title = "Order Created";
                     customerOrderListViewModel.Message = "New customer order created!";
 
                     int Res = AdminNotificaton(customerOrderListViewModel);
@@ -1568,7 +1598,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         [HttpPost]
         public HttpResponseMessage CustomerOrderAcceptedByDriver(CustomerNoteOrderViewModel customerNoteOrderViewModel)
         {
@@ -1600,13 +1630,13 @@ namespace IT.WebServices.Controllers
                     customerOrderListViewModel.NotificationCode = "CUS-004";
                     customerOrderListViewModel.Title = "Order Assigend";
                     customerOrderListViewModel.Message = "Order assign to assigned successfully";
-                    customerOrderListViewModel.RequestedQuantity = 0;  
+                    customerOrderListViewModel.RequestedQuantity = 0;
                     customerOrderListViewModel.CustomerId = Res.Result;
 
                     //Send Notification to Customer
                     CustomerNotification(customerOrderListViewModel);
                 }
-                
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(1));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -1635,16 +1665,16 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         public HttpResponseMessage CustomerOrderGroupRejectByDriver(CustomerNoteOrderViewModel customerNoteOrderViewModel)
         {
             try
             {
                 var Res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupRejectByDriver @OrderId,@DriverId,@OrderAsignId,@Description",
                    new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerNoteOrderViewModel.OrderId }
-                  ,new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerNoteOrderViewModel.DriverId }
-                  ,new SqlParameter("OrderAsignId", System.Data.SqlDbType.Int) { Value = customerNoteOrderViewModel.OrderAssignId }
-                  ,new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerNoteOrderViewModel.Note }
+                  , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerNoteOrderViewModel.DriverId }
+                  , new SqlParameter("OrderAsignId", System.Data.SqlDbType.Int) { Value = customerNoteOrderViewModel.OrderAssignId }
+                  , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerNoteOrderViewModel.Note }
                    ).FirstOrDefault();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res.Result));
@@ -1656,17 +1686,17 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         #endregion
 
         #region Customer Group Order Status
 
         //CustomerOrder Group All Asigned To Driver
         [HttpPost]
-        public HttpResponseMessage CustomerOrderGroupAllAsignedToDriver()  
+        public HttpResponseMessage CustomerOrderGroupAllAsignedToDriver()
         {
             try
-            { 
+            {
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerOrderGroupAllAsignedToDriver"
                     ).ToList();
 
@@ -1681,7 +1711,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         //(last time updated)
         //CustomerOrder Group All Company 
 
@@ -1711,7 +1741,7 @@ namespace IT.WebServices.Controllers
                 int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
 
                 // Returns List of Customer after applying Paging   
-                var items = CustomerOrderList.OrderByDescending(x=>x.OrderId).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+                var items = CustomerOrderList.OrderByDescending(x => x.OrderId).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
 
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
@@ -1763,7 +1793,7 @@ namespace IT.WebServices.Controllers
         }
 
         #endregion
-       
+
         #region Message
         [HttpPost]
         public HttpResponseMessage CustomerDeliverdOrderUpdate(int Id)
@@ -1803,10 +1833,10 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
         //Get Driver And Vehicle list in single api
         [HttpPost]
-        public HttpResponseMessage DriverandVehicellist(SearchViewModel searchViewModel )
+        public HttpResponseMessage DriverandVehicellist(SearchViewModel searchViewModel)
         {
             DriverVehicelViewModel driverVehicelViewModel = new DriverVehicelViewModel();
             try
@@ -1832,7 +1862,7 @@ namespace IT.WebServices.Controllers
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
-            
+
         }
 
         [HttpPost]
@@ -1850,7 +1880,7 @@ namespace IT.WebServices.Controllers
                      ).FirstOrDefault();
 
                 var DriverQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerDriverAll @CompanyId",
-                      new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }                      
+                      new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                     ).FirstOrDefault();
 
                 var VehicleQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerVehicleAll @CompanyId",
@@ -1869,7 +1899,7 @@ namespace IT.WebServices.Controllers
                        ).ToList();
 
 
-                foreach(var item in SevenDatesRequested)
+                foreach (var item in SevenDatesRequested)
                 {
                     CustomerOrderDateViewModel customerOrderDateViewModel = new CustomerOrderDateViewModel();
                     var CountByDate = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderCountByDate @CompanyId,@CreatedDare",
@@ -1941,7 +1971,7 @@ namespace IT.WebServices.Controllers
             {
                 DateTime TodayDate = Convert.ToDateTime(System.DateTime.Now.ToShortDateString());
 
-                var RequestedQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderRequestedQtyTodateAdmin @CurrentDate",                     
+                var RequestedQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderRequestedQtyTodateAdmin @CurrentDate",
                        new SqlParameter("CurrentDate", System.Data.SqlDbType.DateTime) { Value = TodayDate }
                      ).FirstOrDefault();
 
@@ -1953,7 +1983,7 @@ namespace IT.WebServices.Controllers
                       new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                     ).FirstOrDefault();
 
-                var DeliverdQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDeliverdQtyTodateAdmin @CurrentDate",                      
+                var DeliverdQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDeliverdQtyTodateAdmin @CurrentDate",
                        new SqlParameter("CurrentDate", System.Data.SqlDbType.DateTime) { Value = TodayDate }
                      ).FirstOrDefault();
 
@@ -2021,7 +2051,7 @@ namespace IT.WebServices.Controllers
             }
 
         }
-        
+
         //Custoer Notification
         [NonAction]
         public int AdminNotificaton(CustomerOrderListViewModel customerOrderListViewModel)
@@ -2031,21 +2061,21 @@ namespace IT.WebServices.Controllers
             List<NotificationInformation> notificationInformation = notificationController.GetAllAdminTokens("Admin");
 
             var Tokenss = notificationInformation.Where(x => x.Device == "ios")
-                                                    .Select(x =>new NotificationInformation()
+                                                    .Select(x => new NotificationInformation()
                                                     {
                                                         Device = x.Device,
                                                         DeviceId = x.DeviceId,
                                                         DeviceToken = x.DeviceToken
                                                     }).ToList();
 
-            var tokens = new string [Tokenss.Count];
+            var tokens = new string[Tokenss.Count];
 
             for (int i = 0; i < Tokenss.Count; i++)
             {
                 tokens[i] = Tokenss[i].DeviceToken;
             }
             var pushSent = PushNotificationLogic.SendPushNotification(tokens, customerOrderListViewModel.Title, customerOrderListViewModel.NotificationCode, customerOrderListViewModel.Message);
-                        
+
             var TokenWebAndroid = notificationInformation.Where(x => x.Device != "ios")
                                                     .Select(x => new NotificationInformation()
                                                     {
@@ -2110,7 +2140,7 @@ namespace IT.WebServices.Controllers
             }
 
             return 1;
-            
+
         }
 
         public int DriverNotification(CustomerOrderListViewModel customerOrderListViewModel)

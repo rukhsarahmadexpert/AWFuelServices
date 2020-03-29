@@ -44,6 +44,7 @@ namespace IT.Core.ViewModels
         public bool IsSend { get; set; }
         public bool IsBulk { get; set; }
         public int BookingId { get; set; }
+        public decimal UnitPrice { get; set; }
 
         public  List<CustomerOrderViewModel> customerOrderViewModels { get; set; }
     }
