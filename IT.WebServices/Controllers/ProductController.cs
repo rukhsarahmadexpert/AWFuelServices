@@ -81,13 +81,15 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("ProductUpdate @Id, @Name,@Description,@Unit,@UpdatedBy",
+                var res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("ProductUpdate @Id, @Name,@Description,@Unit,@UpdatedBy,@Uprice",
                        new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = productViewModel.Id }
                      , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = productViewModel.Name == null ? (object)DBNull.Value : productViewModel.Name }
                      , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = productViewModel.Description == null ? (object)DBNull.Value : productViewModel.Description }
                      , new SqlParameter("Unit", System.Data.SqlDbType.Int) { Value = productViewModel.Unit }
                      , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = productViewModel.UpdatedBy }
+                     , new SqlParameter("Uprice", System.Data.SqlDbType.Money) { Value = productViewModel.UPrice}
                     ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(res.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

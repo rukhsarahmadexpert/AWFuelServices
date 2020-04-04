@@ -91,7 +91,7 @@ namespace IT.WebServices.Controllers
                             File.Delete(filename);
                         }
 
-                        if (file1.Headers.ContentDisposition.Name == "\"LogoUrl\"")
+                        if (file1.Headers.ContentDisposition.Name == "\"LogoUrl\"" || file1.Headers.ContentDisposition.DispositionType == "LogoUrl")
                         {
                             companyViewModel.LogoUrl = thisFileName;
                         }
@@ -302,7 +302,7 @@ namespace IT.WebServices.Controllers
                             File.Delete(filename);
                         }
 
-                        if (file1.Headers.ContentDisposition.Name == "\"LogoUrl\"")
+                        if (file1.Headers.ContentDisposition.Name == "\"LogoUrl\"" || file1.Headers.ContentDisposition.DispositionType == "LogoUrl")
                         {
                             companyViewModel.LogoUrl = thisFileName;
                         }

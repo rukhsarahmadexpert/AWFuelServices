@@ -340,14 +340,12 @@ namespace IT.WebServices.Controllers
 
         [HttpPost]
         public async Task<HttpResponseMessage> update()
-        {
-            
+        {            
             try
             {
 
                 VehicleViewModel vehicleViewModel = new VehicleViewModel();
-
-
+                
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -552,11 +550,12 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var Result = unitOfWork.GetRepositoryInstance<DriverModel>().ReadStoredProcedure("DirectSaleDriverAdd @DriverName,@ContactNumber",
+                var Result = unitOfWork.GetRepositoryInstance<DriverModel>().ReadStoredProcedure("DirectSaleDriverAdd @TraficPlateNumber, @DriverName,@ContactNumber",
                      new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = driverModel.TraficPlateNumber == null ? (object)DBNull.Value : driverModel.TraficPlateNumber },
                      new SqlParameter("DriverName", System.Data.SqlDbType.NVarChar) { Value = driverModel.DriverName == null ? driverModel.TraficPlateNumber : driverModel.DriverName },
                      new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = driverModel.ContactNumber == null ? "UnKnown" : driverModel.ContactNumber }
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

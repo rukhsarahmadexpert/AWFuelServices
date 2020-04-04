@@ -457,7 +457,7 @@ namespace IT.WebServices.Controllers
         }
 
         #region Customer Group Order        
-
+        //Direct sale Add
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupDirectSaleAdd([FromBody] CustomerOrderListViewModel customerOrderListViewModel)
         {
@@ -591,7 +591,7 @@ namespace IT.WebServices.Controllers
                                 storageViewModel.StockOut = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
                                 storageViewModel.StockIn = 0;
                                 storageViewModel.ClientVehicleId = 0;
-                                if (checkIfDriverLoginGetVehicleId.VehicleId > 0)
+                                if (checkIfDriverLoginGetVehicleId != null && checkIfDriverLoginGetVehicleId.VehicleId > 0)
                                 {
                                     storageViewModel.Source = "admin vehicle";
                                     storageViewModel.VehicleId = checkIfDriverLoginGetVehicleId.VehicleId;
@@ -600,7 +600,14 @@ namespace IT.WebServices.Controllers
                                 {
                                     storageViewModel.Source = "site";
                                     storageViewModel.VehicleId = 0;
-                                    storageViewModel.SiteId = checkIfDriverLoginGetVehicleId.DriverLoginId;
+                                    if (checkIfDriverLoginGetVehicleId != null)
+                                    {
+                                        storageViewModel.SiteId = checkIfDriverLoginGetVehicleId.DriverLoginId;
+                                    }
+                                    else
+                                    {
+                                        storageViewModel.SiteId = 1;
+                                    }
                                 }
 
                             }
@@ -1297,20 +1304,19 @@ namespace IT.WebServices.Controllers
         {
 
             var BookingId = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingTopOneOpen @OrderId",
-                               new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.OrderId }
+                               new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                                ).FirstOrDefault();
 
             var checkQuantity = new SingleIntegerValueResult();
             if (BookingId.Result > 0)
             {
-                checkQuantity = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingQuantityToDeliver @OrderId",
+                checkQuantity = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingQuantityToDeliver @BookingId,@DeliveryQuantity",
                               new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result },
                               new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
                               ).FirstOrDefault();
 
                 if (checkQuantity.Result != 0 && checkQuantity.Result != 1)
                 {
-
                     var NewAutoBookingAndOrderCreation = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAddAuto @OrderId,@DeliveryQuantity,@DeliveryNoteNumber,@UnitPrice,@VAT,@TotalAmount",
                                new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.OrderId },
                                new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = checkQuantity.TotalCount },

@@ -17,5 +17,6 @@ namespace IT.Core.ViewModels
         public int DriverId { get; set; }
         public string ContactNumber { get; set; }
         public string Name { get; set; }
+        public string DriverName { get; set; }
     }
 }

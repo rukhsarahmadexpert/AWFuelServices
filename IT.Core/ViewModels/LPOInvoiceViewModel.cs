@@ -14,7 +14,6 @@ namespace IT.Core.ViewModels
         public decimal Total { get; set; }
         public decimal VAT { get; set; }
         public int LPOId { get; set; }
-
         public decimal GrandTotal { get; set; }
         public string TermCondition { get; set; }
         public string CustomerNote { get; set; }
@@ -27,7 +26,6 @@ namespace IT.Core.ViewModels
 
         public decimal Balance { get; set; }
 
-       
         public string PONumber { get; set; }
         public string RefrenceNumber { get; set; }
         public int CreatedBy { get; set; }
@@ -53,8 +51,11 @@ namespace IT.Core.ViewModels
         public string Heading { get; set; }
         public int CustomerId { get; set; }
         public int CompanyId { get; set; }
+        public int TotalQuantity { get; set; }
         public decimal ReceivedAmount { get; set; }
         public string BillNumber { get; set; }
+        public string Product { get; set; }
+        public string UnitName { get; set; }
         public bool IsForCustomer { get; set; }
         public bool IsFromLpo { get; set; }
 
