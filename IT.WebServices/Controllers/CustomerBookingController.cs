@@ -94,6 +94,22 @@ namespace IT.WebServices.Controllers
                , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UnitId }
                  ).FirstOrDefault();
 
+                if (BookingAdd.Id > 0)
+                {
+                    var customerOrderListViewModel = new CustomerOrderListViewModel();
+                    CustomerOrderController customerOrderController = new CustomerOrderController();
+
+                    if (customerOrderListViewModel.IsSend == true)
+                    {
+                        //Send Notification
+                        customerOrderListViewModel.Title = "Booking Created";
+                        customerOrderListViewModel.NotificationCode = "ADM-009";
+                        customerOrderListViewModel.Message = "new Booking Created.";
+
+                        int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
+                    }
+                }
+                
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingAdd));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -260,9 +276,16 @@ namespace IT.WebServices.Controllers
 
                 if (BookingAcceptReject.IsAccepted == true)
                 {
+
+                     var BookingConfirmation = unitOfWork.GetRepositoryInstance<BookingUpdateReason>().ReadStoredProcedure("BookingConfirmationAdd @BookingId,@CreatedBy,@CompanyId",
+                       new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id },
+                       new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy },
+                       new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = BookingAcceptReject.CompanyId }
+                         ).FirstOrDefault();
+
                     customerOrderListViewModel.NotificationCode = "CUS-006";
                     customerOrderListViewModel.Title = "Booking Accepted";
-                    customerOrderListViewModel.Message = "Admin has accepted your Booking successfully, Please send LPO";
+                    customerOrderListViewModel.Message = "Confirmation has beed sended successfully, Please send LPO";
                     customerOrderListViewModel.RequestedQuantity = 0;
                     customerOrderListViewModel.CustomerId = BookingAcceptReject.CompanyId;
 
@@ -309,7 +332,103 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
+        
+        [HttpPost]
+        public HttpResponseMessage BookingConfirmationAdd(CustomerBookingViewModel customerBookingViewModel)
+        {
+            try
+            {
+                var BookingConfirmation = unitOfWork.GetRepositoryInstance<BookingUpdateReason>().ReadStoredProcedure("BookingConfirmationAdd @BookingId,@CreatedBy,@CompanyId",
+                    new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id },
+                    new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy },
+                    new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
+                      ).FirstOrDefault();
 
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingConfirmation));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+              
+        [HttpPost]
+        public HttpResponseMessage BookingConfirmationByCompany(PagingParameterModel pagingparametermodel)
+        {
+            try
+            {
+                var BookingList = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("BookingConfirmationByCompany @CompanyId",
+                    new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = pagingparametermodel.CompanyId }
+                    ).ToList();
+
+                int count = BookingList.Count();
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+                int CurrentPage = pagingparametermodel.pageNumber;
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+                int PageSize = pagingparametermodel.pageSize;
+
+                // Display TotalCount to Records to User  
+                int TotalCount = count;
+
+                // Calculating Totalpage by Dividing (No of Records / Pagesize)  
+                int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+
+                // Returns List of Customer after applying Paging   
+                var items = BookingList.Skip((CurrentPage - 1) * PageSize).Take(PageSize).OrderByDescending(x => x.Id).ToList();
+
+                // if CurrentPage is greater than 1 means it has previousPage  
+                var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+                // if TotalPages is greater than CurrentPage means it has nextPage  
+                var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+                // Object which we are going to send in header   
+                var paginationMetadata = new
+                {
+                    totalCount = TotalCount,
+                    pageSize = PageSize,
+                    currentPage = CurrentPage,
+                    totalPages = TotalPages,
+                    previousPage,
+                    nextPage
+                };
+
+                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
+        [HttpPost]
+        public HttpResponseMessage BookingConfirmationById(SearchViewModel searchViewModel)
+        {
+            try
+            {
+                var ConfirmationData = unitOfWork.GetRepositoryInstance<BookingConfirmationViewModel>().ReadStoredProcedure("BookingConfirmationById @Id",
+                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
+                    ).FirstOrDefault();
+                             
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ConfirmationData));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+        
     }
 }
 

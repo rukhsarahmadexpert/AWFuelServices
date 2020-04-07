@@ -29,6 +29,7 @@ namespace IT.Core.ViewModels
         public string CompanyName { get; set; }
         public DateTime DueDate { get; set; }
         public string DueDates { get; set; }
+        public string CreatedDates { get; set; }
         public bool IsAccepted { get; set; }
         public string UpdateReason { get; set; }
 

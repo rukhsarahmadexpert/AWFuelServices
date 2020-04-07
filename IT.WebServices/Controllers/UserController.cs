@@ -2,13 +2,19 @@
 using IT.Core.ViewModels.Common;
 using IT.Repository;
 using IT.WebServices.MISC;
+using IT.WebServices.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Mail;
+using System.Threading.Tasks;
+using System.Web;
+using System.Web.Configuration;
 using System.Web.Http;
 using System.Web.Script.Serialization;
 
@@ -308,6 +314,125 @@ namespace IT.WebServices.Controllers
             }
         }
         
+        [HttpPost]
+        public HttpResponseMessage UserInformationByUserName(LoginViewModel loginViewModel)
+        {
+            try
+            {
+                var notificationAddResponse = unitOfWork.GetRepositoryInstance<UserViewModel>().ReadStoredProcedure("UserInformationByUserName @userName"
+                                                        ,new SqlParameter("userName", System.Data.SqlDbType.NVarChar) { Value = loginViewModel.UserName ?? (object)DBNull.Value }
+                                                        ).FirstOrDefault();
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(notificationAddResponse));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception exception)
+            {
+                userRepsonse.Exception(exception.Message);
+                return Request.CreateResponse(HttpStatusCode.Conflict, userRepsonse, contentType);
+            }
+        }
+
+        [HttpPost]
+        public async Task<HttpResponseMessage> UserInformationUpdate()
+        {
+            UserViewModel userViewModel = new UserViewModel();
+
+            try
+            {
+                if (!Request.Content.IsMimeMultipartContent())
+                {
+                    userRepsonse.Success((new JavaScriptSerializer()).Serialize("Media type Not Supported"));
+                    return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+                    //throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+                }
+
+                var provider = await Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(new InMemoryMultipartFormDataStreamProvider());
+                //access form data  
+                NameValueCollection formData = provider.FormData;
+
+                //access files  
+                IList<HttpContent> files = provider.Files;
+
+                Int32 unixTimestamp = (Int32)(DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
+                string DDTT = unixTimestamp.ToString();
+
+                for (int i = 0; i < files.Count; i++)
+                {
+
+                    HttpContent file1 = files[i];
+
+                    var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
+
+                    string filename = String.Empty;
+                    Stream input = await file1.ReadAsStreamAsync();
+                    string directoryName = String.Empty;
+                    string URL = String.Empty;
+                    string tempDocUrl = WebConfigurationManager.AppSettings["DocsUrl"];
+
+                    if (formData["ClientDocs"] == "ClientDocs")
+                    {
+                        var path = HttpRuntime.AppDomainAppPath;
+                        directoryName = System.IO.Path.Combine(path, "ClientDocument");
+                        filename = System.IO.Path.Combine(directoryName, thisFileName);
+
+                        //Deletion exists file  
+                        if (File.Exists(filename))
+                        {
+                            File.Delete(filename);
+                        }
+
+                        if (file1.Headers.ContentDisposition.Name == "\"ImageUrl\"" || file1.Headers.ContentDisposition.DispositionType == "ImageUrl")
+                        {
+                            userViewModel.ImageUrl = thisFileName;
+                        }
+
+                        string DocsPath = tempDocUrl + "/" + "ClientDocument" + "/";
+                        URL = DocsPath + thisFileName;
+
+                    }
+
+                    //Directory.CreateDirectory(@directoryName);  
+                    using (Stream file = File.OpenWrite(filename))
+                    {
+                        input.CopyTo(file);
+                        //close file  
+                        file.Close();
+                    }
+                    var response = Request.CreateResponse(HttpStatusCode.OK);
+                    response.Headers.Add("DocsUrl", URL);
+                }
+
+                userViewModel.UserId = Convert.ToInt32(HttpContext.Current.Request["UserId"]);
+                userViewModel.UserName = HttpContext.Current.Request["UserName"];
+                userViewModel.FullName = HttpContext.Current.Request["FullName"];
+                userViewModel.Gender = HttpContext.Current.Request["Gender"];
+                userViewModel.DOB = Convert.ToDateTime(HttpContext.Current.Request["DOB"]); 
+                
+                if(userViewModel.ImageUrl == null || userViewModel.ImageUrl == "")
+                {
+                    userViewModel.ImageUrl = HttpContext.Current.Request["ImageUrl"];
+                }
+
+                var notificationUpdateResponse = unitOfWork.GetRepositoryInstance<UserViewModel>().ReadStoredProcedure("UserInformationUpdate @UserID,@UserName,@FullName,@ImageUrl,@Gender,@DOB"
+                                                        , new SqlParameter("UserID", System.Data.SqlDbType.Int) { Value = userViewModel.UserId }
+                                                        , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = userViewModel.UserName ?? (object)DBNull.Value }
+                                                        , new SqlParameter("FullName", System.Data.SqlDbType.NVarChar) { Value = userViewModel.FullName ?? (object)DBNull.Value }
+                                                        , new SqlParameter("ImageUrl", System.Data.SqlDbType.NVarChar) { Value = userViewModel.ImageUrl ?? (object)DBNull.Value }
+                                                        , new SqlParameter("Gender", System.Data.SqlDbType.NVarChar) { Value = userViewModel.Gender ?? (object)DBNull.Value }
+                                                        , new SqlParameter("DOB", System.Data.SqlDbType.DateTime) { Value = userViewModel.DOB ?? (object)DBNull.Value }
+                                                        ).FirstOrDefault();
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(notificationUpdateResponse));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception exception)
+            {
+                userRepsonse.Exception(exception.Message);
+                return Request.CreateResponse(HttpStatusCode.Conflict, userRepsonse, contentType);
+            }
+        }
+
         #region Email
         [NonAction]
         public bool sendMailRessetPassword(string ToEmail, string Code, string Number)
@@ -326,19 +451,19 @@ namespace IT.WebServices.Controllers
 
                 MailMessage mail = new MailMessage();
 
-                mail.From = new MailAddress("support@invoicetip.nl"); //IMPORTANT: This must be same as your smtp authentication address.
+                mail.From = new MailAddress("info@awfuel.com"); //IMPORTANT: This must be same as your smtp authentication address.
                 mail.To.Add(ToEmail);
 
                 //set the content 
-                mail.Subject = "email verificatie";
+                mail.Subject = "email verification";
                 mail.IsBodyHtml = true;
                 mail.Body = html;
                 //send the message 
-                SmtpClient smtp = new SmtpClient("mail.invoicetip.nl");
+                SmtpClient smtp = new SmtpClient("mail.awfuel.com");
 
                 //IMPORANT:  Your smtp login email MUST be same as your FROM address. 
                 smtp.Port = 8889;
-                NetworkCredential Credentials = new NetworkCredential("support@invoicetip.nl", "Admin@123");
+                NetworkCredential Credentials = new NetworkCredential("info@awfuel.com", "Admin@123");
                 smtp.Credentials = Credentials;
                 smtp.Send(mail);
 
