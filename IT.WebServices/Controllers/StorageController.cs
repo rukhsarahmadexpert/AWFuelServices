@@ -174,7 +174,7 @@ namespace IT.WebServices.Controllers
             {
                 var StorageEditList = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageTwoRowBy @Id",
                     new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
-                    ).FirstOrDefault();
+                    ).ToList();
 
                 
                 var Documents = unitOfWork.GetRepositoryInstance<UploadDocumentsViewModel>().ReadStoredProcedure("UploadDocumentsGetByRespectiveId @Id,@Flag"
@@ -182,7 +182,7 @@ namespace IT.WebServices.Controllers
                   , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Storage" }
                   ).ToList();
 
-                StorageEditList.uploadDocumentsViewModels = Documents;
+                StorageEditList[0].uploadDocumentsViewModels = Documents;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(StorageEditList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

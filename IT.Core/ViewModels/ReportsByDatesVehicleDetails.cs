@@ -20,6 +20,6 @@ namespace IT.Core.ViewModels
         public int CustomerId { get; set; }
         public string CompanyName { get; set; }
         public string ProductName { get; set; }
-
+        public bool IsBulk { get; set; }
     }
 }

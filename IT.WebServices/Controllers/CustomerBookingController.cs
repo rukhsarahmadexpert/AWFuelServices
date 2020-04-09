@@ -99,15 +99,15 @@ namespace IT.WebServices.Controllers
                     var customerOrderListViewModel = new CustomerOrderListViewModel();
                     CustomerOrderController customerOrderController = new CustomerOrderController();
 
-                    if (customerOrderListViewModel.IsSend == true)
-                    {
+                    //if (customerOrderListViewModel.IsSend == true)
+                    //{
                         //Send Notification
                         customerOrderListViewModel.Title = "Booking Created";
                         customerOrderListViewModel.NotificationCode = "ADM-009";
                         customerOrderListViewModel.Message = "new Booking Created.";
 
                         int Res = customerOrderController.AdminNotificaton(customerOrderListViewModel);
-                    }
+                   // }
                 }
                 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingAdd));

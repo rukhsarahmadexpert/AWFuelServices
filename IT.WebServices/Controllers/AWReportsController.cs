@@ -930,21 +930,44 @@ namespace IT.WebServices.Controllers
 
             try
             {
-                var OrderDatesGroup = unitOfWork.GetRepositoryInstance<ReportsByDatesViewModel>().ReadStoredProcedure("CustomerOrderByDate @FromDate,@ToDate,@CurrentStatus,@CompanyId",
-                    new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate },
-                    new SqlParameter("ToDate", System.Data.SqlDbType.DateTime) { Value = ToDate },
-                    new SqlParameter("CurrentStatus", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.searchkey },
-                    new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
+                var OrderDatesGroup = new List<ReportsByDatesViewModel>();
+                var OrderDatesNonGroupList = new List<ReportsByDatesVehicleDetails>();
 
-                    ).ToList();
+                if (searchViewModel.Status == true)
+                {
+                    OrderDatesGroup = unitOfWork.GetRepositoryInstance<ReportsByDatesViewModel>().ReadStoredProcedure("CustomerOrderByDateBulk @FromDate,@ToDate,@CurrentStatus,@CompanyId",
+                        new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate },
+                        new SqlParameter("ToDate", System.Data.SqlDbType.DateTime) { Value = ToDate },
+                        new SqlParameter("CurrentStatus", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.searchkey },
+                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
 
-                var OrderDatesNonGroupList = unitOfWork.GetRepositoryInstance<ReportsByDatesVehicleDetails>().ReadStoredProcedure("CustomerOrderByDateWithOutGroup @FromDate,@ToDate,@CurrentStatus,@CompanyId",
+                        ).ToList();
+
+                  OrderDatesNonGroupList = unitOfWork.GetRepositoryInstance<ReportsByDatesVehicleDetails>().ReadStoredProcedure("CustomerOrderByDateWithOutGroupBulk @FromDate,@ToDate,@CurrentStatus,@CompanyId",
                    new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate },
                    new SqlParameter("ToDate", System.Data.SqlDbType.DateTime) { Value = ToDate },
                    new SqlParameter("CurrentStatus", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.searchkey },
                    new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                    ).ToList();
+                }
+                else
+                {
+                       OrderDatesGroup = unitOfWork.GetRepositoryInstance<ReportsByDatesViewModel>().ReadStoredProcedure("CustomerOrderByDate @FromDate,@ToDate,@CurrentStatus,@CompanyId",
+                        new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate },
+                        new SqlParameter("ToDate", System.Data.SqlDbType.DateTime) { Value = ToDate },
+                        new SqlParameter("CurrentStatus", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.searchkey },
+                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
 
+                        ).ToList();
+
+                    OrderDatesNonGroupList = unitOfWork.GetRepositoryInstance<ReportsByDatesVehicleDetails>().ReadStoredProcedure("CustomerOrderByDateWithOutGroup @FromDate,@ToDate,@CurrentStatus,@CompanyId",
+                      new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate },
+                      new SqlParameter("ToDate", System.Data.SqlDbType.DateTime) { Value = ToDate },
+                      new SqlParameter("CurrentStatus", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.searchkey },
+                      new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
+                      ).ToList();
+
+                }
 
                 foreach (var item in OrderDatesGroup)
                 {
