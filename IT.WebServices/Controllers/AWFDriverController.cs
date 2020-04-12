@@ -243,8 +243,7 @@ namespace IT.WebServices.Controllers
                     List<int> myValues = new List<int>() { 1, 2, 3 };
                     driverViewModel.LicenseTypes = myValues;
                 }
-
-
+                
                 driverViewModel.LicenseExpiry = HttpContext.Current.Request["LicenseExpiry"];
                 driverViewModel.Contact = HttpContext.Current.Request["Contact"];
                 driverViewModel.Email = HttpContext.Current.Request["Email"];
@@ -273,8 +272,7 @@ namespace IT.WebServices.Controllers
                         }
                     }
                 }
-
-
+                
                 var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CheckUser @UserName"
                      , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
                     ).FirstOrDefault();

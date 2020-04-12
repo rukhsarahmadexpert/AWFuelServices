@@ -204,8 +204,6 @@ namespace IT.WebServices.Controllers
 
                     HttpContent file1 = files[i];
 
-
-
                     var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
 
                     string filename = String.Empty;
@@ -216,8 +214,6 @@ namespace IT.WebServices.Controllers
 
                     if (formData["ClientDocs"] == "ClientDocs")
                     {
-
-
                         var path = HttpRuntime.AppDomainAppPath;
                         directoryName = System.IO.Path.Combine(path, "ClientDocument");
                         filename = System.IO.Path.Combine(directoryName, thisFileName);
@@ -259,8 +255,7 @@ namespace IT.WebServices.Controllers
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Headers.Add("DocsUrl", URL);
                 }
-
-
+                
                 vehicleViewModel.VehicleType = Convert.ToInt32(HttpContext.Current.Request["VehicleType"]);
                 vehicleViewModel.TraficPlateNumber = HttpContext.Current.Request["TraficPlateNumber"];
                 vehicleViewModel.TCNumber = HttpContext.Current.Request["TCNumber"];
@@ -274,8 +269,7 @@ namespace IT.WebServices.Controllers
                 vehicleViewModel.UID = HttpContext.Current.Request["UID"];
                 vehicleViewModel.CompanyId = Convert.ToInt32(HttpContext.Current.Request["CompanyId"]);
                 vehicleViewModel.CreatedBy = Convert.ToInt32(HttpContext.Current.Request["CreatedBy"]);
-
-
+                
                 var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("VehicleCheckTraficPlateNumber @TraficPlateNumber,@CompanyId"
                   , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber }
                   , new SqlParameter("CompanyId", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.CompanyId }

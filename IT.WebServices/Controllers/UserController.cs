@@ -247,7 +247,6 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
                  changePasswordViewModel.NewPassword = HashPassword.GetHashCode(changePasswordViewModel.NewPassword);
 
                 var responselist = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("UserPasswordUpassword @NewPassword,@Email"                   

@@ -272,12 +272,12 @@ namespace IT.WebServices.Controllers
                         }
                     }
                 }
-                var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CheckUser @UserName"
-                    , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
+                var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("IsDriverEmailAvailible @Email"
+                    , new SqlParameter("Email", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
                    ).FirstOrDefault();
                 if (userIsAlreadyAvailible.Result > 0)
                 {
-                    userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("User Already Availible"));
+                    userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("Email Already Availible"));
                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
                 }
                 else

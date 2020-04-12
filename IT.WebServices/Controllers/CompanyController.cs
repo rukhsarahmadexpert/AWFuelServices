@@ -396,8 +396,6 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
-
                 var CompanyList = unitOfWork.GetRepositoryInstance<CompanyViewModel>().ReadStoredProcedure("CompayAll"
                    ).ToList();
                 //userRepsonse.Success((new JavaScriptSerializer()).Serialize(CompanyList));
