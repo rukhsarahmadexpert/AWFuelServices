@@ -24,8 +24,8 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
-                DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
+                DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate.ToString()).AddDays(1);
+                DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate.ToString()).AddDays(1);
 
                 var LPOID = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("BIllAdd @FromDate, @DueDate, @PONumber, @RefrenceNumber, @CreatedBy,@Bill_Id,@BillNumber,@Total, @VAT, @GrandTotal,@VenderId,@IsFromLpo"
 
