@@ -216,6 +216,7 @@
     <Compile Include="Controllers\AdvertisementController.cs" />
     <Compile Include="Controllers\AppVersionController.cs" />
     <Compile Include="Controllers\AWDepartmentController.cs" />
+    <Compile Include="Controllers\AWFCompanyController.cs" />
     <Compile Include="Controllers\AWFDriverController.cs" />
     <Compile Include="Controllers\AWFEmployeeController.cs" />
     <Compile Include="Controllers\AWFuelSalaryController.cs" />

@@ -338,8 +338,7 @@ namespace IT.WebServices.Controllers
                 companyViewModel.UpdatedBy = Convert.ToInt32(HttpContext.Current.Request["UpdatedBy"]);
                 companyViewModel.Address = HttpContext.Current.Request["Address"];
                 companyViewModel.TRN = HttpContext.Current.Request["TRN"];
-
-
+                
                 var CompanyUpdate = unitOfWork.GetRepositoryInstance<CompanyViewModel>().ReadStoredProcedure("CompanyUpdate @Id, @Name,@OwnerRepresentaive, @Street, @Postcode, @City, @State, @Country, @Phone, @Cell, @Email, @Web, @UpdatedBy,@Address,@TRN,@LogoUrl",
                      new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyViewModel.Id }
                    , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Name == null ? (object)DBNull.Value : companyViewModel.Name }

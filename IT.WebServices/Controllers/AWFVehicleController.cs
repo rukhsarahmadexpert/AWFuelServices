@@ -124,8 +124,6 @@ namespace IT.WebServices.Controllers
 
                     HttpContent file1 = files[i];
 
-
-
                     var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
 
                     string filename = String.Empty;

@@ -126,17 +126,29 @@ namespace IT.WebServices.Controllers
             try
             {
                 var BookingUpdate = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingUpdate @Id, @BookQuantity, @UnitPrice, @VAT, @TotalAmount, @Description,@UpdatedBy,@Productid,@UnitId",
-                 new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id }
-               , new SqlParameter("BookQuantity", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.BookQuantity }
-               , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.UnitPrice }
-               , new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.VAT }
-               , new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.TotalAmount }
-               , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.Description ?? (object)DBNull.Value }
-               , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UpdatedBy }
-               , new SqlParameter("Productid", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Productid }
-               , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UnitId }
-                 ).FirstOrDefault();
+                     new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id }
+                   , new SqlParameter("BookQuantity", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.BookQuantity }
+                   , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.UnitPrice }
+                   , new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.VAT }
+                   , new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.TotalAmount }
+                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.Description ?? (object)DBNull.Value }
+                   , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UpdatedBy }
+                   , new SqlParameter("Productid", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Productid }
+                   , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UnitId }
+                     ).FirstOrDefault();
 
+                if (customerBookingViewModel.reasonDescriptionViewModel != null)
+                {
+                    if (BookingUpdate.Id > 0)
+                    {
+                        var UpdateReason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionAdd @Id, @ReasonDescription, @Flag, @CreatedBy",
+                                            new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id }
+                                          , new SqlParameter("ReasonDescription", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.reasonDescriptionViewModel.ReasonDescription ?? (object)DBNull.Value }
+                                          , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.reasonDescriptionViewModel.Flag ?? (object)DBNull.Value }
+                                          , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy }
+                                          ).First();
+                    }
+                }
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingUpdate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

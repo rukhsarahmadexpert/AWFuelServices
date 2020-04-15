@@ -114,9 +114,9 @@ namespace IT.WebServices.Controllers
                         , new SqlParameter("Action", System.Data.SqlDbType.Bit) { Value = storageViewModel.Action }
                         , new SqlParameter("ClientVehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.ClientVehicleId }
                         , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = storageViewModel.LPOId }
-                        , new SqlParameter("Decription", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Decription }
+                        , new SqlParameter("Decription", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Decription ?? (object)DBNull.Value}
                         , new SqlParameter("ProductId", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.ProductId }
-                        , new SqlParameter("uniques", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.uniques }
+                        , new SqlParameter("uniques", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.uniques ?? (object)DBNull.Value}
                         ).FirstOrDefault();
                     }
                 }
@@ -142,7 +142,7 @@ namespace IT.WebServices.Controllers
                 var Res = new StorageViewModel();
                 foreach (var storageViewModel in storageViewModels)
                 {
-                    Res = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageUpdate @Id,@StockIn,@StockOut,@VehicleId,@CreatedBy,@Source,@SiteId,@Action,@ClientVehicleId,@LPOId,@Decription",
+                    Res = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageUpdate @Id,@StockIn,@StockOut,@VehicleId,@CreatedBy,@Source,@SiteId,@Action,@ClientVehicleId,@LPOId,@Decription,@ProductId",
                           new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = storageViewModel.Id }
                         , new SqlParameter("StockIn", System.Data.SqlDbType.Float) { Value = storageViewModel.StockIn }
                         , new SqlParameter("StockOut", System.Data.SqlDbType.Float) { Value = storageViewModel.StockOut }
@@ -154,6 +154,7 @@ namespace IT.WebServices.Controllers
                         , new SqlParameter("ClientVehicleId", System.Data.SqlDbType.Int) { Value = storageViewModel.ClientVehicleId }
                         , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = storageViewModel.LPOId }
                         , new SqlParameter("Decription", System.Data.SqlDbType.NVarChar) { Value = storageViewModel.Decription }
+                        , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = storageViewModel.ProductId }
                     ).FirstOrDefault();
                 }
                 userRepsonse.Success(new JavaScriptSerializer().Serialize(Res));
