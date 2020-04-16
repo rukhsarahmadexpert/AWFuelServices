@@ -192,8 +192,7 @@ namespace IT.WebServices.Controllers
                 vehicleViewModel.UID = HttpContext.Current.Request["UID"];
                 vehicleViewModel.CompanyId = Convert.ToInt32(HttpContext.Current.Request["CompanyId"]);
                 vehicleViewModel.CreatedBy = Convert.ToInt32(HttpContext.Current.Request["CreatedBy"]);
-
-
+                
                 var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("AWFVehicleCheckTraficPlateNumber @TraficPlateNumber,@CompanyId"
                    , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber }
                    , new SqlParameter("CompanyId", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.CompanyId }

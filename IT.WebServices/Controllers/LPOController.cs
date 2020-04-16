@@ -156,13 +156,11 @@ namespace IT.WebServices.Controllers
                 var LPOData = unitOfWork.GetRepositoryInstance<LPOInvoiceViewModel>().ReadStoredProcedure("LPOGetById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
-
-
+                
                 var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("LPODetailsById @Id"
                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                ).ToList();
-
-
+                
                 var CompanyModel = new List<CompnayModel>();
 
                 if (LPOData.IsForCustomer == true)
@@ -170,7 +168,6 @@ namespace IT.WebServices.Controllers
                      CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
                        , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
                        ).ToList();
-
                 }
                 else
                 {
