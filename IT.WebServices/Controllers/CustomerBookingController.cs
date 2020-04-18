@@ -1,5 +1,6 @@
 ﻿using IT.Core.ViewModels;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -123,6 +124,7 @@ namespace IT.WebServices.Controllers
         [HttpPost]
         public HttpResponseMessage CustomerBookingUpdate([FromBody] CustomerBookingViewModel customerBookingViewModel)
         {
+            UpdateReason updateReason = new UpdateReason(); 
             try
             {
                 var BookingUpdate = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingUpdate @Id, @BookQuantity, @UnitPrice, @VAT, @TotalAmount, @Description,@UpdatedBy,@Productid,@UnitId",
@@ -137,16 +139,11 @@ namespace IT.WebServices.Controllers
                    , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UnitId }
                      ).FirstOrDefault();
 
-                if (customerBookingViewModel.reasonDescriptionViewModel != null)
+                if (customerBookingViewModel.UpdateReasonDescriptionViewModel != null)
                 {
                     if (BookingUpdate.Id > 0)
                     {
-                        var UpdateReason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionAdd @Id, @ReasonDescription, @Flag, @CreatedBy",
-                                            new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id }
-                                          , new SqlParameter("ReasonDescription", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.reasonDescriptionViewModel.ReasonDescription ?? (object)DBNull.Value }
-                                          , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = customerBookingViewModel.reasonDescriptionViewModel.Flag ?? (object)DBNull.Value }
-                                          , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy }
-                                          ).First();
+                        var result = updateReason.Add(customerBookingViewModel.UpdateReasonDescriptionViewModel);
                     }
                 }
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingUpdate));
@@ -201,7 +198,13 @@ namespace IT.WebServices.Controllers
                , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Booking" }
                ).ToList();
 
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Id }
+               , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Booking" }
+               ).ToList();
+
                 BookingById.uploadDocumentsViewModels = Documents;
+                BookingById.updateReasonDescriptionViewModels = updatereason;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingById));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

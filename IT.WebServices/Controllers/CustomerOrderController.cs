@@ -1904,7 +1904,6 @@ namespace IT.WebServices.Controllers
                        new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                        ).ToList();
 
-
                 foreach (var item in SevenDatesRequested)
                 {
                     CustomerOrderDateViewModel customerOrderDateViewModel = new CustomerOrderDateViewModel();
@@ -1993,11 +1992,19 @@ namespace IT.WebServices.Controllers
                        new SqlParameter("CurrentDate", System.Data.SqlDbType.DateTime) { Value = TodayDate }
                      ).FirstOrDefault();
 
+                var VirtualQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("GETAdminTotalVirtual"                      
+                    ).FirstOrDefault();
+
+                var BookedQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("GETAdminTotalBooking"
+                    ).FirstOrDefault();
+
+                var CustomersBookedQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomersTotalConfirmBooking"
+                    ).FirstOrDefault();
+
                 //Requested 7 Record
                 List<CustomerOrderDateViewModel> reportsByDatesViewModelsRequested = new List<CustomerOrderDateViewModel>();
                 var SevenDatesRequested = unitOfWork.GetRepositoryInstance<CustomerOrderDateViewModel>().ReadStoredProcedure("CustomerOrderSevenDaysAdmin"
                          ).ToList();
-
 
                 foreach (var item in SevenDatesRequested)
                 {
@@ -2046,6 +2053,9 @@ namespace IT.WebServices.Controllers
                 customerOrderStatistics.RequestedBySevenDayed = reportsByDatesViewModelsRequested;
                 customerOrderStatistics.DeliverdBySevenDayed = reportsByDatesViewModelsDeliverd;
                 customerOrderStatistics.customerNotification = CustomerNotificationGetActive;
+                customerOrderStatistics.VirtualTotalQuantity = VirtualQTY.Result;
+                customerOrderStatistics.BookedTotalQuantity = BookedQTY.Result;
+                customerOrderStatistics.CustomerConfirmBooking = CustomersBookedQTY.Result;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerOrderStatistics));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -2055,7 +2065,6 @@ namespace IT.WebServices.Controllers
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
-
         }
 
         //Custoer Notification
@@ -2103,6 +2112,7 @@ namespace IT.WebServices.Controllers
             return Result;
         }
 
+        [NonAction]
         public int CustomerNotification(CustomerOrderListViewModel customerOrderListViewModel)
         {
             NotificationController notificationController = new NotificationController();
@@ -2149,6 +2159,7 @@ namespace IT.WebServices.Controllers
 
         }
 
+        [NonAction]
         public int DriverNotification(CustomerOrderListViewModel customerOrderListViewModel)
         {
             NotificationController notificationController = new NotificationController();

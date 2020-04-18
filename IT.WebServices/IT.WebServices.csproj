@@ -266,6 +266,7 @@
     </Compile>
     <Compile Include="MISC\HashPassword.cs" />
     <Compile Include="MISC\Notification.cs" />
+    <Compile Include="MISC\UpdateReason.cs" />
     <Compile Include="Models\InMemoryMultipartFormDataStreamProvider.cs" />
     <Compile Include="Models\PagingParameterModel.cs" />
     <Compile Include="Models\UserModel.cs" />

@@ -34,8 +34,9 @@ namespace IT.Core.ViewModels
         public string UpdateReason { get; set; }
 
         public BookingUpdateReason bookingUpdateReason { get; set; }
-        public UpdateReasonDescriptionViewModel reasonDescriptionViewModel { get; set; }
+        public UpdateReasonDescriptionViewModel UpdateReasonDescriptionViewModel { get; set; }
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }
 

@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -257,7 +258,8 @@ namespace IT.WebServices.Controllers
 
         [HttpPost]
         public async Task<HttpResponseMessage> Update()
-        {   
+        {
+            UpdateReason updateReason = new UpdateReason();
             try
             {
                 CompanyViewModel companyViewModel = new CompanyViewModel();
@@ -266,11 +268,9 @@ namespace IT.WebServices.Controllers
                 {
                     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
                 }
-
                 var provider = await Request.Content.ReadAsMultipartAsync<InMemoryMultipartFormDataStreamProvider>(new InMemoryMultipartFormDataStreamProvider());
                 //access form data  
                 NameValueCollection formData = provider.FormData;
-
                 //access files  
                 IList<HttpContent> files = provider.Files;
 
@@ -279,7 +279,6 @@ namespace IT.WebServices.Controllers
 
                 for (int i = 0; i < files.Count; i++)
                 {
-
                     HttpContent file1 = files[i];
 
                     var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
@@ -338,7 +337,7 @@ namespace IT.WebServices.Controllers
                 companyViewModel.UpdatedBy = Convert.ToInt32(HttpContext.Current.Request["UpdatedBy"]);
                 companyViewModel.Address = HttpContext.Current.Request["Address"];
                 companyViewModel.TRN = HttpContext.Current.Request["TRN"];
-                
+
                 var CompanyUpdate = unitOfWork.GetRepositoryInstance<CompanyViewModel>().ReadStoredProcedure("CompanyUpdate @Id, @Name,@OwnerRepresentaive, @Street, @Postcode, @City, @State, @Country, @Phone, @Cell, @Email, @Web, @UpdatedBy,@Address,@TRN,@LogoUrl",
                      new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyViewModel.Id }
                    , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Name == null ? (object)DBNull.Value : companyViewModel.Name }

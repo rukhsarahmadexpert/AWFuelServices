@@ -13,5 +13,6 @@ namespace IT.Core.ViewModels
         public string Flag { get; set; }
         public int CreatedBy { get; set; }
         public string UserName { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

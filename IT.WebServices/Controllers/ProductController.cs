@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -89,6 +90,15 @@ namespace IT.WebServices.Controllers
                      , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = productViewModel.UpdatedBy }
                      , new SqlParameter("Uprice", System.Data.SqlDbType.Money) { Value = productViewModel.UPrice}
                     ).FirstOrDefault();
+
+                if (productViewModel.updateReasons != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (productViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(productViewModel.updateReasons[0]);
+                    }
+                }
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(res.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

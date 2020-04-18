@@ -20,5 +20,6 @@ namespace IT.Core.ViewModels
         public bool IsActive { get; set; }
         public string UserName { get; set; }
         public decimal UPrice { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasons { get; set; }
     }
 }
