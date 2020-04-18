@@ -2119,8 +2119,13 @@ namespace IT.WebServices.Controllers
 
             List<NotificationInformation> notificationInformation = notificationController.GetCompaniesTokens(customerOrderListViewModel.CustomerId);
 
+            var tekenNot = notificationInformation.Where(x => x.DeviceToken == "token not availibe").ToList();
 
-            var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
+            foreach (var item in tekenNot)
+            {
+                notificationInformation.Remove(item);
+            }
+              var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
 
             var tokens = new string[Tokenss.Count];
 
