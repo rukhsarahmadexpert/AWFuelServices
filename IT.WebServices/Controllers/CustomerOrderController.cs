@@ -2075,6 +2075,13 @@ namespace IT.WebServices.Controllers
 
             List<NotificationInformation> notificationInformation = notificationController.GetAllAdminTokens("Admin");
 
+            var tekenNot = notificationInformation.Where(x => x.DeviceToken == "token not availibe").ToList();
+
+            foreach (var item in tekenNot)
+            {
+                notificationInformation.Remove(item);
+            }
+
             var Tokenss = notificationInformation.Where(x => x.Device == "ios")
                                                     .Select(x => new NotificationInformation()
                                                     {
@@ -2125,7 +2132,7 @@ namespace IT.WebServices.Controllers
             {
                 notificationInformation.Remove(item);
             }
-              var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
+            var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
 
             var tokens = new string[Tokenss.Count];
 
@@ -2170,6 +2177,13 @@ namespace IT.WebServices.Controllers
             NotificationController notificationController = new NotificationController();
 
             List<NotificationInformation> notificationInformation = notificationController.GetDriverTokens(customerOrderListViewModel.email);
+
+            var tekenNot = notificationInformation.Where(x => x.DeviceToken == "token not availibe").ToList();
+
+            foreach (var item in tekenNot)
+            {
+                notificationInformation.Remove(item);
+            }
 
             var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
 

@@ -43,6 +43,6 @@ namespace IT.Core.ViewModels
         public string locationFullUrl { get; set; }
         public string pickingPoint { get; set; }
         public string Description { get; set; }
-
+        public int DeliverdQuantity { get; set; }
     }
 }
