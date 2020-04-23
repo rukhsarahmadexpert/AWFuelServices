@@ -283,7 +283,6 @@ namespace IT.WebServices.Controllers
                 }
                 else
                 {
-
                     var DriverResult = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverAddAWFuel @FullName, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
                           new SqlParameter("FullName", System.Data.SqlDbType.VarChar) { Value = driverViewModel.FullName == null ? (object)DBNull.Value : driverViewModel.FullName }
                         , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact == null ? (Object)DBNull.Value : driverViewModel.Contact }

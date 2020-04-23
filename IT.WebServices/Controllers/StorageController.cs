@@ -194,5 +194,23 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
+
+        [HttpPost]
+        public HttpResponseMessage StorageAllDetails()
+        {
+            try
+            {
+                var StorageDetails = unitOfWork.GetRepositoryInstance<StorageDetailsViewModel>().ReadStoredProcedure("StorageAllDetails"
+                                     ).ToList();
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(StorageDetails));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }   
     }
 }

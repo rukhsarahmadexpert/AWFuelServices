@@ -443,7 +443,25 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        
+
+        [HttpPost]
+        public HttpResponseMessage BookingAllDetails()
+        {
+            try
+            {
+                var bookingDetails = unitOfWork.GetRepositoryInstance<BookingDetailsViewModel>().ReadStoredProcedure("CustomerBookingDetails"
+                                     ).ToList();
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(bookingDetails));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
     }
 }
 

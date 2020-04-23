@@ -322,7 +322,7 @@ namespace IT.WebServices.Controllers
         }
 
         [HttpPost]
-        public HttpResponseMessage ViewDeliveryInfo(int Id)
+        public HttpResponseMessage ViewDeliveryInfo(string Id)
         {
             try
             {
@@ -1527,7 +1527,7 @@ namespace IT.WebServices.Controllers
         public HttpResponseMessage CustomerOrderDetailsGroupDeliveryByDriver(CustomerOrderDeliverVewModel customerOrderDeliverVewModel)
         {
             CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
-
+            var Storagelist = new List<StorageViewModel>();
             try
             {
                 var Res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDetailsGroupUpDelQTY @Id,@DeliverdQuantity,@KiloMeter,@Note",
@@ -1635,7 +1635,7 @@ namespace IT.WebServices.Controllers
                 {
                     customerOrderListViewModel.NotificationCode = "CUS-004";
                     customerOrderListViewModel.Title = "Order Assigend";
-                    customerOrderListViewModel.Message = "Order assign to assigned successfully";
+                    customerOrderListViewModel.Message = "Your Order is dispatched successfully";
                     customerOrderListViewModel.RequestedQuantity = 0;
                     customerOrderListViewModel.CustomerId = Res.Result;
 

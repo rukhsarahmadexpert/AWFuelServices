@@ -12,6 +12,7 @@ namespace IT.Core.ViewModels
         public bool IsSuccess { get; set; }
         public string Message { get; set; }
         public string Data { get; set; }
+
         public void Success(string entity)
         {
             this.StatusCode = System.Net.HttpStatusCode.Accepted;

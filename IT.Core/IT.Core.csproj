@@ -48,6 +48,7 @@
     <Compile Include="ViewModels\AWDepartments.cs" />
     <Compile Include="ViewModels\AWFuelDepartmentDetailsViewModel.cs" />
     <Compile Include="ViewModels\BookingConfirmationViewModel.cs" />
+    <Compile Include="ViewModels\BookingDetailsViewModel.cs" />
     <Compile Include="ViewModels\BookingUpdateReason.cs" />
     <Compile Include="ViewModels\BookLeftRemainingViewModel.cs" />
     <Compile Include="ViewModels\CompanyAboutUs.cs" />
@@ -137,6 +138,7 @@
     <Compile Include="ViewModels\SiteViewModel.cs" />
     <Compile Include="ViewModels\StateViewModel.cs" />
     <Compile Include="ViewModels\StockViewModel.cs" />
+    <Compile Include="ViewModels\StorageDetailsViewModel.cs" />
     <Compile Include="ViewModels\StorageViewModel.cs" />
     <Compile Include="ViewModels\TransferFromDriverViewModel.cs" />
     <Compile Include="ViewModels\TypeOwnerReprentative.cs" />
