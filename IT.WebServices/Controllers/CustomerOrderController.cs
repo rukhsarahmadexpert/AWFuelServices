@@ -648,8 +648,7 @@ namespace IT.WebServices.Controllers
                 var number = OrderNumber();
                 if (number != null)
                 {
-                    int NumberNew = Convert.ToInt32(number) + 1;
-
+                    int NumberNew = Convert.ToInt32(number) + 1;                    
                     customerOrderListViewModel.CustomerOrderNumber = NumberNew.ToString();
                 }
                 else
@@ -761,7 +760,6 @@ namespace IT.WebServices.Controllers
 
                 if (ExpNumberData != null)
                 {
-
                     return ExpNumberData.Result.ToString();
                 }
                 else
@@ -1333,7 +1331,7 @@ namespace IT.WebServices.Controllers
             int Count = 0;
             try
             {
-                var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId",
+                var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId,@IsforSite,@SiteId",
                             new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                           , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
                           , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
@@ -1341,6 +1339,8 @@ namespace IT.WebServices.Controllers
                           , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
                           , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
                           , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result }
+                          , new SqlParameter("IsforSite", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsforSite }
+                          , new SqlParameter("SiteId", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.SiteId }
 
                       ).FirstOrDefault();
 
@@ -1390,16 +1390,38 @@ namespace IT.WebServices.Controllers
                     }
 
                     //  CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                    if (customerOrderListViewModel.IsforSite == false)
+                    {
+                        customerOrderListViewModel.NotificationCode = "DRV-001";
+                        customerOrderListViewModel.Title = "Assigned Order";
+                        customerOrderListViewModel.Message = "Admin has Assign new Order to you!";
+                        customerOrderListViewModel.RequestedQuantity = 0;
+                        customerOrderListViewModel.email = OrderAsignAdd.email;
 
-                    customerOrderListViewModel.NotificationCode = "DRV-001";
-                    customerOrderListViewModel.Title = "Assigned Order";
-                    customerOrderListViewModel.Message = "Admin has Assign new Order to you!";
-                    customerOrderListViewModel.RequestedQuantity = 0;
-                    customerOrderListViewModel.email = OrderAsignAdd.email;
+                        //Send Notification
+                        int Res = DriverNotification(customerOrderListViewModel);
+                    }
+                    else
+                    {
+                        customerOrderListViewModel.NotificationCode = "ADM-009";
+                        customerOrderListViewModel.Title = "Assigned Order";
+                        customerOrderListViewModel.Message = "Admin has Assign new Order to Site!";
+                        customerOrderListViewModel.RequestedQuantity = 0;
+                        customerOrderListViewModel.email = OrderAsignAdd.email;
 
-                    //Send Notification
-                    int Res = DriverNotification(customerOrderListViewModel);
+                        //Send Notification
+                        int Res = AdminNotificaton(customerOrderListViewModel);
 
+                        customerOrderListViewModel.NotificationCode = "CUS-005";
+                        customerOrderListViewModel.Title = "Order Assigend";
+                        customerOrderListViewModel.Message = "Your Order is assigned to site successfully, Please send your vehicle";
+                        customerOrderListViewModel.RequestedQuantity = 0;
+                        customerOrderListViewModel.CustomerId = BookingId.TotalCount;
+
+                        //Send Notification to Customer
+                        CustomerNotification(customerOrderListViewModel);
+
+                    }
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAsignAdd));
                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
                 }

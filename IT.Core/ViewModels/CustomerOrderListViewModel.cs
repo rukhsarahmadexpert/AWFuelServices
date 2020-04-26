@@ -45,6 +45,8 @@ namespace IT.Core.ViewModels
         public bool IsBulk { get; set; }
         public int BookingId { get; set; }
         public decimal UnitPrice { get; set; }
+        public bool IsforSite { get; set; }
+       
 
         public  List<CustomerOrderViewModel> customerOrderViewModels { get; set; }
     }

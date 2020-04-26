@@ -17,10 +17,11 @@ namespace IT.WebServices.Models
         public bool IsSend { get; set; }
         public string SerachKey { get; set; }
         public string SearchFlag { get; set; }
+        public string sortColumn { get; set; }
+        public string sortColumnDir { get; set; }
         public int DriverId { get; set; }
         public int pageSize
         {
-
             get { return _pageSize; }
             set
             {

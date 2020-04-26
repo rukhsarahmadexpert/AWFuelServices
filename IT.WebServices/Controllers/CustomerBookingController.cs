@@ -32,6 +32,12 @@ namespace IT.WebServices.Controllers
                     ).ToList();
 
                 int count = BookingList.Count();
+                int TotalCount = count;
+
+                if (pagingparametermodel.SerachKey != null && pagingparametermodel.SerachKey != "")
+                {
+                    BookingList = BookingList.Where(x => x.CompanyName.ToLower().Contains(pagingparametermodel.SerachKey.ToLower())).ToList();
+                }
 
                 // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
                 int CurrentPage = pagingparametermodel.pageNumber;
@@ -40,14 +46,19 @@ namespace IT.WebServices.Controllers
                 int PageSize = pagingparametermodel.pageSize;
 
                 // Display TotalCount to Records to User  
-                int TotalCount = count;
 
+                var items = new List<CustomerBookingViewModel>();
                 // Calculating Totalpage by Dividing (No of Records / Pagesize)  
                 int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
-
-                // Returns List of Customer after applying Paging   
-                var items = BookingList.Skip((CurrentPage - 1) * PageSize).Take(PageSize).OrderByDescending(x => x.Id).ToList();
-
+                if (pagingparametermodel.sortColumnDir == "asc")
+                {
+                    items = BookingList.Skip((CurrentPage - 1) * PageSize).Take(PageSize).OrderBy(x => pagingparametermodel.sortColumn).ToList();
+                }
+                else
+                {
+                    // Returns List of Customer after applying Paging   
+                     items = BookingList.Skip((CurrentPage - 1) * PageSize).Take(PageSize).OrderByDescending(x => x.CompanyName).ToList();
+                }
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
 

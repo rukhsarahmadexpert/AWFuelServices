@@ -399,13 +399,12 @@ namespace IT.WebServices.Controllers
                 //userRepsonse.Success((new JavaScriptSerializer()).Serialize(CompanyList));
                 //return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
 
-                if(pagingparametermodel.SerachKey != null && pagingparametermodel.SerachKey != "")
+                int count = CompanyList.Count();
+
+                if (pagingparametermodel.SerachKey != null && pagingparametermodel.SerachKey != "")
                 {
                     CompanyList = CompanyList.Where(x => x.Name.ToLower().Contains(pagingparametermodel.SerachKey.ToLower())).ToList();
                 }
-
-                int count = CompanyList.Count();
-
                 // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
                 int CurrentPage = pagingparametermodel.pageNumber;
 
