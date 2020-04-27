@@ -1498,6 +1498,61 @@ namespace IT.WebServices.Controllers
             }
         }
 
+        //Site Assigned Order
+        [HttpPost]
+        public HttpResponseMessage CustomerOrderGroupAsignedForSite(PagingParameterModel pagingparametermodel)
+        {
+            try
+            {
+                var customerGroupOrder = unitOfWork.GetRepositoryInstance<CustomerOrderSiteAssignedViewModel>().ReadStoredProcedure("CustomerOrderAssignedOrderToSites"
+                    ).ToList();
+                
+                int count = customerGroupOrder.Count();
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+                int CurrentPage = pagingparametermodel.pageNumber;
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+                int PageSize = pagingparametermodel.pageSize;
+
+                // Display TotalCount to Records to User  
+                int TotalCount = count;
+
+                // Calculating Totalpage by Dividing (No of Records / Pagesize)  
+                int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+
+                // Returns List of Customer after applying Paging   
+                var items = customerGroupOrder.OrderByDescending(x => x.CreatedDate).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+                // if CurrentPage is greater than 1 means it has previousPage  
+                var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+                // if TotalPages is greater than CurrentPage means it has nextPage  
+                var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+                // Object which we are going to send in header   
+                var paginationMetadata = new
+                {
+                    totalCount = TotalCount,
+                    pageSize = PageSize,
+                    currentPage = CurrentPage,
+                    totalPages = TotalPages,
+                    previousPage,
+                    nextPage
+                };
+
+                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
         //Customer Order Group asign by Id
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupAsignedByOrderId(SearchViewModel searchViewModel)
@@ -1555,7 +1610,7 @@ namespace IT.WebServices.Controllers
                 var Res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDetailsGroupUpDelQTY @Id,@DeliverdQuantity,@KiloMeter,@Note",
                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerOrderDeliverVewModel.Id },
                    new SqlParameter("DeliverdQuantity", System.Data.SqlDbType.Int) { Value = customerOrderDeliverVewModel.Quantity },
-                   new SqlParameter("KiloMeter", System.Data.SqlDbType.NVarChar) { Value = customerOrderDeliverVewModel.KiloMeter },
+                   new SqlParameter("KiloMeter", System.Data.SqlDbType.NVarChar) { Value = customerOrderDeliverVewModel.KiloMeter ?? (object)DBNull.Value },
                    new SqlParameter("Note", System.Data.SqlDbType.NVarChar) { Value = customerOrderDeliverVewModel.Note }
                    ).FirstOrDefault();
 
@@ -1739,7 +1794,6 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
         //(last time updated)
         //CustomerOrder Group All Company 
 

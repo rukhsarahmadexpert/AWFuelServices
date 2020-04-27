@@ -44,5 +44,6 @@ namespace IT.Core.ViewModels
         public string pickingPoint { get; set; }
         public string Description { get; set; }
         public int DeliverdQuantity { get; set; }
+        public bool IsBulk { get; set; }
     }
 }

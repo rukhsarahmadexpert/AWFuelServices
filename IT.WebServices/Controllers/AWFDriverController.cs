@@ -272,15 +272,20 @@ namespace IT.WebServices.Controllers
                         }
                     }
                 }
-                
-                var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CheckUser @UserName"
-                     , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
-                    ).FirstOrDefault();
+
+                var userIsAlreadyAvailible = new SingleIntegerValueResult();
+
+                if (driverViewModel.Email != null)
+                {
+                     userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CheckUser @UserName"
+                         , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
+                        ).FirstOrDefault();
+                }
                 if (userIsAlreadyAvailible.Result > 0)
                 {
-                    userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("User Already Availible"));
-                    return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
-                }
+                     userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("User Already Availible"));
+                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+                }                
                 else
                 {
                     var DriverResult = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverAddAWFuel @FullName, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",

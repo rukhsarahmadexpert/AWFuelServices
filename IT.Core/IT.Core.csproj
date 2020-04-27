@@ -60,6 +60,7 @@
     <Compile Include="ViewModels\CustomerBookingViewModel.cs" />
     <Compile Include="ViewModels\CustomerNotification.cs" />
     <Compile Include="ViewModels\CustomerOrderLocationViewModel.cs" />
+    <Compile Include="ViewModels\CustomerOrderSiteAssignedViewModel.cs" />
     <Compile Include="ViewModels\CustomerOrderStatistics.cs" />
     <Compile Include="Interfaces\IRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
