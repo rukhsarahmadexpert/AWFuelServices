@@ -8,7 +8,6 @@ namespace IT.Core.ViewModels
 {
     public class CustomerOrderListViewModel
     {
-
         public int Id { get; set; }
         public int OrderId { get; set; }
         public int CustomerId { get; set; }

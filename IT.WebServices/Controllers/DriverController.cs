@@ -513,8 +513,7 @@ namespace IT.WebServices.Controllers
                 driverViewModel.DrivingLicenseExpiryDate = HttpContext.Current.Request["DrivingLicenseExpiryDate"];
 
                 // driverViewModel.DrivingLicenseExpiryDate = Convert.ToDateTime(driverViewModel.LicenseExpiry == null ? System.DateTime.Now.ToShortDateString() : driverViewModel.LicenseExpiry);
-
-
+                
                 var Res = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverUpdate @Id, @Name, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
                     , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name == null ? (object)DBNull.Value : driverViewModel.Name }

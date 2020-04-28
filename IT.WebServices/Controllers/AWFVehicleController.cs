@@ -26,8 +26,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
         {

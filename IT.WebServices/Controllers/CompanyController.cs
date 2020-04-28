@@ -22,12 +22,11 @@ namespace IT.WebServices.Controllers
 {
     public class CompanyController : ApiController
     {
-
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         //UserViewModel userViewModel = new UserViewModel();
-       readonly string contentType = "application/json";
+        readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage GetAll()

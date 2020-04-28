@@ -14,11 +14,10 @@ namespace IT.WebServices.Controllers
 {
     public class LPOController : ApiController
     {
-
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-       readonly string contentType = "application/json";
+        readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage LPOUnconvertedALL()
@@ -318,7 +317,7 @@ namespace IT.WebServices.Controllers
                               new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = LPOId }
                             , new SqlParameter("ItemId", System.Data.SqlDbType.Int) { Value = DetailsList.ItemId }
                             , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = DetailsList.UnitId }
-                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description }
+                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description ?? (object)DBNull.Value}
                             , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = DetailsList.UnitPrice }
                             , new SqlParameter("Qunatity", System.Data.SqlDbType.Int) { Value = DetailsList.Qunatity }
                             , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = DetailsList.Total }
@@ -334,7 +333,7 @@ namespace IT.WebServices.Controllers
                             , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = LPOId }
                             , new SqlParameter("ItemId", System.Data.SqlDbType.Int) { Value = DetailsList.ItemId }
                             , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = DetailsList.UnitId }
-                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description }
+                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description ?? (object)DBNull.Value}
                             , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = DetailsList.UnitPrice }
                             , new SqlParameter("Qunatity", System.Data.SqlDbType.Int) { Value = DetailsList.Qunatity }
                             , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = DetailsList.Total }

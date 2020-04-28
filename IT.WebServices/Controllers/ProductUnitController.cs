@@ -18,8 +18,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage Add([FromBody] ProductUnitViewModel productUnitViewModel)
         {
@@ -55,8 +54,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Edit(int Id)
         {

@@ -24,18 +24,18 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate.ToString()).AddDays(1);
-                DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate.ToString()).AddDays(1);
+                //DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate.ToString()).AddDays(1);
+                //DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate.ToString()).AddDays(1);
 
                 var LPOID = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("BIllAdd @FromDate, @DueDate, @PONumber, @RefrenceNumber, @CreatedBy,@Bill_Id,@BillNumber,@Total, @VAT, @GrandTotal,@VenderId,@IsFromLpo"
 
-                    , new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate }
-                    , new SqlParameter("DueDate", System.Data.SqlDbType.DateTime) { Value = DueDate }
-                    , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber == null ? (object)DBNull.Value : lPOInvoiceViewModel.PONumber }
-                    , new SqlParameter("RefrenceNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.RefrenceNumber == null ? (object)DBNull.Value : lPOInvoiceViewModel.RefrenceNumber }
+                    , new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = lPOInvoiceViewModel.FromDate }
+                    , new SqlParameter("DueDate", System.Data.SqlDbType.DateTime) { Value = lPOInvoiceViewModel.DueDate }
+                    , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber ?? (object)DBNull.Value }
+                    , new SqlParameter("RefrenceNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.RefrenceNumber ?? (object)DBNull.Value }
                     , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.CreatedBy }
                     , new SqlParameter("Bill_Id", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.LPOId }
-                    , new SqlParameter("BillNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.BillNumber == null ? (object)DBNull.Value : lPOInvoiceViewModel.BillNumber }
+                    , new SqlParameter("BillNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.BillNumber ?? (object)DBNull.Value }
                     , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.Total }
                     , new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.VAT }
                     , new SqlParameter("GrandTotal", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.GrandTotal }
@@ -51,7 +51,7 @@ namespace IT.WebServices.Controllers
                           new SqlParameter("BillId", System.Data.SqlDbType.Int) { Value = LPOID.Result }
                         , new SqlParameter("ItemId", System.Data.SqlDbType.Int) { Value = DetailsList.ItemId }
                         , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = DetailsList.UnitId }
-                        , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description == null ? (object)DBNull.Value : DetailsList.Description }
+                        , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description ?? (object)DBNull.Value }
                         , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = DetailsList.UnitPrice }
                         , new SqlParameter("Qunatity", System.Data.SqlDbType.Int) { Value = DetailsList.Qunatity }
                         , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = DetailsList.Total }
@@ -189,10 +189,6 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
-                DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
-
-
                 var LPOID = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("BillUpdateAll @Id, @Total, @VAT, @GrandTotal, @TermCondition, @CustomerNote,@FromDate, @DueDate, @PONumber, @RefrenceNumber, @CreatedBy,@ReasonUpdated",
                      new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.Id }
                     , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.Total }
@@ -200,8 +196,8 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("GrandTotal", System.Data.SqlDbType.Money) { Value = lPOInvoiceViewModel.GrandTotal }
                     , new SqlParameter("TermCondition", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.TermCondition == null ? (object)DBNull.Value : lPOInvoiceViewModel.TermCondition }
                     , new SqlParameter("CustomerNote", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.CustomerNote == null ? (object)DBNull.Value : lPOInvoiceViewModel.CustomerNote }
-                    , new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = FromDate }
-                    , new SqlParameter("DueDate", System.Data.SqlDbType.DateTime) { Value = DueDate }
+                    , new SqlParameter("FromDate", System.Data.SqlDbType.DateTime) { Value = lPOInvoiceViewModel.FromDate }
+                    , new SqlParameter("DueDate", System.Data.SqlDbType.DateTime) { Value = lPOInvoiceViewModel.DueDate }
                     , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber ?? (object)DBNull.Value }
                     , new SqlParameter("RefrenceNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.RefrenceNumber == null ? (object)DBNull.Value : lPOInvoiceViewModel.RefrenceNumber }
                     , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.CreatedBy }
@@ -220,7 +216,7 @@ namespace IT.WebServices.Controllers
                                new SqlParameter("BillId", System.Data.SqlDbType.Int) { Value = LPOID.Result }
                              , new SqlParameter("ItemId", System.Data.SqlDbType.Int) { Value = DetailsList.ItemId }
                              , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = DetailsList.UnitId }
-                             , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description == null ? (object)DBNull.Value : DetailsList.Description }
+                             , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description ?? (object)DBNull.Value }
                              , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = DetailsList.UnitPrice }
                              , new SqlParameter("Qunatity", System.Data.SqlDbType.Int) { Value = DetailsList.Qunatity }
                              , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = DetailsList.Total }
@@ -235,7 +231,7 @@ namespace IT.WebServices.Controllers
                             , new SqlParameter("LPOId", System.Data.SqlDbType.Int) { Value = LPOId }
                             , new SqlParameter("ItemId", System.Data.SqlDbType.Int) { Value = DetailsList.ItemId }
                             , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = DetailsList.UnitId }
-                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description }
+                            , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = DetailsList.Description ?? (object)DBNull.Value }
                             , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = DetailsList.UnitPrice }
                             , new SqlParameter("Qunatity", System.Data.SqlDbType.Int) { Value = DetailsList.Qunatity }
                             , new SqlParameter("Total", System.Data.SqlDbType.Money) { Value = DetailsList.Total }

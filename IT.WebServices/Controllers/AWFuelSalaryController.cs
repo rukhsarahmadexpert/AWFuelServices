@@ -18,8 +18,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         string contentType = "application/json";
-
-
+        
         //Generate Salary
         [HttpPost]
         public HttpResponseMessage Add([FromBody] AccountViewModel accountViewModel)
@@ -56,8 +55,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage AllEmployeeByProjectId(int Id)
         {
@@ -76,8 +74,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage GenerateSalary(AccountViewModel accountViewModel)
         {
@@ -106,8 +103,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage IsSalaryGenerated(AccountViewModel accountViewModel)
         {
@@ -129,8 +125,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage AddEmployeeLoad(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -157,7 +152,6 @@ namespace IT.WebServices.Controllers
             }
         }
         
-
         [HttpPost]
         public HttpResponseMessage EmployeeStatistics(int Id)
         {
@@ -177,8 +171,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage EmployeeLoanReturn(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -204,8 +197,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage SaveDeduction(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -232,8 +224,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-        
+                
         [HttpPost]
         public HttpResponseMessage EmployeeAllowanceSaved(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -260,8 +251,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage IssueEmployeeSalary(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -290,6 +280,5 @@ namespace IT.WebServices.Controllers
             }
         }
         
-
     }
 }

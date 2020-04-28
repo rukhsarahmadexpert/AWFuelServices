@@ -1622,10 +1622,8 @@ namespace IT.WebServices.Controllers
                     new SqlParameter("OrderDeatislId", System.Data.SqlDbType.Int) { Value = customerOrderDeliverVewModel.Id }
                     ).FirstOrDefault();
 
-
                 if (Result1.TotalCount < 1)
                 {
-
                     customerOrderListViewModel.NotificationCode = "ADM-003";
                     customerOrderListViewModel.Title = "Order Deliverd";
                     customerOrderListViewModel.Message = "Driver has deliverd order successfully";
