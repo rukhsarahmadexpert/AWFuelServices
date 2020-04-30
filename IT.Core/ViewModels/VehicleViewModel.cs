@@ -38,6 +38,8 @@ namespace IT.Core.ViewModels
         public string Oprater { get; set; }
         public bool IsActive { get; set; }
         public string OrderProgress { get; set; }
+        public int TotalRows { get; set; }
+
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
     }
 }

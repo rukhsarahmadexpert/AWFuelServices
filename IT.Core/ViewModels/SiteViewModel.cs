@@ -28,5 +28,6 @@ namespace IT.Core.ViewModels
         public string PickingPoint { get; set; }
         public string locationFullUrl { get; set; }
         public int CompanyId { get; set; }
+        public int TotalRows { get; set; }
     }
 }

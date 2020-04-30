@@ -77,6 +77,94 @@ namespace IT.WebServices.Controllers
             }
         }
 
+
+        [HttpPost]
+        public HttpResponseMessage AllWeb(PagingParameterModel pagingparametermodel)
+        {
+            try
+            {
+                var StorageList = unitOfWork.GetRepositoryInstance<StorageViewModel>().ReadStoredProcedure("StorageAll @SiteId",
+                    new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = pagingparametermodel.Id }
+                    ).ToList();
+
+                List<StorageViewModel> storageViewModels2 = new List<StorageViewModel>();
+
+                if (StorageList.Count > 0)
+                {
+                    StorageViewModel storageViewModelObj = new StorageViewModel();
+
+                    foreach (var item in StorageList)
+                    {
+                        if (item.Action == true)
+                        {
+                            storageViewModelObj.Id = item.Id;
+                            storageViewModelObj.StockIn = item.StockIn;
+                            storageViewModelObj.To = item.Source.ToLower() == "site" ? item.SiteName : item.TrafficPlateNumber;
+                            if (item.Source == "Client Vehicle")
+                            {
+                                storageViewModelObj.To = item.Source.ToLower() == "site" ? item.SiteName : item.TrafficPlateNumberClient;
+                            }
+                            storageViewModelObj.ToSource = item.Source;
+                            storageViewModelObj.UserName = item.UserName;
+                        }
+                        else
+                        {
+                            storageViewModelObj.StockOut = item.StockOut;
+                            storageViewModelObj.From = item.Source.ToLower() == "site" ? item.SiteName : item.TrafficPlateNumber;
+                            storageViewModelObj.Source = item.Source;
+
+                            storageViewModels2.Add(storageViewModelObj);
+                            storageViewModelObj = new StorageViewModel();
+                        }
+                    }
+                }         
+
+                int count = storageViewModels2.Count();
+                
+                // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+                int CurrentPage = pagingparametermodel.pageNumber;
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+                int PageSize = pagingparametermodel.pageSize;
+
+                // Display TotalCount to Records to User  
+                int TotalCount = count;
+
+                // Calculating Totalpage by Dividing (No of Records / Pagesize)  
+                int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+
+                // Returns List of Customer after applying Paging   
+                var items = storageViewModels2.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+                // if CurrentPage is greater than 1 means it has previousPage  
+                var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+                // if TotalPages is greater than CurrentPage means it has nextPage  
+                var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+                // Object which we are going to send in header   
+                var paginationMetadata = new
+                {
+                    totalCount = TotalCount,
+                    pageSize = PageSize,
+                    currentPage = CurrentPage,
+                    totalPages = TotalPages,
+                    previousPage,
+                    nextPage
+                };
+
+                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+                items[0].TotalRows = count;
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
         [HttpPost]
         public HttpResponseMessage StorageAdd(List<StorageViewModel> storageViewModels)
         {

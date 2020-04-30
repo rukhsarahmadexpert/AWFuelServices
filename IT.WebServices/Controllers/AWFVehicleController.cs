@@ -58,6 +58,10 @@ namespace IT.WebServices.Controllers
                 // Returns List of Customer after applying Paging   
                 var items = AWvehicleList.OrderByDescending(x=>x.Id).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
 
+                if(items.Count  > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
 

@@ -24,6 +24,7 @@ namespace IT.Core.ViewModels
         public bool IsActive { get; set; }
         public string UserName { get; set; }
         public string TraficPlateNumber { get; set; }
+        public int TotalRows { get; set; }
     }
 }
 
