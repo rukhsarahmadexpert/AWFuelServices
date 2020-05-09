@@ -10,5 +10,6 @@ namespace IT.Core.ViewModels.Common
     {
         public int Result { get; set; }
         public int TotalCount { get; set; }
+        public int Id { get; set; }
     }
 }

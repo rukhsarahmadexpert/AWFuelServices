@@ -51,6 +51,10 @@ namespace IT.WebServices.Controllers
                 // Returns List of Customer after applying Paging   
                 var items = CustomerOrderList.Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
 
+                if (items.Count > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
 
@@ -483,7 +487,7 @@ namespace IT.WebServices.Controllers
                     {
                         ResDriver = unitOfWork.GetRepositoryInstance<DriverModel>().ReadStoredProcedure("DirectSaleDriverAdd @DriverName, @ContactNumber",
                          new SqlParameter("DriverName", System.Data.SqlDbType.VarChar) { Value = customerOrderListViewModel.DriverName ?? (object)DBNull.Value }
-                        , new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }
+                        ,new SqlParameter("ContactNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.ContactNumber ?? (Object)DBNull.Value }
                        ).FirstOrDefault();
 
                         customerOrderListViewModel.customerOrderViewModels[0].DriverId = ResDriver.DriverId;
@@ -507,13 +511,17 @@ namespace IT.WebServices.Controllers
                         {
                             try
                             {
-                                var OrderDetailsAdd = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDetailsGroupDirectSaleAdd @OrderId, @VehicleId, @DriverId, @RequestedQuantity,@Comments,@ProductId",
+                                var OrderDetailsAdd = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderDetailsGroupDirectSaleAdd @OrderId, @VehicleId, @DriverId, @RequestedQuantity,@Comments,@ProductId,@UnitPrice,@VATPercentage,@VatAmount,@TotalAmount",
                                  new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = OrderId }
                                , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                                , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.DriverId }
                                , new SqlParameter("RequestedQuantity", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.OrderQuantity }
                                , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                                , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.ProductId }
+                               , new SqlParameter("UnitPrice", System.Data.SqlDbType.Decimal) { Value = customerOrderViewModel.UnitPrice }
+                               , new SqlParameter("VATPercentage", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VATPercentage }
+                               , new SqlParameter("VatAmount", System.Data.SqlDbType.Money) { Value = customerOrderViewModel.VatAmount }
+                               , new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerOrderViewModel.TotalAmount }
                                ).FirstOrDefault();
                             }
                             catch (Exception ex)
@@ -576,14 +584,12 @@ namespace IT.WebServices.Controllers
 
                             if (i == 0)
                             {
-
                                 storageViewModel.Source = "client vehicle";
                                 storageViewModel.Action = true;
                                 storageViewModel.StockOut = 0;
                                 storageViewModel.StockIn = customerOrderListViewModel.customerOrderViewModels[0].OrderQuantity;
                                 storageViewModel.ClientVehicleId = customerOrderListViewModel.customerOrderViewModels[0].VehicleId;
                                 storageViewModel.VehicleId = 0;
-
                             }
                             else
                             {
@@ -646,9 +652,9 @@ namespace IT.WebServices.Controllers
             {
                 int OrderId = 0;
                 var number = OrderNumber();
-                if (number != null)
+                if (number != null || number != "")
                 {
-                    int NumberNew = Convert.ToInt32(number) + 1;                    
+                    int NumberNew = Convert.ToInt32(number) + 1;
                     customerOrderListViewModel.CustomerOrderNumber = NumberNew.ToString();
                 }
                 else
@@ -659,7 +665,7 @@ namespace IT.WebServices.Controllers
 
                 try
                 {
-                    var OrderAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAdd @CustomerId, @RequestedQuantity, @DeliverdQuantity, @OrderProgress,  @CreatedBy,@CustomerNote,@CustomerOrderId,@DeliveryNoteNumber,@CustomerOrderNumber,@RequestThrough,@SiteId,@IsBulk",
+                    var OrderAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAdd @CustomerId, @RequestedQuantity, @DeliverdQuantity, @OrderProgress,  @CreatedBy,@CustomerNote,@CustomerOrderId,@DeliveryNoteNumber,@CustomerOrderNumber,@RequestThrough,@SiteId,@IsBulk,@IsSelfPickup",
                             new SqlParameter("CustomerId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerId }
                           , new SqlParameter("RequestedQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
                           , new SqlParameter("DeliverdQuantity", System.Data.SqlDbType.Int) { Value = 0 }
@@ -672,6 +678,7 @@ namespace IT.WebServices.Controllers
                           , new SqlParameter("RequestThrough", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.RequestThrough ?? (object)DBNull.Value }
                           , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.SiteId }
                           , new SqlParameter("IsBulk", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsBulk }
+                          , new SqlParameter("IsSelfPickup", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsSelfPickup }
                     ).FirstOrDefault();
 
                     OrderId = OrderAdd.Id;
@@ -757,8 +764,7 @@ namespace IT.WebServices.Controllers
                 var ExpNumberData = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("CustomerOrderNumber"
                 ).FirstOrDefault();
 
-
-                if (ExpNumberData != null)
+                if (ExpNumberData.Result != null)
                 {
                     return ExpNumberData.Result.ToString();
                 }
@@ -1008,7 +1014,6 @@ namespace IT.WebServices.Controllers
         }
 
         //Admin CustomerOrder Api with Bragi
-
         #region Admin Section
 
         [HttpPost]
@@ -1055,7 +1060,6 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
-
                 int count = CustomerUnreadOrderList.Count();
 
                 // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
@@ -1073,6 +1077,11 @@ namespace IT.WebServices.Controllers
 
                 // Returns List of Customer after applying Paging   
                 var items = CustomerUnreadOrderList.OrderByDescending(x => x.Id).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+                if (items.Count > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
 
                 // if CurrentPage is greater than 1 means it has previousPage  
                 var previousPage = CurrentPage > 1 ? "Yes" : "No";
@@ -1105,6 +1114,66 @@ namespace IT.WebServices.Controllers
                 //serializer.MaxJsonLength = Int32.MaxValue;
                 //userRepsonse.Success(serializer.Serialize(CustomerUnreadOrderList));
 
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception ex)
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
+        //Get Direct Order List
+        [HttpPost]
+        public HttpResponseMessage CustomerOrderAllDirectSale(PagingParameterModel pagingParameterModel)
+        {
+            try
+            {
+                var customerOrderListDirectSale = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerOrderGroupDirectSale"
+                                                 ).ToList();
+
+                int count = customerOrderListDirectSale.Count();
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
+                int CurrentPage = pagingParameterModel.pageNumber;
+
+                // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
+                int PageSize = pagingParameterModel.pageSize;
+
+                // Display TotalCount to Records to User  
+                int TotalCount = count;
+
+                // Calculating Totalpage by Dividing (No of Records / Pagesize)  
+                int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
+                
+                // Returns List of Customer after applying Paging   
+                var items = customerOrderListDirectSale.OrderByDescending(x => x.Id).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+
+                if (items.Count > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
+
+                // if CurrentPage is greater than 1 means it has previousPage  
+                var previousPage = CurrentPage > 1 ? "Yes" : "No";
+
+                // if TotalPages is greater than CurrentPage means it has nextPage  
+                var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
+
+                // Object which we are going to send in header   
+                var paginationMetadata = new
+                {
+                    totalCount = TotalCount,
+                    pageSize = PageSize,
+                    currentPage = CurrentPage,
+                    totalPages = TotalPages,
+                    previousPage,
+                    nextPage
+                };
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
+
+                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
@@ -1213,6 +1282,20 @@ namespace IT.WebServices.Controllers
             }
         }
 
+        //Direct sale customer Order Group list
+        public HttpResponseMessage CustomerOrderGroupDirectSale()
+        {
+            try
+            {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(1));
+                return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         //End with Bragi
         #endregion
 
@@ -1237,6 +1320,7 @@ namespace IT.WebServices.Controllers
             }
         }
 
+        [HttpPost]
         public HttpResponseMessage CustomerOrderRejectDetailsById(int Id)
         {
             try
@@ -1301,6 +1385,8 @@ namespace IT.WebServices.Controllers
         public HttpResponseMessage CustomerOrderGroupAsignedDriverAdd([FromBody] CustomerOrderListViewModel customerOrderListViewModel)
         {
 
+            bool Flage = true;
+
             var BookingId = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingTopOneOpen @OrderId",
                                new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
                                ).FirstOrDefault();
@@ -1313,127 +1399,164 @@ namespace IT.WebServices.Controllers
                               new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
                               ).FirstOrDefault();
 
-                if (checkQuantity.Result != 0 && checkQuantity.Result != 1)
+                if (checkQuantity.TotalCount < 0)
                 {
-                    var NewAutoBookingAndOrderCreation = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAddAuto @OrderId,@DeliveryQuantity,@DeliveryNoteNumber,@UnitPrice,@VAT,@TotalAmount",
-                               new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.OrderId },
-                               new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = checkQuantity.TotalCount },
-                               new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber },
-                               new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.UnitPrice },
-                               new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity },
-                               new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity }
-                               ).FirstOrDefault();
-
-                    // customerOrderListViewModel.RequestedQuantity = customerOrderListViewModel.RequestedQuantity - checkQuantity.TotalCount;
-
-                }
-            }
-            int Count = 0;
-            try
-            {
-                var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId,@IsforSite,@SiteId",
-                            new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
-                          , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
-                          , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
-                          , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
-                          , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
-                          , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
-                          , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result }
-                          , new SqlParameter("IsforSite", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsforSite }
-                          , new SqlParameter("SiteId", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.SiteId }
-
-                      ).FirstOrDefault();
-
-                var ResultId = OrderAsignAdd.Id;
-
-                if (ResultId > 0 && OrderAsignAdd.Note != "Order already asigned")
-                {
-                    foreach (CustomerOrderViewModel customerOrderViewModel in customerOrderListViewModel.customerOrderViewModels)
+                    if (checkQuantity.Id > 0)
                     {
-                        try
+                        Flage = false;
+                        for (int i = 0; i < 2; i++)
                         {
-                            var OrderDetailsAdd = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAsignedDetailsAdd @OrderDriverAsignId, @CustomerOrderId, @CustomerOrderDetailId,@VehicleId",
-                             new SqlParameter("OrderDriverAsignId", System.Data.SqlDbType.Int) { Value = ResultId }
-                           , new SqlParameter("CustomerOrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
-                           , new SqlParameter("CustomerOrderDetailId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
-                           , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
-                            ).FirstOrDefault();
+                            int DeliverQuantity = 0; int BookingIds = 0;
+                            if (i == 0)
+                            {
+                                BookingIds = BookingId.Result;
+                                DeliverQuantity = customerOrderListViewModel.RequestedQuantity - Math.Abs(checkQuantity.TotalCount);
+                            }
+                            else
+                            {
+                                BookingIds = checkQuantity.Id;
+                                DeliverQuantity = Math.Abs(checkQuantity.TotalCount);
+                            }
 
-                            var Success = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderOrderProgresChange @OrderId",
+                            var NewAutoBookingAndOrderCreation = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAddAuto @OrderId,@DeliveryQuantity,@DeliveryNoteNumber,@UnitPrice,@VAT,@TotalAmount,@BookingId",
+                                       new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId },
+                                       new SqlParameter("DeliveryQuantity", System.Data.SqlDbType.Int) { Value = DeliverQuantity },
+                                       new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber },
+                                       new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.UnitPrice },
+                                       new SqlParameter("VAT", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity },
+                                       new SqlParameter("TotalAmount", System.Data.SqlDbType.Money) { Value = customerOrderListViewModel.RequestedQuantity },
+                                       new SqlParameter("BookingId", System.Data.SqlDbType.Money) { Value = BookingIds }
+                                       ).FirstOrDefault();
+
+                            var SuccessBookingStatusChanges = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingIsOpenToFalse @BookingId",
+                                       new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingIds }
+                                       ).FirstOrDefault();
+                        }                        
+                    }
+                    else
+                    {
+                        userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("Currently you have no booking availible"));
+                        return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
+                    }
+                }
+                int Count = 0;
+                try
+                {
+                    var OrderAsignAdd = unitOfWork.GetRepositoryInstance<CustomerOrderListViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDriverAdd @OrderId, @TotalQuantity, @DriverId,@CreatedBy,@VehicleId,@DeliveryNoteNumber,@BookingId,@IsforSite,@SiteId,@Flage",
                                 new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
+                              , new SqlParameter("TotalQuantity", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.RequestedQuantity }
+                              , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.DriverId }
+                              , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CreatedBy }
+                              , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.VehicleId }
+                              , new SqlParameter("DeliveryNoteNumber", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.DeliveryNoteNumber ?? (object)DBNull.Value }
+                              , new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result }
+                              , new SqlParameter("IsforSite", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.IsforSite }
+                              , new SqlParameter("SiteId", System.Data.SqlDbType.Bit) { Value = customerOrderListViewModel.SiteId }
+                              , new SqlParameter("Flage", System.Data.SqlDbType.Bit) { Value = Flage }
+
+                          ).FirstOrDefault();
+
+                    var ResultId = OrderAsignAdd.Id;
+
+                    if (ResultId > 0 && OrderAsignAdd.Note != "Order already asigned")
+                    {
+                        foreach (CustomerOrderViewModel customerOrderViewModel in customerOrderListViewModel.customerOrderViewModels)
+                        {
+                            try
+                            {
+                                var OrderDetailsAdd = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderGroupAsignedDetailsAdd @OrderDriverAsignId, @CustomerOrderId, @CustomerOrderDetailId,@VehicleId",
+                                 new SqlParameter("OrderDriverAsignId", System.Data.SqlDbType.Int) { Value = ResultId }
+                               , new SqlParameter("CustomerOrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
+                               , new SqlParameter("CustomerOrderDetailId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
+                               , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                                 ).FirstOrDefault();
 
-                            Count = Success.TotalCount;
+                                var Success = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderOrderProgresChange @OrderId",
+                                    new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.CustomerOrderId }
+                                    ).FirstOrDefault();
+                                if (Flage == true)
+                                {
+                                    var SuccessBookingStatusChanges = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerBookingIsOpenToFalse @BookingId",
+                                       new SqlParameter("BookingId", System.Data.SqlDbType.Int) { Value = BookingId.Result }
+                                       ).FirstOrDefault();
+                                }
 
-                            //customerOrderListViewModel.NotificationCode = "CUS-003";
-                            //customerOrderListViewModel.Title = "Admin Assign Order";
-                            //customerOrderListViewModel.Message = "Admin Assign Order to Driver";
-                            //customerOrderListViewModel.RequestedQuantity = 0;
-                            //customerOrderListViewModel.CustomerId = Success.Result;
-                            ////Send Notification
-                            //CustomerNotification(customerOrderListViewModel);
+                                Count = Success.TotalCount;
+
+                                //customerOrderListViewModel.NotificationCode = "CUS-003";
+                                //customerOrderListViewModel.Title = "Admin Assign Order";
+                                //customerOrderListViewModel.Message = "Admin Assign Order to Driver";
+                                //customerOrderListViewModel.RequestedQuantity = 0;
+                                //customerOrderListViewModel.CustomerId = Success.Result;
+                                ////Send Notification
+                                //CustomerNotification(customerOrderListViewModel);
+                            }
+                            catch (Exception ex)
+                            {
+                                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+                            }
                         }
-                        catch (Exception ex)
+
+                        if (Count == 0)
                         {
-                            userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+                            customerOrderListViewModel.Id = 0;
                         }
-                    }
+                        else
+                        {
+                            customerOrderListViewModel.Id = ResultId;
+                        }
 
-                    if (Count == 0)
-                    {
-                        customerOrderListViewModel.Id = 0;
-                    }
-                    else
-                    {
-                        customerOrderListViewModel.Id = ResultId;
-                    }
+                        //  CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                        if (customerOrderListViewModel.IsforSite == false)
+                        {
+                            customerOrderListViewModel.NotificationCode = "DRV-001";
+                            customerOrderListViewModel.Title = "Assigned Order";
+                            customerOrderListViewModel.Message = "Admin has Assign new Order to you!";
+                            customerOrderListViewModel.RequestedQuantity = 0;
+                            customerOrderListViewModel.email = OrderAsignAdd.email;
 
-                    //  CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
-                    if (customerOrderListViewModel.IsforSite == false)
-                    {
-                        customerOrderListViewModel.NotificationCode = "DRV-001";
-                        customerOrderListViewModel.Title = "Assigned Order";
-                        customerOrderListViewModel.Message = "Admin has Assign new Order to you!";
-                        customerOrderListViewModel.RequestedQuantity = 0;
-                        customerOrderListViewModel.email = OrderAsignAdd.email;
+                            //Send Notification
+                            int Res = DriverNotification(customerOrderListViewModel);
+                        }
+                        else
+                        {
+                            customerOrderListViewModel.NotificationCode = "ADM-009";
+                            customerOrderListViewModel.Title = "Assigned Order";
+                            customerOrderListViewModel.Message = "Admin has Assign new Order to Site!";
+                            customerOrderListViewModel.RequestedQuantity = 0;
+                            customerOrderListViewModel.email = OrderAsignAdd.email;
 
-                        //Send Notification
-                        int Res = DriverNotification(customerOrderListViewModel);
-                    }
-                    else
-                    {
-                        customerOrderListViewModel.NotificationCode = "ADM-009";
-                        customerOrderListViewModel.Title = "Assigned Order";
-                        customerOrderListViewModel.Message = "Admin has Assign new Order to Site!";
-                        customerOrderListViewModel.RequestedQuantity = 0;
-                        customerOrderListViewModel.email = OrderAsignAdd.email;
+                            //Send Notification
+                            int Res = AdminNotificaton(customerOrderListViewModel);
 
-                        //Send Notification
-                        int Res = AdminNotificaton(customerOrderListViewModel);
+                            customerOrderListViewModel.NotificationCode = "CUS-005";
+                            customerOrderListViewModel.Title = "Order Assigend";
+                            customerOrderListViewModel.Message = "Your Order is assigned to site successfully, Please send your vehicle";
+                            customerOrderListViewModel.RequestedQuantity = 0;
+                            customerOrderListViewModel.CustomerId = BookingId.TotalCount;
 
-                        customerOrderListViewModel.NotificationCode = "CUS-005";
-                        customerOrderListViewModel.Title = "Order Assigend";
-                        customerOrderListViewModel.Message = "Your Order is assigned to site successfully, Please send your vehicle";
-                        customerOrderListViewModel.RequestedQuantity = 0;
-                        customerOrderListViewModel.CustomerId = BookingId.TotalCount;
+                            //Send Notification to Customer
+                            CustomerNotification(customerOrderListViewModel);
 
-                        //Send Notification to Customer
-                        CustomerNotification(customerOrderListViewModel);
-
+                        }
+                        userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAsignAdd));
+                        return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
                     }
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAsignAdd));
                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
                 }
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAsignAdd));
+                catch (Exception ex)
+                {
+                    userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                    return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+                }
+            }
+            else
+            {
+                userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("Currently you have no booking availible"));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
-            catch (Exception ex)
-            {
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
-                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
-            }
-
         }
 
         #endregion
@@ -1450,7 +1573,6 @@ namespace IT.WebServices.Controllers
                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = pagingparametermodel.Id },
                    new SqlParameter("OrderProgress", System.Data.SqlDbType.NVarChar) { Value = pagingparametermodel.OrderProgress }
                    ).ToList();
-
 
                 int count = customerGroupOrder.Count();
 
@@ -1506,7 +1628,7 @@ namespace IT.WebServices.Controllers
             {
                 var customerGroupOrder = unitOfWork.GetRepositoryInstance<CustomerOrderSiteAssignedViewModel>().ReadStoredProcedure("CustomerOrderAssignedOrderToSites"
                     ).ToList();
-                
+
                 int count = customerGroupOrder.Count();
 
                 // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
@@ -1562,7 +1684,6 @@ namespace IT.WebServices.Controllers
                 var customerGroupOrder = unitOfWork.GetRepositoryInstance<CustomerOrderGroupViewModel>().ReadStoredProcedure("CustomerOrderGroupBYAsignedId @Id",
                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
                    ).FirstOrDefault();
-
 
                 var customerGroupOrderDetails = unitOfWork.GetRepositoryInstance<CustomerGroupOrderDetailsViewModel>().ReadStoredProcedure("CustomerOrderGroupAsignedDetailsByOrderId @Id",
                  new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
@@ -1792,9 +1913,8 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-        //(last time updated)
-        //CustomerOrder Group All Company 
 
+        //CustomerOrder Group All Company 
         [HttpPost]
         public HttpResponseMessage CustomerOrderAllByCompanyId(PagingParameterModel pagingParameterModel)
         {
@@ -1840,8 +1960,12 @@ namespace IT.WebServices.Controllers
                     nextPage
                 };
 
-                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
+                if(CustomerOrderList.Count > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
 
+                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -1930,7 +2054,6 @@ namespace IT.WebServices.Controllers
                    new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                    ).ToList();
 
-
                 driverVehicelViewModel.driverModels = driverList;
                 driverVehicelViewModel.vehicleModels = vehicleList;
 
@@ -1942,7 +2065,6 @@ namespace IT.WebServices.Controllers
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
-
         }
 
         [HttpPost]
@@ -2066,7 +2188,7 @@ namespace IT.WebServices.Controllers
                        new SqlParameter("CurrentDate", System.Data.SqlDbType.DateTime) { Value = TodayDate }
                      ).FirstOrDefault();
 
-                var VirtualQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("GETAdminTotalVirtual"                      
+                var VirtualQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("GETAdminTotalVirtual"
                     ).FirstOrDefault();
 
                 var BookedQTY = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("GETAdminTotalBooking"

@@ -45,5 +45,8 @@ namespace IT.Core.ViewModels
         public string Description { get; set; }
         public int DeliverdQuantity { get; set; }
         public bool IsBulk { get; set; }
+        public bool IsSelfPickup { get; set; }
+        public bool IsDirectSale { get; set; }
+        public int TotalRows { get; set; }
     }
 }

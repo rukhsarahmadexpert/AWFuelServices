@@ -799,50 +799,8 @@ namespace IT.WebServices.Controllers
                     new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = pagingparametermodel.Id }
                     ).ToList();
 
-                int count = DriverList.Count();
-
-                // Parameter is passed from Query string if it is null then it default Value will be pageNumber:1  
-                int CurrentPage = pagingparametermodel.pageNumber;
-
-                // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
-                int PageSize = pagingparametermodel.pageSize;
-
-                // Display TotalCount to Records to User  
-                int TotalCount = count;
-
-                // Calculating Totalpage by Dividing (No of Records / Pagesize)  
-                int TotalPages = (int)Math.Ceiling(count / (double)PageSize);
-
-                // Returns List of Customer after applying Paging   
-                var items = DriverList.OrderByDescending(x => x.DriverId).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
-
-                // if CurrentPage is greater than 1 means it has previousPage  
-                var previousPage = CurrentPage > 1 ? "Yes" : "No";
-
-                // if TotalPages is greater than CurrentPage means it has nextPage  
-                var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
-
-                // Object which we are going to send in header   
-                var paginationMetadata = new
-                {
-                    totalCount = TotalCount,
-                    pageSize = PageSize,
-                    currentPage = CurrentPage,
-                    totalPages = TotalPages,
-                    previousPage,
-                    nextPage
-                };
-
-                HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-
-                if (DriverList.Count < 1)
-                {
-                    userRepsonse.Success("[]");
-                }
-                else
-                {
-                    userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
-                }               
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(DriverList));
+                             
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)

@@ -65,6 +65,10 @@ namespace IT.WebServices.Controllers
                 // if TotalPages is greater than CurrentPage means it has nextPage  
                 var nextPage = CurrentPage < TotalPages ? "Yes" : "No";
 
+                if(items.Count > 0)
+                {
+                    items[0].TotalRows = TotalCount;
+                }
                 // Object which we are going to send in header   
                 var paginationMetadata = new
                 {
@@ -73,11 +77,10 @@ namespace IT.WebServices.Controllers
                     currentPage = CurrentPage,
                     totalPages = TotalPages,
                     previousPage,
-                    nextPage
+                    nextPage,
                 };
 
                 HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
-
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

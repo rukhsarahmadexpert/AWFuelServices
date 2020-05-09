@@ -276,9 +276,14 @@ namespace IT.WebServices.Controllers
                         }
                     }
                 }
-                var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("IsDriverEmailAvailible @Email"
-                    , new SqlParameter("Email", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
-                   ).FirstOrDefault();
+                var userIsAlreadyAvailible = new SingleIntegerValueResult();
+
+                if (driverViewModel.Email != null && driverViewModel.Email != "")
+                {
+                     userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("IsDriverEmailAvailible @Email"
+                        , new SqlParameter("Email", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email }
+                       ).FirstOrDefault();
+                }
                 if (userIsAlreadyAvailible.Result > 0)
                 {
                     userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("Email Already Availible"));
@@ -286,7 +291,6 @@ namespace IT.WebServices.Controllers
                 }
                 else
                 {
-
                     var Res = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverAdd @Name, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
                           new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name == null ? (object)DBNull.Value : driverViewModel.Name }
                         , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact == null ? (Object)DBNull.Value : driverViewModel.Contact }

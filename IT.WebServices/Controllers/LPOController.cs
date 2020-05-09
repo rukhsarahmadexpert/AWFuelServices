@@ -93,15 +93,7 @@ namespace IT.WebServices.Controllers
 
                 HttpContext.Current.Response.Headers.Add("Paging-Headers", JsonConvert.SerializeObject(paginationMetadata));
 
-                if (LpoList.Count < 1)
-                {
-                    userRepsonse.Success(null);
-                }
-                else
-                {
-                    userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
-                }
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(items));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)

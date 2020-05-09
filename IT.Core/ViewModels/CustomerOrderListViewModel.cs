@@ -45,6 +45,8 @@ namespace IT.Core.ViewModels
         public int BookingId { get; set; }
         public decimal UnitPrice { get; set; }
         public bool IsforSite { get; set; }
+        public bool IsSelfPickup { get; set; }
+        public bool IsDirectSale { get; set; }
        
 
         public  List<CustomerOrderViewModel> customerOrderViewModels { get; set; }

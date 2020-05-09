@@ -32,6 +32,7 @@ namespace IT.Core.ViewModels
         public string CreatedDates { get; set; }
         public bool IsAccepted { get; set; }
         public string UpdateReason { get; set; }
+        public int TotalRows { get; set; }
 
         public BookingUpdateReason bookingUpdateReason { get; set; }
         public UpdateReasonDescriptionViewModel UpdateReasonDescriptionViewModel { get; set; }

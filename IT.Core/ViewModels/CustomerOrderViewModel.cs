@@ -34,5 +34,10 @@ namespace IT.Core.ViewModels
         public int ProductId { get; set; }
         public string ProductName { get; set; }
         public decimal UPrice { get; set; }
+        public int TotalRows { get; set; }
+        public decimal UnitPrice { get; set; }
+        public int VATPercentage { get; set; }
+        public decimal VatAmount { get; set; }
+        public decimal TotalAmount { get; set; }
     }
 }
