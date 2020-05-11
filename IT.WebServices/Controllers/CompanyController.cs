@@ -35,6 +35,7 @@ namespace IT.WebServices.Controllers
             {
                 var userList = unitOfWork.GetRepositoryInstance<UserViewModel>().ReadStoredProcedure("UserAll"
                    ).ToList();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(userList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -98,7 +99,6 @@ namespace IT.WebServices.Controllers
 
                         string DocsPath = tempDocUrl + "/" + "ClientDocument" + "/";
                         URL = DocsPath + thisFileName;
-
                     }
 
                     //Directory.CreateDirectory(@directoryName);  
@@ -110,9 +110,7 @@ namespace IT.WebServices.Controllers
                     }
                     var response = Request.CreateResponse(HttpStatusCode.OK);
                     response.Headers.Add("DocsUrl", URL);
-                }
-
-                
+                }                
 
                 companyViewModel.Id = Convert.ToInt32(HttpContext.Current.Request["Id"]);
                 companyViewModel.Name = HttpContext.Current.Request["Name"];
@@ -134,8 +132,7 @@ namespace IT.WebServices.Controllers
                 companyViewModel.DeviceId = HttpContext.Current.Request["DeviceId"];
                 companyViewModel.Device = HttpContext.Current.Request["Device"];
                 companyViewModel.IsCashCompany = Convert.ToBoolean(HttpContext.Current.Request["IsCashCompany"]);
-
-
+                
                 var CompanyAdd = unitOfWork.GetRepositoryInstance<CompanyViewModel>().ReadStoredProcedure("CompanyAdd @Name,@OwnerRepresentaive, @Street, @Postcode, @City, @State, @Country, @Phone, @Cell, @Email, @Web, @Comments, @FindSource, @CreatedBy,@LogoURL,@TradeLicense,@PassportFirstPage,@VATCertificate, @PassportLastPage,@IDCardUAE,@UID,@TRN,@Address,@IsCashCompany",
                      new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Name == null ? (object)DBNull.Value : companyViewModel.Name }
                     , new SqlParameter("OwnerRepresentaive", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.OwnerRepresentaive == null ? (Object)DBNull.Value : companyViewModel.OwnerRepresentaive }
@@ -164,10 +161,8 @@ namespace IT.WebServices.Controllers
                   
                     ).FirstOrDefault();
 
-
                 if (CompanyAdd.Id > 0)
                 {
-
                     if (companyViewModel.Token != null && companyViewModel.Token != "")
                     {
                         var notificationAddResponse = unitOfWork.GetRepositoryInstance<UserCompanyViewModel>().ReadStoredProcedure("NotificationInformationAdd @DeviceId,@DeviceToken,@Email,@Authority,@CompanyId,@Device"
@@ -184,7 +179,6 @@ namespace IT.WebServices.Controllers
                 CustomerOrderController customerOrderController = new CustomerOrderController();
                 CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel
                 { 
-
                     NotificationCode = "ADM-006",
                     Title = "New Company Registered",
                     Message = companyViewModel.Name + " Is Registered as new company",
@@ -372,12 +366,11 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("CompanyDeleteImage @Id, @Flage",
+                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CompanyDeleteImage @Id, @Flage",
                           new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyImages.Id }
-                        , new SqlParameter("Flage", System.Data.SqlDbType.NVarChar)
-                        {
-                            Value = companyImages.Flage == null ? (Object)DBNull.Value : companyImages.Flage
-                        });
+                        , new SqlParameter("Flage", System.Data.SqlDbType.NVarChar) { Value = companyImages.Flage ?? (Object)DBNull.Value }
+                        ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -462,6 +455,7 @@ namespace IT.WebServices.Controllers
                           new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id },
                           new SqlParameter("Flage", System.Data.SqlDbType.NVarChar) { Value = searchViewModel.Flage }
                         ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -478,8 +472,8 @@ namespace IT.WebServices.Controllers
             {
                 var CompanyList = unitOfWork.GetRepositoryInstance<CompanyModel>().ReadStoredProcedure("CompayAllwithoutPagination"
                    ).ToList();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(CompanyList));
-               
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)

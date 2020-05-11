@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using SendingPushNotifications.Logics;
@@ -810,6 +811,12 @@ namespace IT.WebServices.Controllers
                        , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerGroupOrder.CompanyId }
                         ).ToList();
 
+                    var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+                      , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+                      , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "DeliveryOrder" }
+                      ).ToList();
+
+                    customerGroupOrder.updateReasonDescriptionViewModels = updatereason;
                     customerGroupOrder.customerRemainingBookingViewModels = customerRemainingBooking;
                     customerGroupOrder.uploadDocumentsViewModels = Documents;
                     customerGroupOrder.customerGroupOrderDetailsViewModels = customerGroupOrderDetails;
@@ -979,6 +986,15 @@ namespace IT.WebServices.Controllers
                 OrderAdd.longitude = Result.longitude;
                 OrderAdd.LocationFullUrl = Result.LocationFullUrl;
                 OrderAdd.PickingPoint = Result.PickingPoint;
+
+                if (customerOrderListViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (customerOrderListViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(customerOrderListViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(OrderAdd));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

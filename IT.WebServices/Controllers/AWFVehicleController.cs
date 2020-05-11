@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -137,8 +138,6 @@ namespace IT.WebServices.Controllers
 
                     if (formData["ClientDocs"] == "ClientDocs")
                     {
-
-
                         var path = HttpRuntime.AppDomainAppPath;
                         directoryName = System.IO.Path.Combine(path, "ClientDocument");
                         filename = System.IO.Path.Combine(directoryName, thisFileName);
@@ -200,6 +199,7 @@ namespace IT.WebServices.Controllers
                    , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber }
                    , new SqlParameter("CompanyId", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.CompanyId }
                   ).FirstOrDefault();
+
                 if (userIsAlreadyAvailible.Result > 0)
                 {
                     userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("TraficPlateNumber Already Availible"));
@@ -207,7 +207,6 @@ namespace IT.WebServices.Controllers
                 }
                 else
                 {
-
                     var vehicleAdd = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleAddAWFuel @VehicleType, @TraficPlateNumber, @TCNumber, @Model, @Color, @MulkiaExpiry,@InsuranceExpiry, @RegisteredRegion, @Brand, @MulkiaFront1, @MulkiaBack1, @MulkiaFront2, @MulkiaBack2, @Comments,@CompanyId,@CreatedBy,@UID",
                          new SqlParameter("VehicleType", System.Data.SqlDbType.Int) { Value = vehicleViewModel.VehicleType }
                         , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber == null ? (Object)DBNull.Value : vehicleViewModel.TraficPlateNumber }
@@ -237,10 +236,6 @@ namespace IT.WebServices.Controllers
                 userRepsonse.Exception((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
-
-
-
-
         }
 
         [HttpPost]
@@ -248,7 +243,7 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var userList = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleByIdAWFuel @Id,@CompanyId"
+                var vehicleList = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleByIdAWFuel @Id,@CompanyId"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id }
                 , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = vehicleViewModel.CompanyId }
                 ).FirstOrDefault();
@@ -258,9 +253,15 @@ namespace IT.WebServices.Controllers
                   , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Vehicle" }
                 ).ToList();
 
-                userList.uploadDocumentsViewModels = Documents;
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id }
+               , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Vehicle" }
+               ).ToList();
 
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(userList));
+                vehicleList.uploadDocumentsViewModels = Documents;
+                vehicleList.updateReasonDescriptionViewModels = updatereason;
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(vehicleList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
@@ -364,7 +365,7 @@ namespace IT.WebServices.Controllers
                 vehicleViewModel.Comments = HttpContext.Current.Request["Comments"];
                 vehicleViewModel.CompanyId = Convert.ToInt32(HttpContext.Current.Request["CompanyId"]);
                 vehicleViewModel.UpdateBy = Convert.ToInt32(HttpContext.Current.Request["UpdatedBy"]);
-
+                vehicleViewModel.ReasonDescription = HttpContext.Current.Request["ReasonDescription"];
 
                 var vehicleAdd = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleUpdateAWFuel @Id, @VehicleType, @TraficPlateNumber, @TCNumber, @Model, @Color, @MulkiaExpiry,@InsuranceExpiry, @RegisteredRegion, @Brand, @MulkiaFront1, @MulkiaBack1, @MulkiaFront2, @MulkiaBack2, @Comments,@UpdatedBy",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id }
@@ -384,6 +385,21 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Comments == null ? (object)DBNull.Value : vehicleViewModel.Comments }
                     , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = vehicleViewModel.UpdateBy == 0 ? (object)DBNull.Value : vehicleViewModel.UpdateBy }
                    ).FirstOrDefault();
+
+                if(vehicleViewModel.ReasonDescription != null && vehicleViewModel.ReasonDescription != "")
+                {
+                    UpdateReason updateReason = new UpdateReason();
+
+                    var updateReasonDescriptionViewModel = new UpdateReasonDescriptionViewModel();
+                    updateReasonDescriptionViewModel.Id = vehicleViewModel.Id;
+                    updateReasonDescriptionViewModel.ReasonDescription = vehicleViewModel.ReasonDescription;
+                    updateReasonDescriptionViewModel.CreatedBy = vehicleViewModel.UpdateBy;
+                    updateReasonDescriptionViewModel.Flag = "Vehicle";
+
+                    var result = updateReason.Add(updateReasonDescriptionViewModel);
+
+                }
+
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(vehicleAdd));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

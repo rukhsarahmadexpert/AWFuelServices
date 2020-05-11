@@ -47,5 +47,6 @@ namespace IT.Core.ViewModels
         public List<CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModels { get; set; }
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
         public List<CustomerRemainingBookingViewModel> customerRemainingBookingViewModels { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

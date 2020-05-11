@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -135,6 +136,7 @@ namespace IT.WebServices.Controllers
                 var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("PurchaseDetailsById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).ToList();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPODetailsData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -244,6 +246,15 @@ namespace IT.WebServices.Controllers
 
                             ).FirstOrDefault();
                         }
+                    }
+                }
+
+                if (lPOInvoiceViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (lPOInvoiceViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(lPOInvoiceViewModel.updateReasonDescriptionViewModel);
                     }
                 }
 

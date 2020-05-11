@@ -47,6 +47,8 @@ namespace IT.Core.ViewModels
 
         public int TotalRows { get; set; }
 
+        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
+
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
     }
 }

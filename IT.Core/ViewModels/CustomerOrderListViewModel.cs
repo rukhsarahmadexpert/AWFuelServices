@@ -48,7 +48,8 @@ namespace IT.Core.ViewModels
         public bool IsSelfPickup { get; set; }
         public bool IsDirectSale { get; set; }
        
-
         public  List<CustomerOrderViewModel> customerOrderViewModels { get; set; }
+        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

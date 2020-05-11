@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -197,7 +198,9 @@ namespace IT.WebServices.Controllers
         public HttpResponseMessage Add([FromBody] LPOInvoiceViewModel lPOInvoiceViewModel)
         {
             try
-            { 
+            {
+                lPOInvoiceViewModel.PONumber = GetQuoNumber();
+
                 DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
                 DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
 
@@ -238,6 +241,23 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
+                if(lPOInvoiceViewModel.IsForCustomer == true)
+                {
+                    //var Customer = unitOfWork.GetRepositoryInstance<Get>().ReadStoredProcedure("LPODetailsAdd").FirstOrDefault(),
+
+
+                   CustomerOrderController customerOrderController = new CustomerOrderController();
+                    var customerOrderListViewModel = new CustomerOrderListViewModel();
+
+                    customerOrderListViewModel.NotificationCode = "CUS-003";
+                    customerOrderListViewModel.Title = "LPO Created";
+                    customerOrderListViewModel.Message = "Admin Created LPO for your company";
+                    customerOrderListViewModel.RequestedQuantity = 0;
+                    customerOrderListViewModel.CustomerId = lPOInvoiceViewModel.CustomerId;
+                    //Send Notification
+                   var resultNotification = customerOrderController.CustomerNotification(customerOrderListViewModel);
+                }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOID.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -246,6 +266,50 @@ namespace IT.WebServices.Controllers
                 userRepsonse.BadRequest((new JavaScriptSerializer()).Serialize(ex.ToString()));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
+        }
+
+        [HttpPost]
+        public string GetQuoNumber()
+        {
+            string SerailNO = "";
+            var LPOData = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("LPOGetPONumber"
+                ).FirstOrDefault();
+
+            if (LPOData != null)
+            {
+                if (LPOData.Result != null || LPOData.Result != "")
+                {
+                    SerailNO = LPOData.Result.Substring(4, 8);
+
+                    SerailNO = LPOData.Result.ToString().Substring(0, 6);
+
+                    string TotdayNumber = POClassLPO.PONumber().Substring(0, 6);
+                    int Counts = 0;
+                    if (SerailNO == TotdayNumber)
+                    {
+                        Counts = Convert.ToInt32(LPOData.Result.Substring(10, 2)) + 1;
+
+                        if (Counts.ToString().Length == 1)
+                        {
+                            SerailNO = "LPO-" + TotdayNumber + "0" + Counts;
+                        }
+                        else
+                        {
+                            SerailNO = "LPO-" + TotdayNumber + Counts.ToString();
+                        }
+                    }
+                    else
+                    {
+                        SerailNO = "LPO-" + POClassLPO.PONumber();
+                    }
+                }
+            }
+            else
+            {
+                SerailNO = "LPO-" + POClassLPO.PONumber();
+            }
+
+            return SerailNO;
         }
 
         [HttpPost]
@@ -320,7 +384,6 @@ namespace IT.WebServices.Controllers
                     CompanyModel = unitOfWork.GetRepositoryInstance<CompnayModel>().ReadStoredProcedure("CompanyById @CompanyId"
                       , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = LPOData.CompanyId }
                       ).ToList();
-
                 }
                 else
                 {
@@ -354,6 +417,7 @@ namespace IT.WebServices.Controllers
             {
                 var LPOData = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("LPOGetPONumber"
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOData.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -372,6 +436,7 @@ namespace IT.WebServices.Controllers
                 var LPODetailsData = unitOfWork.GetRepositoryInstance<LPOInvoiceDetails>().ReadStoredProcedure("LPODetailsById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).ToList();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPODetailsData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -446,6 +511,15 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
+                if (lPOInvoiceViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (lPOInvoiceViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(lPOInvoiceViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOID.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -468,6 +542,7 @@ namespace IT.WebServices.Controllers
                 , new SqlParameter("GrandTotal", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.GrandTotal }
                 , new SqlParameter("LPODetaiRowId", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.detailId }
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LPOData.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -495,8 +570,10 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = searchViewModel.CompanyId }
                     ).ToList();
 
-                 LpoList[0].compnays = CompanyModel;
-
+                if (LpoList.Count > 0)
+                {
+                    LpoList[0].compnays = CompanyModel;
+                }
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(LpoList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -505,6 +582,33 @@ namespace IT.WebServices.Controllers
                 userRepsonse.BadRequest((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
+        }
+    }
+
+    internal class POClassLPO
+    {
+        public static string PONumber()
+        {
+            string Day = System.DateTime.Now.Day.ToString();
+            string Month = System.DateTime.Now.Month.ToString();
+            string YY = System.DateTime.Now.Year.ToString();
+
+
+            if (Day.Length == 1)
+            {
+                Day = "0" + Day;
+            }
+            if (Month.Length == 1)
+            {
+                Month = "0" + Month;
+            }
+
+            YY = YY.Substring(2, 2);
+
+            string PONumber = Day + Month + YY + "01";
+
+
+            return PONumber;
         }
     }
 }

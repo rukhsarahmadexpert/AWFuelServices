@@ -64,6 +64,7 @@ namespace IT.Core.ViewModels
         public List<CompnayModel> compnays { get; set; }
         public List<VenderViewModel> venders { get; set; }
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
+        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
 
     }
 }

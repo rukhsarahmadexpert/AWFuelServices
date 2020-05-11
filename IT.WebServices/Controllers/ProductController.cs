@@ -45,6 +45,14 @@ namespace IT.WebServices.Controllers
                 var product = unitOfWork.GetRepositoryInstance<ProductViewModel>().ReadStoredProcedure("ProductById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
+
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+               , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Vender" }
+               ).ToList();
+
+                product.updateReasons = updatereason;
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(product));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

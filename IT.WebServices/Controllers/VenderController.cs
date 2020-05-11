@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -75,10 +76,18 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var siteDate = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("VenderById @Id"
+                var venderDate = unitOfWork.GetRepositoryInstance<VenderViewModel>().ReadStoredProcedure("VenderById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(siteDate));
+
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+               , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+               , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Vender" }
+               ).ToList();
+
+                venderDate.updateReasonDescriptionViewModels = updatereason;
+
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(venderDate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
@@ -107,9 +116,18 @@ namespace IT.WebServices.Controllers
                 , new SqlParameter("TRN", System.Data.SqlDbType.NVarChar) { Value = venderViewModel.TRN == null ? (object)DBNull.Value : venderViewModel.TRN }
                 , new SqlParameter("Representative", System.Data.SqlDbType.NVarChar) { Value = venderViewModel.Representative == null ? (object)DBNull.Value : venderViewModel.Representative }
                 , new SqlParameter("Title", System.Data.SqlDbType.VarChar) { Value = venderViewModel.Title == null ? (object)DBNull.Value : venderViewModel.Title }
-
-
+                
                 ).FirstOrDefault();
+
+                if (venderViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (venderViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(venderViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
+
                 userRepsonse.Success(new JavaScriptSerializer().Serialize(Res.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

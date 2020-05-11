@@ -61,12 +61,12 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
                 userViewModel.Password = HashPassword.GetHashCode(userViewModel.Password);
 
                 var userIsAlreadyAvailible = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CheckUser @UserName"
                      , new SqlParameter("UserName", System.Data.SqlDbType.NVarChar) { Value = userViewModel.UserName }
                     ).FirstOrDefault();
+
                 if (userIsAlreadyAvailible.Result > 0)
                 {
                     userRepsonse.AlradyUserAvailible((new JavaScriptSerializer()).Serialize("User Already Availible"));
@@ -174,7 +174,6 @@ namespace IT.WebServices.Controllers
         {
                 try
                 {
-
                     changePasswordViewModel.Password = HashPassword.GetHashCode(changePasswordViewModel.Password);
                     changePasswordViewModel.NewPassword = HashPassword.GetHashCode(changePasswordViewModel.NewPassword);
 

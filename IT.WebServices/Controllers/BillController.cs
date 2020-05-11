@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -288,6 +289,15 @@ namespace IT.WebServices.Controllers
 
                             ).FirstOrDefault();
                         }
+                    }
+                }
+
+                if (lPOInvoiceViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (lPOInvoiceViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(lPOInvoiceViewModel.updateReasonDescriptionViewModel);
                     }
                 }
 

@@ -39,7 +39,9 @@ namespace IT.Core.ViewModels
         public bool IsActive { get; set; }
         public string OrderProgress { get; set; }
         public int TotalRows { get; set; }
+        public string ReasonDescription { get; set; }
 
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

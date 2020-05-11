@@ -29,5 +29,8 @@ namespace IT.Core.ViewModels
         public string Representative { get; set; }
         public string Title { get; set; }
         public int TotalRows { get; set; }
+
+        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

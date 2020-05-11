@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -26,7 +27,9 @@ namespace IT.WebServices.Controllers
         public HttpResponseMessage Add([FromBody] LPOInvoiceViewModel lPOInvoiceViewModel)
         {
             try
-            {
+            {                
+                lPOInvoiceViewModel.PONumber = GetQuoNumber();
+                //lPOInvoiceViewModel.RefrenceNumber = GetQuoNumber();
 
                 DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
                 DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
@@ -158,12 +161,50 @@ namespace IT.WebServices.Controllers
         }
         
         [HttpPost]
+        public string GetQuoNumber()
+        {
+            string SerailNO = "";
+            var QuotNumberData = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("QuotNumber"
+                ).FirstOrDefault();
+
+            if(QuotNumberData.Result != null || QuotNumberData.Result != "")
+            {
+                SerailNO = QuotNumberData.Result.Substring(4, 8);
+
+                SerailNO = QuotNumberData.Result.ToString().Substring(0, 6);
+
+                string TotdayNumber = POClass.PONumber().Substring(0, 6);
+                int Counts = 0;
+                if (SerailNO == TotdayNumber)
+                {
+                    Counts = Convert.ToInt32(QuotNumberData.Result.Substring(10, 2)) + 1;
+
+                    if (Counts.ToString().Length == 1)
+                    {
+                        SerailNO = "QUO-" + TotdayNumber + "0" + Counts;
+                    }
+                    else
+                    {
+                        SerailNO = "QUO-" + TotdayNumber + Counts.ToString();
+                    }
+                }
+                else
+                {
+                    SerailNO = "QUO-" + POClass.PONumber();
+                }
+            }
+
+            return SerailNO;
+        }
+
+        [HttpPost]
         public HttpResponseMessage QuotaNumber()
         {
             try
             {
                 var QuotNumberData = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("QuotNumber"
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(QuotNumberData.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -298,6 +339,16 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
+
+                if (lPOInvoiceViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (lPOInvoiceViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(lPOInvoiceViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(QuotationId.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -366,4 +417,32 @@ namespace IT.WebServices.Controllers
         }
 
     }
+
+    internal class POClass
+    {
+        public static string PONumber()
+        {
+            string Day = System.DateTime.Now.Day.ToString();
+            string Month = System.DateTime.Now.Month.ToString();
+            string YY = System.DateTime.Now.Year.ToString();
+
+
+            if (Day.Length == 1)
+            {
+                Day = "0" + Day;
+            }
+            if (Month.Length == 1)
+            {
+                Month = "0" + Month;
+            }
+
+            YY = YY.Substring(2, 2);
+
+            string PONumber = Day + Month + YY + "01";
+
+
+            return PONumber;
+        }
+    }
 }
+

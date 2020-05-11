@@ -160,6 +160,7 @@ namespace IT.WebServices.Controllers
                         var result = updateReason.Add(customerBookingViewModel.UpdateReasonDescriptionViewModel);
                     }
                 }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(BookingUpdate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

@@ -16,6 +16,7 @@ using System.Web.Http;
 using System.Web.Script.Serialization;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
+using IT.WebServices.MISC;
 
 namespace IT.WebServices.Controllers
 {
@@ -129,7 +130,6 @@ namespace IT.WebServices.Controllers
 
                 for (int i = 0; i < files.Count; i++)
                 {
-
                     HttpContent file1 = files[i];
 
                     var thisFileName = DDTT + file1.Headers.ContentDisposition.FileName.Trim('\"');
@@ -334,6 +334,7 @@ namespace IT.WebServices.Controllers
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
                 , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = driverViewModel.CompanyId }
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(driverData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -350,8 +351,7 @@ namespace IT.WebServices.Controllers
             try
             {
                 DriverViewModel driverViewModel = new DriverViewModel();
-
-
+                
                 if (!Request.Content.IsMimeMultipartContent())
                 {
                     throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
@@ -519,9 +519,14 @@ namespace IT.WebServices.Controllers
                 driverViewModel.Comments = HttpContext.Current.Request["Comments"];
                 driverViewModel.Nationality = HttpContext.Current.Request["Nationality"];
                 driverViewModel.DrivingLicenseExpiryDate = HttpContext.Current.Request["DrivingLicenseExpiryDate"];
+                var ReasonDes = HttpContext.Current.Request["updateReasonDescriptionViewModel"];
 
+                //if (ReasonDes != null)
+                //{
+                //    driverViewModel.updateReasonDescriptionViewModel = ReasonDes as UpdateReasonDescriptionViewModel;
+                //}
                 // driverViewModel.DrivingLicenseExpiryDate = Convert.ToDateTime(driverViewModel.LicenseExpiry == null ? System.DateTime.Now.ToShortDateString() : driverViewModel.LicenseExpiry);
-                
+
                 var Res = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverUpdate @Id, @Name, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
                     , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name == null ? (object)DBNull.Value : driverViewModel.Name }
@@ -547,6 +552,15 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("PassportBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportBack == null ? (object)DBNull.Value : driverViewModel.PassportBack }
                     ).FirstOrDefault();
 
+                if (driverViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if (driverViewModel.Id > 0)
+                    {
+                        var result = updateReason.Add(driverViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -562,12 +576,11 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("DriverDeleteImage @Id, @Flage",
+                var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("DriverDeleteImage @Id, @Flage",
                        new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyImages.Id }
-                     , new SqlParameter("Flage", System.Data.SqlDbType.NVarChar)
-                     {
-                         Value = companyImages.Flage == null ? (Object)DBNull.Value : companyImages.Flage
-                     });
+                     , new SqlParameter("Flage", System.Data.SqlDbType.NVarChar) { Value = companyImages.Flage ?? companyImages.Flage})
+                     .FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -683,12 +696,13 @@ namespace IT.WebServices.Controllers
             {
                 var driverData = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("BulkDriver"
                 ).FirstOrDefault();
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(driverData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
             catch (Exception ex)
             {
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
