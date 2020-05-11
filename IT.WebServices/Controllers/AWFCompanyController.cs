@@ -1,5 +1,6 @@
 ﻿using IT.Core.ViewModels;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage Edit(SearchViewModel searchViewModel)
@@ -39,7 +40,13 @@ namespace IT.WebServices.Controllers
                 //, new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Company" }
                 //).ToList();
 
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+              , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = searchViewModel.Id }
+              , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "AWFCompany" }
+              ).ToList();
+
                 AwfCompanyInfo.uploadDocumentsViewModels = Documents;
+                AwfCompanyInfo.updateReasonDescriptionViewModels = updatereason;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(AwfCompanyInfo));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -134,26 +141,43 @@ namespace IT.WebServices.Controllers
                 companyViewModel.UpdatedBy = Convert.ToInt32(HttpContext.Current.Request["UpdatedBy"]);
                 companyViewModel.Address = HttpContext.Current.Request["Address"];
                 companyViewModel.TRN = HttpContext.Current.Request["TRN"];
+                companyViewModel.ReasonDescription = HttpContext.Current.Request["ReasonDescription"];
 
                 var CompanyUpdate = unitOfWork.GetRepositoryInstance<CompanyViewModel>().ReadStoredProcedure("CompanyUpdateAWFuel @Id, @Name,@OwnerRepresentaive, @Street, @Postcode, @City, @State, @Country, @Phone, @Cell, @Email, @Web, @UpdatedBy,@Address,@TRN,@LogoUrl",
                      new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyViewModel.Id }
-                   , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Name == null ? (object)DBNull.Value : companyViewModel.Name }
-                   , new SqlParameter("OwnerRepresentaive", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.OwnerRepresentaive == null ? (object)DBNull.Value : companyViewModel.OwnerRepresentaive }
-                   , new SqlParameter("Street", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Street == null ? (Object)DBNull.Value : companyViewModel.Street }
-                   , new SqlParameter("Postcode", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Postcode == null ? (Object)DBNull.Value : companyViewModel.Postcode }
-                   , new SqlParameter("City", System.Data.SqlDbType.VarChar) { Value = companyViewModel.City == null ? (Object)DBNull.Value : companyViewModel.City }
-                   , new SqlParameter("State", System.Data.SqlDbType.VarChar) { Value = companyViewModel.State == null ? (Object)DBNull.Value : companyViewModel.State }
-                   , new SqlParameter("Country", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Country == null ? (Object)DBNull.Value : companyViewModel.Country }
-                   , new SqlParameter("Phone", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Phone == null ? (Object)DBNull.Value : companyViewModel.Phone }
-                   , new SqlParameter("Cell", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Cell == null ? (Object)DBNull.Value : companyViewModel.Cell }
-                   , new SqlParameter("Email", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Email == null ? (Object)DBNull.Value : companyViewModel.Email }
-                   , new SqlParameter("Web", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Web == null ? (Object)DBNull.Value : companyViewModel.Web }
+                   , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Name ?? (object)DBNull.Value }
+                   , new SqlParameter("OwnerRepresentaive", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.OwnerRepresentaive ?? (object)DBNull.Value }
+                   , new SqlParameter("Street", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Street ?? (Object)DBNull.Value }
+                   , new SqlParameter("Postcode", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Postcode ?? (Object)DBNull.Value }
+                   , new SqlParameter("City", System.Data.SqlDbType.VarChar) { Value = companyViewModel.City ?? (Object)DBNull.Value }
+                   , new SqlParameter("State", System.Data.SqlDbType.VarChar) { Value = companyViewModel.State ?? (Object)DBNull.Value }
+                   , new SqlParameter("Country", System.Data.SqlDbType.VarChar) { Value = companyViewModel.Country ?? (Object)DBNull.Value }
+                   , new SqlParameter("Phone", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Phone ?? (Object)DBNull.Value }
+                   , new SqlParameter("Cell", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Cell ?? (Object)DBNull.Value }
+                   , new SqlParameter("Email", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Email ?? (Object)DBNull.Value }
+                   , new SqlParameter("Web", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Web ?? (Object)DBNull.Value }
                    , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = 1 }
-                   , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Address == null ? (object)DBNull.Value : companyViewModel.Address }
-                   , new SqlParameter("TRN", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.TRN == null ? (object)DBNull.Value : companyViewModel.TRN }
-                   , new SqlParameter("LogoUrl", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.LogoUrl == null ? (object)DBNull.Value : companyViewModel.LogoUrl }
+                   , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.Address ?? (object)DBNull.Value }
+                   , new SqlParameter("TRN", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.TRN ?? (object)DBNull.Value }
+                   , new SqlParameter("LogoUrl", System.Data.SqlDbType.NVarChar) { Value = companyViewModel.LogoUrl ?? (object)DBNull.Value }
 
                    ).FirstOrDefault();
+
+                if (companyViewModel.ReasonDescription != null)
+                {
+                    var updateReason = new UpdateReason();
+                    if (companyViewModel.Id > 0)
+                    {
+                        var updateReasonDes = new UpdateReasonDescriptionViewModel {
+                            Id = companyViewModel.Id,
+                            ReasonDescription = companyViewModel.ReasonDescription,
+                            CreatedBy = companyViewModel.UpdatedBy,
+                            Flag = "AWFCompany"
+                        };
+                    var result = updateReason.Add(updateReasonDes);
+                    }
+                }
+
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(CompanyUpdate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

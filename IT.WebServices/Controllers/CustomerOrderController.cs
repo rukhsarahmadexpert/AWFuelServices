@@ -1082,7 +1082,7 @@ namespace IT.WebServices.Controllers
                 int CurrentPage = customerOrderGroupViewModel.pageNumber;
 
                 // Parameter is passed from Query string if it is null then it default Value will be pageSize:20  
-                int PageSize = customerOrderGroupViewModel.pageSize;
+                int PageSize = customerOrderGroupViewModel.PageSize;
 
                 // Display TotalCount to Records to User  
                 int TotalCount = count;

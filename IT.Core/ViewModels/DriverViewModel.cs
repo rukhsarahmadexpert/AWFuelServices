@@ -41,14 +41,14 @@ namespace IT.Core.ViewModels
         public int VehicleId { get; set; }
         public string DriverImageUrl { get; set; }
         public string PassportBack { get; set; }
+        public string ReasonDescription { get; set; }
 
         public string[] LicienceList { get; set; }
         public List<int> LicenseTypes { get; set; }
 
         public int TotalRows { get; set; }
 
-        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
-
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
     }
 }

@@ -31,7 +31,7 @@ namespace IT.Core.ViewModels
         public string VehicleNumber { get; set; }
         public int CompanyId { get; set; }
         public int pageNumber { get; set; }
-        public int pageSize { get; set; }      
+        public int PageSize { get; set; }      
         public string LogoURL { get; set; }
         public string serachKey { get; set; }
         public string SearchFlage { get; set; }
@@ -43,7 +43,6 @@ namespace IT.Core.ViewModels
         public string pickingPoint { get; set; }
         public string Description { get; set; }
        
-
         public List<CustomerGroupOrderDetailsViewModel> customerGroupOrderDetailsViewModels { get; set; }
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
         public List<CustomerRemainingBookingViewModel> customerRemainingBookingViewModels { get; set; }

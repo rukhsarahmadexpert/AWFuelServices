@@ -25,7 +25,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
@@ -292,27 +292,27 @@ namespace IT.WebServices.Controllers
                 else
                 {
                     var Res = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverAdd @Name, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
-                          new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name == null ? (object)DBNull.Value : driverViewModel.Name }
-                        , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact == null ? (Object)DBNull.Value : driverViewModel.Contact }
-                        , new SqlParameter("Email   ", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email == null ? (Object)DBNull.Value : driverViewModel.Email }
-                        , new SqlParameter("Facebook", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Facebook == null ? (Object)DBNull.Value : driverViewModel.Facebook }
-                        , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Comments == null ? (Object)DBNull.Value : driverViewModel.Comments }
-                        , new SqlParameter("PassportCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportCopy == null ? (Object)DBNull.Value : driverViewModel.PassportCopy }
-                        , new SqlParameter("VisaCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.VisaCopy == null ? (Object)DBNull.Value : driverViewModel.VisaCopy }
-                        , new SqlParameter("IDUAECopyFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyFront == null ? (Object)DBNull.Value : driverViewModel.IDUAECopyFront }
-                        , new SqlParameter("IDUAECopyBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyBack == null ? (Object)DBNull.Value : driverViewModel.IDUAECopyBack }
-                        , new SqlParameter("DrivingLicenseFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseFront == null ? (Object)DBNull.Value : driverViewModel.DrivingLicenseFront }
-                        , new SqlParameter("DrivingLicenseBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseBack == null ? (Object)DBNull.Value : driverViewModel.DrivingLicenseBack }
-                        , new SqlParameter("Nationality", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Nationality == null ? (Object)DBNull.Value : driverViewModel.Nationality }
-                        , new SqlParameter("DrivingLicenseExpiryDate", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.LicenseExpiry == null ? (Object)DBNull.Value : driverViewModel.LicenseExpiry }
+                          new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name ?? (object)DBNull.Value }
+                        , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact ?? (Object)DBNull.Value }
+                        , new SqlParameter("Email   ", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email ?? (Object)DBNull.Value }
+                        , new SqlParameter("Facebook", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Facebook ?? (Object)DBNull.Value }
+                        , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Comments ?? (Object)DBNull.Value }
+                        , new SqlParameter("PassportCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportCopy ?? (Object)DBNull.Value }
+                        , new SqlParameter("VisaCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.VisaCopy ?? (Object)DBNull.Value }
+                        , new SqlParameter("IDUAECopyFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyFront ?? (Object)DBNull.Value  }
+                        , new SqlParameter("IDUAECopyBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyBack ?? (Object)DBNull.Value  }
+                        , new SqlParameter("DrivingLicenseFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseFront ?? (Object)DBNull.Value  }
+                        , new SqlParameter("DrivingLicenseBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseBack ?? (Object)DBNull.Value }
+                        , new SqlParameter("Nationality", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Nationality ?? (Object)DBNull.Value  }
+                        , new SqlParameter("DrivingLicenseExpiryDate", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.LicenseExpiry ?? (Object)DBNull.Value  }
                         , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = driverViewModel.CompanyId }
                         , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = driverViewModel.CreatedBy }
-                        , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.UID == null ? (object)DBNull.Value : driverViewModel.UID }
+                        , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.UID ?? (object)DBNull.Value }
                         , new SqlParameter("LicenseType", System.Data.SqlDbType.Int) { Value = a }
                         , new SqlParameter("LicenseType2", System.Data.SqlDbType.Int) { Value = b }
                         , new SqlParameter("LicenseType3", System.Data.SqlDbType.Int) { Value = c }
-                        , new SqlParameter("DriverImageUrl", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DriverImageUrl == null ? (object)DBNull.Value : driverViewModel.DriverImageUrl }
-                        , new SqlParameter("PassportBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportBack == null ? (object)DBNull.Value : driverViewModel.PassportBack }
+                        , new SqlParameter("DriverImageUrl", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DriverImageUrl ?? (object)DBNull.Value }
+                        , new SqlParameter("PassportBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportBack ?? (object)DBNull.Value  }
                         ).FirstOrDefault();
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));                
                     return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -334,6 +334,13 @@ namespace IT.WebServices.Controllers
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
                 , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = driverViewModel.CompanyId }
                 ).FirstOrDefault();
+
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+                  , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
+                  , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "Driver" }
+                  ).ToList();
+
+                driverData.updateReasonDescriptionViewModels = updatereason;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(driverData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -508,9 +515,7 @@ namespace IT.WebServices.Controllers
                             c = driverViewModel.LicenseTypes[i];
                         }
                     }
-                }
-
-
+                }                
 
                 driverViewModel.LicenseExpiry = HttpContext.Current.Request["LicenseExpiry"];
                 driverViewModel.Contact = HttpContext.Current.Request["Contact"];
@@ -519,7 +524,7 @@ namespace IT.WebServices.Controllers
                 driverViewModel.Comments = HttpContext.Current.Request["Comments"];
                 driverViewModel.Nationality = HttpContext.Current.Request["Nationality"];
                 driverViewModel.DrivingLicenseExpiryDate = HttpContext.Current.Request["DrivingLicenseExpiryDate"];
-                var ReasonDes = HttpContext.Current.Request["updateReasonDescriptionViewModel"];
+                driverViewModel.ReasonDescription = HttpContext.Current.Request["ReasonDescription"];
 
                 //if (ReasonDes != null)
                 //{
@@ -529,35 +534,41 @@ namespace IT.WebServices.Controllers
 
                 var Res = unitOfWork.GetRepositoryInstance<DriverViewModel>().ReadStoredProcedure("DriverUpdate @Id, @Name, @Contact, @Email, @Facebook, @Comments, @PassportCopy, @VisaCopy, @IDUAECopyFront,@IDUAECopyBack,@DrivingLicenseFront, @DrivingLicenseBack,@Nationality, @DrivingLicenseExpiryDate,@CompanyId, @CreatedBy,@UID,@LicenseType,@LicenseType2,@LicenseType3,@DriverImageUrl,@PassportBack",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = driverViewModel.Id }
-                    , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name == null ? (object)DBNull.Value : driverViewModel.Name }
-                    , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact == null ? (Object)DBNull.Value : driverViewModel.Contact }
-                    , new SqlParameter("Email   ", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email == null ? (Object)DBNull.Value : driverViewModel.Email }
-                    , new SqlParameter("Facebook", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Facebook == null ? (Object)DBNull.Value : driverViewModel.Facebook }
-                    , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Comments == null ? (Object)DBNull.Value : driverViewModel.Comments }
-                    , new SqlParameter("PassportCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportCopy == null ? (Object)DBNull.Value : driverViewModel.PassportCopy }
-                    , new SqlParameter("VisaCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.VisaCopy == null ? (Object)DBNull.Value : driverViewModel.VisaCopy }
-                    , new SqlParameter("IDUAECopyFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyFront == null ? (Object)DBNull.Value : driverViewModel.IDUAECopyFront }
-                    , new SqlParameter("IDUAECopyBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyBack == null ? (Object)DBNull.Value : driverViewModel.IDUAECopyBack }
-                    , new SqlParameter("DrivingLicenseFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseFront == null ? (Object)DBNull.Value : driverViewModel.DrivingLicenseFront }
-                    , new SqlParameter("DrivingLicenseBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseBack == null ? (Object)DBNull.Value : driverViewModel.DrivingLicenseBack }
-                    , new SqlParameter("Nationality", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Nationality == null ? (Object)DBNull.Value : driverViewModel.Nationality }
-                    , new SqlParameter("DrivingLicenseExpiryDate", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseExpiryDate == null ? (Object)DBNull.Value : driverViewModel.DrivingLicenseExpiryDate }
+                    , new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = driverViewModel.Name ?? (object)DBNull.Value  }
+                    , new SqlParameter("Contact", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Contact ?? (Object)DBNull.Value  }
+                    , new SqlParameter("Email   ", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Email ?? (Object)DBNull.Value  }
+                    , new SqlParameter("Facebook", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Facebook ?? (Object)DBNull.Value  }
+                    , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Comments ?? (Object)DBNull.Value  }
+                    , new SqlParameter("PassportCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportCopy ?? (Object)DBNull.Value }
+                    , new SqlParameter("VisaCopy", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.VisaCopy ?? (Object)DBNull.Value  }
+                    , new SqlParameter("IDUAECopyFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyFront ?? (Object)DBNull.Value   }
+                    , new SqlParameter("IDUAECopyBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.IDUAECopyBack ?? (Object)DBNull.Value  }
+                    , new SqlParameter("DrivingLicenseFront", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseFront ?? (Object)DBNull.Value  }
+                    , new SqlParameter("DrivingLicenseBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseBack ?? (Object)DBNull.Value  }
+                    , new SqlParameter("Nationality", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.Nationality ?? (Object)DBNull.Value }
+                    , new SqlParameter("DrivingLicenseExpiryDate", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DrivingLicenseExpiryDate ?? System.DateTime.Now.ToShortDateString() }
                     , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = driverViewModel.CompanyId }
                     , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = driverViewModel.CreatedBy }
-                    , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.UID == null ? (object)DBNull.Value : driverViewModel.UID }
+                    , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.UID ?? (object)DBNull.Value }
                     , new SqlParameter("LicenseType", System.Data.SqlDbType.Int) { Value = a }
                     , new SqlParameter("LicenseType2", System.Data.SqlDbType.Int) { Value = b }
                     , new SqlParameter("LicenseType3", System.Data.SqlDbType.Int) { Value = c }
-                    , new SqlParameter("DriverImageUrl", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DriverImageUrl == null ? (object)DBNull.Value : driverViewModel.DriverImageUrl }
-                    , new SqlParameter("PassportBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportBack == null ? (object)DBNull.Value : driverViewModel.PassportBack }
+                    , new SqlParameter("DriverImageUrl", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.DriverImageUrl ?? (object)DBNull.Value  }
+                    , new SqlParameter("PassportBack", System.Data.SqlDbType.NVarChar) { Value = driverViewModel.PassportBack ?? (object)DBNull.Value }
                     ).FirstOrDefault();
 
-                if (driverViewModel.updateReasonDescriptionViewModel != null)
+                if (driverViewModel.ReasonDescription != null)
                 {
                     UpdateReason updateReason = new UpdateReason();
                     if (driverViewModel.Id > 0)
-                    {
-                        var result = updateReason.Add(driverViewModel.updateReasonDescriptionViewModel);
+                    {                        
+                       var ReasonDes = new UpdateReasonDescriptionViewModel { 
+                            ReasonDescription = driverViewModel.ReasonDescription,
+                            Id = driverViewModel.Id,
+                            CreatedBy = driverViewModel.CreatedBy,
+                            Flag = "Driver"
+                        };
+                    var result = updateReason.Add(ReasonDes);
                     }
                 }
 
@@ -566,7 +577,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }

@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using IT.WebServices.Models;
 using Newtonsoft.Json;
 using System;
@@ -21,7 +22,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage Add(SiteViewModel siteViewModel)
@@ -30,18 +31,18 @@ namespace IT.WebServices.Controllers
             {
 
                 var Res = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("SiteAdd @SiteName,@ContactPersonName,@ContactPhone,@SiteCell,@FaceBook,@SiteEmail,@Address,@CreatedBy,@longitude,@latitude,@locationFullUrl,@pickingPoint",
-                  new SqlParameter("SiteName", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteName == null ? (object)DBNull.Value : siteViewModel.SiteName }
-                , new SqlParameter("ContactPersonName", System.Data.SqlDbType.VarChar) { Value = siteViewModel.ContactPersonName == null ? (object)DBNull.Value : siteViewModel.ContactPersonName }
-                , new SqlParameter("ContactPhone", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.ContactPhone == null ? (object)DBNull.Value : siteViewModel.ContactPhone }
-                , new SqlParameter("SiteCell", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteCell == null ? (object)DBNull.Value : siteViewModel.SiteCell }
-                , new SqlParameter("FaceBook", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.FaceBook == null ? (object)DBNull.Value : siteViewModel.FaceBook }
-                , new SqlParameter("SiteEmail", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteEmail == null ? (object)DBNull.Value : siteViewModel.SiteEmail }
-                , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.Address == null ? (object)DBNull.Value : siteViewModel.Address }
+                  new SqlParameter("SiteName", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteName ?? (object)DBNull.Value }
+                , new SqlParameter("ContactPersonName", System.Data.SqlDbType.VarChar) { Value = siteViewModel.ContactPersonName ?? (object)DBNull.Value }
+                , new SqlParameter("ContactPhone", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.ContactPhone ?? (object)DBNull.Value }
+                , new SqlParameter("SiteCell", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteCell ?? (object)DBNull.Value }
+                , new SqlParameter("FaceBook", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.FaceBook ?? (object)DBNull.Value }
+                , new SqlParameter("SiteEmail", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteEmail ?? (object)DBNull.Value }
+                , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.Address ?? (object)DBNull.Value }
                 , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = siteViewModel.CreatedBy }
-                , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.longitude == null ? (object)DBNull.Value : siteViewModel.longitude }
-                , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.latitude == null ? (object)DBNull.Value : siteViewModel.latitude }
-                , new SqlParameter("locationFullUrl", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.locationFullUrl == null ? (object)DBNull.Value : siteViewModel.locationFullUrl }
-                , new SqlParameter("pickingPoint", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.PickingPoint == null ? (object)DBNull.Value : siteViewModel.PickingPoint }
+                , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.longitude ?? (object)DBNull.Value }
+                , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.latitude ?? (object)DBNull.Value }
+                , new SqlParameter("locationFullUrl", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.locationFullUrl ?? (object)DBNull.Value }
+                , new SqlParameter("pickingPoint", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.PickingPoint ?? (object)DBNull.Value }
 
                 ).FirstOrDefault();
                 userRepsonse.Success(new JavaScriptSerializer().Serialize(Res));
@@ -62,8 +63,7 @@ namespace IT.WebServices.Controllers
             {
                 var SiteList = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("SiteAll"
                     ).ToList();
-
-               
+                               
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(SiteList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -82,6 +82,14 @@ namespace IT.WebServices.Controllers
                 var siteDate = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("SiteById @Id"
                 , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
                 ).FirstOrDefault();
+
+                var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+              , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = Id }
+              , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "AWFSite" }
+              ).ToList();
+
+                siteDate.updateReasonDescriptionViewModels = updatereason;
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(siteDate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -99,20 +107,30 @@ namespace IT.WebServices.Controllers
             {
                 var Res = unitOfWork.GetRepositoryInstance<SiteViewModel>().ReadStoredProcedure("SiteUpdate @Id,@SiteName,@ContactPersonName,@ContactPhone,@SiteCell,@FaceBook,@SiteEmail,@Address,@UpdatedBy,@longitude,@latitude,@locationFullUrl,@pickingPoint",
                   new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = siteViewModel.Id }
-                , new SqlParameter("SiteName", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteName == null ? (object)DBNull.Value : siteViewModel.SiteName }
-                , new SqlParameter("ContactPersonName", System.Data.SqlDbType.VarChar) { Value = siteViewModel.ContactPersonName == null ? (object)DBNull.Value : siteViewModel.ContactPersonName }
-                , new SqlParameter("ContactPhone", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.ContactPhone == null ? (object)DBNull.Value : siteViewModel.ContactPhone }
-                , new SqlParameter("SiteCell", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteCell == null ? (object)DBNull.Value : siteViewModel.SiteCell }
-                , new SqlParameter("FaceBook", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.FaceBook == null ? (object)DBNull.Value : siteViewModel.FaceBook }
-                , new SqlParameter("SiteEmail", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteEmail == null ? (object)DBNull.Value : siteViewModel.SiteEmail }
-                , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.Address == null ? (object)DBNull.Value : siteViewModel.Address }
+                , new SqlParameter("SiteName", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteName ?? (object)DBNull.Value }
+                , new SqlParameter("ContactPersonName", System.Data.SqlDbType.VarChar) { Value = siteViewModel.ContactPersonName ?? (object)DBNull.Value }
+                , new SqlParameter("ContactPhone", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.ContactPhone ?? (object)DBNull.Value }
+                , new SqlParameter("SiteCell", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteCell ?? (object)DBNull.Value }
+                , new SqlParameter("FaceBook", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.FaceBook ?? (object)DBNull.Value }
+                , new SqlParameter("SiteEmail", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.SiteEmail ?? (object)DBNull.Value }
+                , new SqlParameter("Address", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.Address ?? (object)DBNull.Value }
                 , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = siteViewModel.UpdateBy }
-                , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.longitude == null ? (object)DBNull.Value : siteViewModel.longitude }
-                , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.latitude == null ? (object)DBNull.Value : siteViewModel.latitude }
-                , new SqlParameter("locationFullUrl", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.locationFullUrl == null ? (object)DBNull.Value : siteViewModel.locationFullUrl }
-                , new SqlParameter("pickingPoint", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.PickingPoint == null ? (object)DBNull.Value : siteViewModel.PickingPoint }
+                , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.longitude ?? (object)DBNull.Value }
+                , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.latitude ?? (object)DBNull.Value }
+                , new SqlParameter("locationFullUrl", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.locationFullUrl ?? (object)DBNull.Value }
+                , new SqlParameter("pickingPoint", System.Data.SqlDbType.NVarChar) { Value = siteViewModel.PickingPoint ?? (object)DBNull.Value  }
 
                 ).FirstOrDefault();
+
+                if(siteViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    if(siteViewModel.Id > 0)
+                    {
+                       var result = updateReason.Add(siteViewModel.updateReasonDescriptionViewModel);
+                    }
+                }
+
                 userRepsonse.Success(new JavaScriptSerializer().Serialize(Res));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }

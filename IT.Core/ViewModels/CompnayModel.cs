@@ -27,5 +27,6 @@ namespace IT.Core.ViewModels
         public string CurrentStatus { get; set; }
 
         public List<UploadDocumentsViewModel> uploadDocumentsViewModels { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

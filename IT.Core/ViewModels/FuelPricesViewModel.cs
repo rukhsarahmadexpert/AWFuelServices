@@ -20,5 +20,8 @@ namespace IT.Core.ViewModels
         public string UnitName { get; set; }
         public int ProductId { get; set; }
         public string ProductName { get; set; }
+
+        public UpdateReasonDescriptionViewModel updateReasonDescriptionViewModel { get; set; }
+        public List<UpdateReasonDescriptionViewModel> updateReasonDescriptionViewModels { get; set; }
     }
 }

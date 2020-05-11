@@ -1,6 +1,7 @@
 ﻿using IT.Core.ViewModels;
 using IT.Core.ViewModels.Common;
 using IT.Repository;
+using IT.WebServices.MISC;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -17,7 +18,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage All()
@@ -74,6 +75,12 @@ namespace IT.WebServices.Controllers
                , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = fuelPricesViewModel.ProductId }
                  ).FirstOrDefault();
 
+                if(fuelPricesViewModel.updateReasonDescriptionViewModel != null)
+                {
+                    UpdateReason updateReason = new UpdateReason();
+                    var res = updateReason.Add(fuelPricesViewModel.updateReasonDescriptionViewModel);
+                }
+
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(FuelPricesUpdate));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -92,6 +99,13 @@ namespace IT.WebServices.Controllers
                 var fuelPricesData = unitOfWork.GetRepositoryInstance<FuelPricesViewModel>().ReadStoredProcedure("FuelPricesEdit @Id",
                     new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = fuelPricesViewModel.Id }
                     ).FirstOrDefault();
+
+                 var updatereason = unitOfWork.GetRepositoryInstance<UpdateReasonDescriptionViewModel>().ReadStoredProcedure("UpdateReasonDescriptionGet @Id,@Flag"
+                , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = fuelPricesViewModel.Id }
+                , new SqlParameter("Flag", System.Data.SqlDbType.NVarChar) { Value = "FuelPrice" }
+                ).ToList();
+
+                fuelPricesData.updateReasonDescriptionViewModels = updatereason;
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(fuelPricesData));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);

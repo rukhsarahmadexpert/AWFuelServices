@@ -26,7 +26,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
         
         [HttpPost]
         public HttpResponseMessage All(PagingParameterModel pagingparametermodel)
@@ -209,22 +209,22 @@ namespace IT.WebServices.Controllers
                 {
                     var vehicleAdd = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleAddAWFuel @VehicleType, @TraficPlateNumber, @TCNumber, @Model, @Color, @MulkiaExpiry,@InsuranceExpiry, @RegisteredRegion, @Brand, @MulkiaFront1, @MulkiaBack1, @MulkiaFront2, @MulkiaBack2, @Comments,@CompanyId,@CreatedBy,@UID",
                          new SqlParameter("VehicleType", System.Data.SqlDbType.Int) { Value = vehicleViewModel.VehicleType }
-                        , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber == null ? (Object)DBNull.Value : vehicleViewModel.TraficPlateNumber }
-                        , new SqlParameter("TCNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TCNumber == null ? (Object)DBNull.Value : vehicleViewModel.TCNumber }
-                        , new SqlParameter("Model", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Model == null ? (Object)DBNull.Value : vehicleViewModel.Model }
-                        , new SqlParameter("Color", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Color == null ? (Object)DBNull.Value : vehicleViewModel.Color }
+                        , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber ?? (Object)DBNull.Value }
+                        , new SqlParameter("TCNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TCNumber ?? (Object)DBNull.Value }
+                        , new SqlParameter("Model", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Model ?? (Object)DBNull.Value  }
+                        , new SqlParameter("Color", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Color ?? (Object)DBNull.Value  }
                         , new SqlParameter("MulkiaExpiry", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaExpiry }
                         , new SqlParameter("InsuranceExpiry", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.InsuranceExpiry }
-                        , new SqlParameter("RegisteredRegion", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.RegisteredRegion == null ? (Object)DBNull.Value : vehicleViewModel.RegisteredRegion }
-                        , new SqlParameter("Brand", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Brand == null ? (Object)DBNull.Value : vehicleViewModel.Brand }
-                        , new SqlParameter("MulkiaFront1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront1 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaFront1 }
-                        , new SqlParameter("MulkiaBack1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack1 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaBack1 }
-                        , new SqlParameter("MulkiaFront2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront2 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaFront2 }
-                        , new SqlParameter("MulkiaBack2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack2 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaBack2 }
-                        , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Comments == null ? (object)DBNull.Value : vehicleViewModel.Comments }
-                        , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = vehicleViewModel.CompanyId == 0 ? (object)DBNull.Value : vehicleViewModel.CompanyId }
-                        , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = vehicleViewModel.CreatedBy == 0 ? (object)DBNull.Value : vehicleViewModel.CreatedBy }
-                        , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.UID == null ? (object)DBNull.Value : vehicleViewModel.UID }
+                        , new SqlParameter("RegisteredRegion", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.RegisteredRegion ?? (Object)DBNull.Value  }
+                        , new SqlParameter("Brand", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Brand ?? (Object)DBNull.Value }
+                        , new SqlParameter("MulkiaFront1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront1 ?? (Object)DBNull.Value  }
+                        , new SqlParameter("MulkiaBack1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack1 ?? (Object)DBNull.Value }
+                        , new SqlParameter("MulkiaFront2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront2 ?? (Object)DBNull.Value  }
+                        , new SqlParameter("MulkiaBack2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack2 ?? (Object)DBNull.Value  }
+                        , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Comments ?? (object)DBNull.Value }
+                        , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = vehicleViewModel.CompanyId }
+                        , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = vehicleViewModel.CreatedBy  }
+                        , new SqlParameter("UID", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.UID ?? (object)DBNull.Value }
                        );
 
                     userRepsonse.Success((new JavaScriptSerializer()).Serialize(vehicleAdd));
@@ -370,37 +370,36 @@ namespace IT.WebServices.Controllers
                 var vehicleAdd = unitOfWork.GetRepositoryInstance<VehicleViewModel>().ReadStoredProcedure("VehicleUpdateAWFuel @Id, @VehicleType, @TraficPlateNumber, @TCNumber, @Model, @Color, @MulkiaExpiry,@InsuranceExpiry, @RegisteredRegion, @Brand, @MulkiaFront1, @MulkiaBack1, @MulkiaFront2, @MulkiaBack2, @Comments,@UpdatedBy",
                       new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = vehicleViewModel.Id }
                     , new SqlParameter("VehicleType", System.Data.SqlDbType.Int) { Value = vehicleViewModel.VehicleType }
-                    , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber == null ? (Object)DBNull.Value : vehicleViewModel.TraficPlateNumber }
-                    , new SqlParameter("TCNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TCNumber == null ? (Object)DBNull.Value : vehicleViewModel.TCNumber }
-                    , new SqlParameter("Model", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Model == null ? (Object)DBNull.Value : vehicleViewModel.Model }
-                    , new SqlParameter("Color", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Color == null ? (Object)DBNull.Value : vehicleViewModel.Color }
+                    , new SqlParameter("TraficPlateNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TraficPlateNumber ?? (Object)DBNull.Value }
+                    , new SqlParameter("TCNumber", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.TCNumber ?? (Object)DBNull.Value }
+                    , new SqlParameter("Model", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Model ?? (Object)DBNull.Value }
+                    , new SqlParameter("Color", System.Data.SqlDbType.VarChar) { Value = vehicleViewModel.Color?? (Object)DBNull.Value  }
                     , new SqlParameter("MulkiaExpiry", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaExpiry }
                     , new SqlParameter("InsuranceExpiry", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.InsuranceExpiry }
-                    , new SqlParameter("RegisteredRegion", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.RegisteredRegion == null ? (Object)DBNull.Value : vehicleViewModel.RegisteredRegion }
-                    , new SqlParameter("Brand", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Brand == null ? (Object)DBNull.Value : vehicleViewModel.Brand }
-                    , new SqlParameter("MulkiaFront1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront1 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaFront1 }
-                    , new SqlParameter("MulkiaBack1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack1 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaBack1 }
-                    , new SqlParameter("MulkiaFront2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront2 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaFront2 }
-                    , new SqlParameter("MulkiaBack2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack2 == null ? (Object)DBNull.Value : vehicleViewModel.MulkiaBack2 }
-                    , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Comments == null ? (object)DBNull.Value : vehicleViewModel.Comments }
-                    , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = vehicleViewModel.UpdateBy == 0 ? (object)DBNull.Value : vehicleViewModel.UpdateBy }
+                    , new SqlParameter("RegisteredRegion", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.RegisteredRegion ?? (Object)DBNull.Value }
+                    , new SqlParameter("Brand", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Brand ?? (Object)DBNull.Value }
+                    , new SqlParameter("MulkiaFront1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront1 ?? (Object)DBNull.Value  }
+                    , new SqlParameter("MulkiaBack1", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack1 ?? (Object)DBNull.Value }
+                    , new SqlParameter("MulkiaFront2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaFront2 ?? (Object)DBNull.Value }
+                    , new SqlParameter("MulkiaBack2", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.MulkiaBack2 ?? (Object)DBNull.Value }
+                    , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = vehicleViewModel.Comments ?? (object)DBNull.Value }
+                    , new SqlParameter("UpdatedBy", System.Data.SqlDbType.Int) { Value = vehicleViewModel.UpdateBy }
                    ).FirstOrDefault();
 
-                if(vehicleViewModel.ReasonDescription != null && vehicleViewModel.ReasonDescription != "")
+                if (vehicleViewModel.ReasonDescription != null && vehicleViewModel.ReasonDescription != "")
                 {
                     UpdateReason updateReason = new UpdateReason();
 
-                    var updateReasonDescriptionViewModel = new UpdateReasonDescriptionViewModel();
-                    updateReasonDescriptionViewModel.Id = vehicleViewModel.Id;
-                    updateReasonDescriptionViewModel.ReasonDescription = vehicleViewModel.ReasonDescription;
-                    updateReasonDescriptionViewModel.CreatedBy = vehicleViewModel.UpdateBy;
-                    updateReasonDescriptionViewModel.Flag = "Vehicle";
+                    var updateReasonDescriptionViewModel = new UpdateReasonDescriptionViewModel
+                    {
+                        Id = vehicleViewModel.Id,
+                        ReasonDescription = vehicleViewModel.ReasonDescription,
+                        CreatedBy = vehicleViewModel.UpdateBy,
+                        Flag = "Vehicle"
+                    };
 
                     var result = updateReason.Add(updateReasonDescriptionViewModel);
-
                 }
-
-
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(vehicleAdd));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -420,7 +419,7 @@ namespace IT.WebServices.Controllers
                        new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = companyImages.Id }
                      , new SqlParameter("Flage", System.Data.SqlDbType.NVarChar)
                      {
-                         Value = companyImages.Flage == null ? (Object)DBNull.Value : companyImages.Flage
+                         Value = companyImages.Flage ?? (Object)DBNull.Value
                      });
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
