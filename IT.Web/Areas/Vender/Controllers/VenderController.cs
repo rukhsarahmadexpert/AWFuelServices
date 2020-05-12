@@ -141,7 +141,7 @@ namespace IT.Web.Areas.Vender.Controllers
                     new
                     {
                         aaData = venderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = venderViewModels,
                         iTotalRecords = totalCount,
@@ -153,7 +153,7 @@ namespace IT.Web.Areas.Vender.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }

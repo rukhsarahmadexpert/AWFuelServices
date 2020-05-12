@@ -15,14 +15,12 @@ namespace IT.Web.Areas.Project.Controllers
         WebServices webServices = new WebServices();
         List<ProjectViewModel> projectViewModels = new List<ProjectViewModel>();
         ProjectViewModel ProjectViewModel = new ProjectViewModel();
-
-
+        
         public ActionResult Index()
         {
             return View();
         }
-
-
+        
         public JsonResult GetAll(DataTablesParm parm)
         {
             try
@@ -99,7 +97,7 @@ namespace IT.Web.Areas.Project.Controllers
                     new
                     {
                         aaData = projectViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = projectViewModels,
                         iTotalRecords = totalCount,
@@ -110,13 +108,11 @@ namespace IT.Web.Areas.Project.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
-
-
-
+               
         public ActionResult  Create()
         {
 
@@ -126,8 +122,7 @@ namespace IT.Web.Areas.Project.Controllers
 
             return View(ProjectViewModel);
         }
-
-
+        
         [HttpPost]
         public ActionResult Create(ProjectViewModel projectViewModel)
         {
@@ -163,9 +158,7 @@ namespace IT.Web.Areas.Project.Controllers
 
            
         }
-
-
-
+               
         public ActionResult Edit(int Id)
         {
             try
@@ -190,8 +183,7 @@ namespace IT.Web.Areas.Project.Controllers
                 throw Exception;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult Edit(ProjectViewModel projectViewModel)
         {
@@ -235,8 +227,7 @@ namespace IT.Web.Areas.Project.Controllers
             }
 
         }
-
-
+        
         [HttpGet]
         public ActionResult Details(int Id)
         {

@@ -16,7 +16,6 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
         List<ProjectViewModel> projectViewModels = new List<ProjectViewModel>();
         List<EmployeeViewModel> employeeViewModels = new List<EmployeeViewModel>();
      
-
         public ActionResult Index()
         {
             var ProjectResults = webServices.Post(new CountryViewModel(), "Project/All");
@@ -33,8 +32,7 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
 
             return View();
         }
-
-
+        
         [HttpGet]
         public JsonResult AllEmployeeByProjectId(int Id)
         {
@@ -50,14 +48,12 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
 
                 return Json("Failed",JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult GeneratSalary(AccountViewModel accountViewModel)
         {
@@ -82,8 +78,7 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw ex;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult IsSalaryGenerated(AccountViewModel accountViewModel)
         {
@@ -101,12 +96,10 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
-        }      
-
-
+        }
+        
         public ActionResult EmployeeLoadIssued()
         {
             var ProjectResults = webServices.Post(new CountryViewModel(), "Project/All");
@@ -121,9 +114,10 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
             }
             ViewBag.projectViewModels = projectViewModels;
 
-            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel();
-            aWFuelSalaryViewModel.IssuedDate = System.DateTime.Now;
-
+            var aWFuelSalaryViewModel = new AWFuelSalaryViewModel
+            {
+                IssuedDate = System.DateTime.Now
+            };
             return View(aWFuelSalaryViewModel);
         }
 
@@ -162,8 +156,7 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw ex;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult EmployeeLoanReturn(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
@@ -198,8 +191,7 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw ex;
             }
         }
-
-                     
+                             
         [HttpPost]
         public ActionResult EmployeeStatistics(int Id)
         {
@@ -224,10 +216,9 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw Exception;
             }
         }
-
-
-       [HttpGet]
-       public ActionResult EmployeeDediction()
+        
+        [HttpGet]
+        public ActionResult EmployeeDediction()
        {
             var ProjectResults = webServices.Post(new CountryViewModel(), "Project/All");
             if (ProjectResults.Data != "[]")
@@ -241,15 +232,14 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
             }
             ViewBag.projectViewModels = projectViewModels;
 
-            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel();
-            aWFuelSalaryViewModel.IssuedDate = System.DateTime.Now;
-
+            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel { 
+                IssuedDate = System.DateTime.Now
+            };
             return View(aWFuelSalaryViewModel);
         }
-
-
-       [HttpPost]
-       public ActionResult SaveDeduction(AWFuelSalaryViewModel aWFuelSalaryViewModel)
+        
+        [HttpPost]
+        public ActionResult SaveDeduction(AWFuelSalaryViewModel aWFuelSalaryViewModel)
        {
             try
             {
@@ -268,9 +258,8 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw ex;
             }
         }
-
-
-       public ActionResult EmployeeAllowansis()
+        
+        public ActionResult EmployeeAllowansis()
         {
             var ProjectResults = webServices.Post(new CountryViewModel(), "Project/All");
             if (ProjectResults.Data != "[]")
@@ -284,14 +273,14 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
             }
             ViewBag.projectViewModels = projectViewModels;
 
-            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel();
-            aWFuelSalaryViewModel.IssuedDate = System.DateTime.Now;
-
+            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel {
+                IssuedDate = System.DateTime.Now
+            };
             return View(aWFuelSalaryViewModel);
         }
 
-       [HttpPost]
-       public ActionResult EmployeeAllowanceSaved(AWFuelSalaryViewModel aWFuelSalaryViewModel)
+        [HttpPost]
+        public ActionResult EmployeeAllowanceSaved(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {
             try
             {
@@ -310,11 +299,10 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
                 throw ex;
             }
         }
-
-
-       [HttpGet]
-       public ActionResult IssueEmployeeSalary()
-       {
+        
+        [HttpGet]
+        public ActionResult IssueEmployeeSalary()
+        {
             var ProjectResults = webServices.Post(new CountryViewModel(), "Project/All");
             if (ProjectResults.Data != "[]")
             {
@@ -327,13 +315,12 @@ namespace IT.Web.Areas.AWFEmployeeSalary.Controllers
             }
             ViewBag.projectViewModels = projectViewModels;
 
-            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel();
-            aWFuelSalaryViewModel.IssuedDate = System.DateTime.Now;
-
+            AWFuelSalaryViewModel aWFuelSalaryViewModel = new AWFuelSalaryViewModel {
+                IssuedDate = System.DateTime.Now
+            };
             return View(aWFuelSalaryViewModel);
         }
-
-
+        
         [HttpPost]
         public ActionResult IssueEmployeeSalary(AWFuelSalaryViewModel aWFuelSalaryViewModel)
         {

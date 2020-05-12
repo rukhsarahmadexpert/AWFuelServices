@@ -327,7 +327,7 @@ namespace IT.Web.Areas.Company.Controllers
             }
             catch (Exception ex)
             {
-                return Json("Failed to Delete");
+                return Json("Failed to Delete"+ex.ToString());
             }
         }
 

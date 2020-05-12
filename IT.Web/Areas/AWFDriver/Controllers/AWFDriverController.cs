@@ -21,21 +21,21 @@ namespace IT.Web.Areas.AWDriver.Controllers
         List<DriverViewModel> driverViewModelss = new List<DriverViewModel>();
         WebServices webServices = new WebServices();
 
-     
+
         public ActionResult Index()
         {
             var results = webServices.Post(new CountryViewModel(), "Country/All");
             if (results.Data != "[]")
             {
-                 CountryViewModel = (new JavaScriptSerializer()).Deserialize<List<CountryViewModel>>(results.Data.ToString());
+                CountryViewModel = (new JavaScriptSerializer()).Deserialize<List<CountryViewModel>>(results.Data.ToString());
 
-                if(CountryViewModel[0].CountryName != "Select Country")
+                if (CountryViewModel[0].CountryName != "Select Country")
                 {
                     CountryViewModel.Insert(0, new CountryViewModel() { Id = 0, CountryName = "Select Country" });
                 }
             }
 
-            
+
 
             ViewBag.CountryList = CountryViewModel;
             return View(driverViewModel);
@@ -62,12 +62,12 @@ namespace IT.Web.Areas.AWDriver.Controllers
                 //}
                 //else
                 //{
-                    var result = webServices.Post(new DriverViewModel(), "AWFDriver/All/" + CompanyId);
-                    driverViewModelss = (new JavaScriptSerializer()).Deserialize<List<DriverViewModel>>(result.Data.ToString());
+                var result = webServices.Post(new DriverViewModel(), "AWFDriver/All/" + CompanyId);
+                driverViewModelss = (new JavaScriptSerializer()).Deserialize<List<DriverViewModel>>(result.Data.ToString());
 
-                    HttpContext.Cache["AWFuelDriverData"] = driverViewModelss;
+                HttpContext.Cache["AWFuelDriverData"] = driverViewModelss;
 
-               // }
+                // }
                 if (parm.sSearch != null)
                 {
 
@@ -116,7 +116,7 @@ namespace IT.Web.Areas.AWDriver.Controllers
                     new
                     {
                         aaData = driverViewModelss,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = driverViewModelss,
                         iTotalRecords = totalCount,
@@ -128,7 +128,7 @@ namespace IT.Web.Areas.AWDriver.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -161,7 +161,7 @@ namespace IT.Web.Areas.AWDriver.Controllers
         {
             driverViewModel.CompanyId = Convert.ToInt32(Session["CompanyId"]);
             driverViewModel.CreatedBy = Convert.ToInt32(Session["UserId"]);
-          
+
 
             if (ModelState.IsValid)
             {
@@ -219,12 +219,12 @@ namespace IT.Web.Areas.AWDriver.Controllers
                         count = count + 1;
                     }
                 }
-                
+
 
                 var result = webServices.Post(driverViewModel, "AWFDriver/Add");
                 if (result.StatusCode == System.Net.HttpStatusCode.Accepted)
                 {
-                   int results = (new JavaScriptSerializer()).Deserialize<int>(result.Data);
+                    int results = (new JavaScriptSerializer()).Deserialize<int>(result.Data);
 
                     HttpContext.Cache.Remove("AWFuelDriverData");
                     return Json("Success", JsonRequestBehavior.AllowGet);
@@ -261,13 +261,14 @@ namespace IT.Web.Areas.AWDriver.Controllers
                     }
                 }
 
-                List<CompanyImages> mylist = new List<CompanyImages>();
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.PassportCopy });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.VisaCopy });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyFront });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyBack });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseFront });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseBack });
+                List<CompanyImages> mylist = new List<CompanyImages> {
+                    new CompanyImages { ImagesUrl = driverViewModel.PassportCopy },
+                    new CompanyImages { ImagesUrl = driverViewModel.VisaCopy },
+                    new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyFront },
+                    new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyBack },
+                    new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseFront },
+                    new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseBack }
+                };
 
                 ViewBag.Images = mylist;
 
@@ -302,10 +303,10 @@ namespace IT.Web.Areas.AWDriver.Controllers
                     }
                 }
 
-                List<LicenseTypeViewModel> types = new List<LicenseTypeViewModel>();
-                types.Add(new LicenseTypeViewModel { Id = 1, Name = "Heavy" });
-                types.Add(new LicenseTypeViewModel { Id = 2, Name = "Light" });
-
+                List<LicenseTypeViewModel> types = new List<LicenseTypeViewModel> {
+                    new LicenseTypeViewModel { Id = 1, Name = "Heavy" },
+                    new LicenseTypeViewModel { Id = 2, Name = "Light" }
+                };
                 ViewBag.LicenseType = types;
 
                 var results = webServices.Post(new CountryViewModel(), "Country/All");
@@ -375,7 +376,7 @@ namespace IT.Web.Areas.AWDriver.Controllers
                     return Json("Failed to delete, try again later");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed to Delete");
             }

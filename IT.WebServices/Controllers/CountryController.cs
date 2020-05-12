@@ -17,7 +17,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+        readonly string contentType = "application/json";
 
         [HttpPost]
         public HttpResponseMessage GetAll()
@@ -139,7 +139,7 @@ namespace IT.WebServices.Controllers
                 foreach (CountryViewModel countryViewModels in countryViewModel)
                 {
                     Res = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().WriteStoredProcedure("CountryAdd @Name",
-                     new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = countryViewModels.CountryName == null ? (object)DBNull.Value : countryViewModels.CountryName }
+                     new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = countryViewModels.CountryName ?? (object)DBNull.Value }
                   );
                 }
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));
@@ -147,7 +147,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
@@ -160,7 +160,7 @@ namespace IT.WebServices.Controllers
                 var Res = new countryViewModels();
                 Res = unitOfWork.GetRepositoryInstance<countryViewModels>().ReadStoredProcedure("CountryUpdate @Id,@Name",
                  new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = countryViewModel.Id },
-                 new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = countryViewModel.CountryName == null ? (object)DBNull.Value : countryViewModel.CountryName }
+                 new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = countryViewModel.CountryName ?? (object)DBNull.Value }
                  ).FirstOrDefault();                  
                   
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));
@@ -168,7 +168,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
@@ -182,7 +182,7 @@ namespace IT.WebServices.Controllers
                   Res = unitOfWork.GetRepositoryInstance<StateViewModel>().ReadStoredProcedure("AddState @Id,@CountryId,@Name",
                      new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = stateViewModel.Id },
                      new SqlParameter("CountryId", System.Data.SqlDbType.Int) { Value = stateViewModel.CountryId },
-                     new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = stateViewModel.States == null ? (object)DBNull.Value : stateViewModel.States }
+                     new SqlParameter("Name", System.Data.SqlDbType.VarChar) { Value = stateViewModel.States ?? (object)DBNull.Value }
                   ).FirstOrDefault();
                 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));
@@ -190,6 +190,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
@@ -203,7 +204,7 @@ namespace IT.WebServices.Controllers
                 Res = unitOfWork.GetRepositoryInstance<CityViewModel>().ReadStoredProcedure("AddUpdateCity @Id,@StateId,@CityName",
                    new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = cityViewModel.Id },
                    new SqlParameter("StateId", System.Data.SqlDbType.Int) { Value = cityViewModel.StateId },
-                   new SqlParameter("CityName", System.Data.SqlDbType.VarChar) { Value = cityViewModel.CityName == null ? (object)DBNull.Value : cityViewModel.CityName }
+                   new SqlParameter("CityName", System.Data.SqlDbType.VarChar) { Value = cityViewModel.CityName ?? (object)DBNull.Value }
                 ).FirstOrDefault();
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Res));
@@ -211,6 +212,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }

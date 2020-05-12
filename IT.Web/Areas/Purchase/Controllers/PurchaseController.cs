@@ -24,9 +24,7 @@ namespace IT.Web.Areas.Purchase.Controllers
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
         List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
         List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
-
-
-
+               
         public ActionResult Index()
         {
             try
@@ -126,14 +124,14 @@ namespace IT.Web.Areas.Purchase.Controllers
                     new
                     {
                         aaData = lPOInvoiceViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = lPOInvoiceViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -167,11 +165,11 @@ namespace IT.Web.Areas.Purchase.Controllers
 
                 ViewBag.PO = SerailNO;
 
-                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel();
-
-                lPOInvoiceVModel.FromDate = System.DateTime.Now;
-                lPOInvoiceVModel.DueDate = System.DateTime.Now;
-
+                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel
+                {
+                    FromDate = System.DateTime.Now,
+                    DueDate = System.DateTime.Now
+                };
                 return View(lPOInvoiceVModel);
 
             }
@@ -274,7 +272,7 @@ namespace IT.Web.Areas.Purchase.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -297,9 +295,10 @@ namespace IT.Web.Areas.Purchase.Controllers
                 ViewBag.ProductUnit = productUnitViewModels;
 
 
-                List<VatModel> model = new List<VatModel>();
-                model.Add(new VatModel() { Id = 0, VAT = 0 });
-                model.Add(new VatModel() { Id = 5, VAT = 5 });
+                List<VatModel> model = new List<VatModel> {
+                    new VatModel() { Id = 0, VAT = 0 },
+                    new VatModel() { Id = 5, VAT = 5 }
+                };
                 ViewBag.VatDrop = model;
 
                 if (Result.Data != "[]")
@@ -332,9 +331,8 @@ namespace IT.Web.Areas.Purchase.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -357,9 +355,10 @@ namespace IT.Web.Areas.Purchase.Controllers
                     productUnitViewModels.Insert(0, new ProductUnitViewModel() { Id = 0, Name = "Select Unit" });
                     ViewBag.ProductUnit = productUnitViewModels;
 
-                    List<VatModel> model = new List<VatModel>();
-                    model.Add(new VatModel() { Id = 0, VAT = 0 });
-                    model.Add(new VatModel() { Id = 5, VAT = 5 });
+                    List<VatModel> model = new List<VatModel> {
+                        new VatModel() { Id = 0, VAT = 0 },
+                        new VatModel() { Id = 5, VAT = 5 }
+                    };
                     ViewBag.VatDrop = model;
 
                     lPOInvoiceViewModel = (new JavaScriptSerializer().Deserialize<LPOInvoiceViewModel>(Result.Data.ToString()));
@@ -407,9 +406,8 @@ namespace IT.Web.Areas.Purchase.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -506,7 +504,7 @@ namespace IT.Web.Areas.Purchase.Controllers
                 Result = Convert.ToDecimal((Total / 100) * vat);
                 return Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result;
             }
@@ -638,7 +636,7 @@ namespace IT.Web.Areas.Purchase.Controllers
 
                 return 1;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

@@ -24,17 +24,14 @@ namespace IT.Web.Areas.LPO.Controllers
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
         List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
         List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
-        List<IT.Core.ViewModels.LPOInvoiceModel> Models = new List<Core.ViewModels.LPOInvoiceModel>();
+        readonly List<IT.Core.ViewModels.LPOInvoiceModel> Models = new List<Core.ViewModels.LPOInvoiceModel>();
        
-
-
         // GET: LPO/LPO
         public ActionResult Index()
         {
             return View();
         }
-
-
+        
         [HttpGet]
         public JsonResult GetAll(DataTablesParm parm)
         {
@@ -115,27 +112,25 @@ namespace IT.Web.Areas.LPO.Controllers
                     new
                     {
                         aaData = lPOInvoiceViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = lPOInvoiceViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
 
         }
-
-
+        
         public ActionResult LPOConverted()
         {
             return View();
         }
-
-
+        
         [HttpGet]
         public JsonResult GetAllConverted(DataTablesParm parm)
         {
@@ -207,21 +202,20 @@ namespace IT.Web.Areas.LPO.Controllers
                     new
                     {
                         aaData = lPOInvoiceViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = lPOInvoiceViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
 
         }
-
-
+        
         public ActionResult Create()
         {
             try
@@ -299,11 +293,12 @@ namespace IT.Web.Areas.LPO.Controllers
 
                 ViewBag.PO = SerailNO;
 
-                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel();
+                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel
+                {
 
-                lPOInvoiceVModel.FromDate = System.DateTime.Now;
-                lPOInvoiceVModel.DueDate = System.DateTime.Now;
-
+                    FromDate = System.DateTime.Now,
+                    DueDate = System.DateTime.Now
+                };
                 return View(lPOInvoiceVModel);
             }
             catch (Exception)
@@ -313,8 +308,7 @@ namespace IT.Web.Areas.LPO.Controllers
             }
            
         }
-
-
+        
         [HttpPost]
         public ActionResult Create(LPOInvoiceViewModel lPOInvoiceViewModel)
         {
@@ -354,8 +348,7 @@ namespace IT.Web.Areas.LPO.Controllers
                 throw;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult CheckISFileExist(int Id)
         {
@@ -397,11 +390,10 @@ namespace IT.Web.Areas.LPO.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult SaveDwnload(LPOInvoiceViewModel lPOInvoiceViewModel)
         {
@@ -448,8 +440,7 @@ namespace IT.Web.Areas.LPO.Controllers
                 throw;
             }
         }
-
-
+        
         [HttpGet]
         public ActionResult Details(int? Id)
         {
@@ -500,14 +491,12 @@ namespace IT.Web.Areas.LPO.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         [HttpGet]
         public ActionResult Edit(int? Id)
         {
@@ -527,9 +516,10 @@ namespace IT.Web.Areas.LPO.Controllers
                 ViewBag.ProductUnit = productUnitViewModels;
 
 
-                List<VatModel> model = new List<VatModel>();
-                model.Add(new VatModel() { Id = 0, VAT = 0 });
-                model.Add(new VatModel() { Id = 5, VAT = 5 });
+                List<VatModel> model = new List<VatModel> {
+                    new VatModel() { Id = 0, VAT = 0 },
+                    new VatModel() { Id = 5, VAT = 5 }
+                };
                 ViewBag.VatDrop = model;
 
                 if (Result.Data != "[]")
@@ -560,14 +550,12 @@ namespace IT.Web.Areas.LPO.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult DeleteLPoDetailsRow(DeleteRowViewModel deleteRowViewModel)
         {
@@ -610,8 +598,7 @@ namespace IT.Web.Areas.LPO.Controllers
                 return new JsonResult { Data = new { Status = "Fail" } };
             }
         }
-
-
+        
         public static decimal CalculateVat(decimal vat, decimal Total)
         {
             decimal Result = 0;
@@ -620,13 +607,12 @@ namespace IT.Web.Areas.LPO.Controllers
                 Result = Convert.ToDecimal((Total / 100) * vat);
                 return Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult Update(LPOInvoiceViewModel lPOInvoiceViewModel)
         {
@@ -668,14 +654,12 @@ namespace IT.Web.Areas.LPO.Controllers
                     return Json("Failed", JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         public FileResult Download(string FileName)
         {
             string PAth = Server.MapPath("~/PDF/" + FileName);
@@ -684,8 +668,7 @@ namespace IT.Web.Areas.LPO.Controllers
             string fileName = "myfile.ext";
             return File(fileBytes, System.Net.Mime.MediaTypeNames.Application.Octet, fileName);
         }
-
-
+        
         [HttpPost]
         public int UploadFileToFolder(int Id)
         {
@@ -773,8 +756,7 @@ namespace IT.Web.Areas.LPO.Controllers
             }
 
         }
-
-
+        
         [HttpGet]
         public ActionResult PrintLPO(int Id)
         {

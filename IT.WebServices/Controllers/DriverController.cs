@@ -100,6 +100,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.Ambiguous, userRepsonse, contentType);
             }
         }
@@ -347,7 +348,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }

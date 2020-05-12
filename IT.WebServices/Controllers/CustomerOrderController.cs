@@ -136,8 +136,10 @@ namespace IT.WebServices.Controllers
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerUnreadOrderList"
                     ).ToList();
 
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                serializer.MaxJsonLength = Int32.MaxValue;
+                JavaScriptSerializer serializer = new JavaScriptSerializer
+                {
+                    MaxJsonLength = Int32.MaxValue
+                };
                 userRepsonse.Success(serializer.Serialize(CustomerUnreadOrderList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -575,14 +577,15 @@ namespace IT.WebServices.Controllers
                         var uniqueId = Guid.NewGuid().ToString();
                         for (int i = 0; i < 2; i++)
                         {
-                            StorageViewModel storageViewModel = new StorageViewModel();
-                            storageViewModel.CreatedBy = Result.CreatedBy;
-                            storageViewModel.SiteId = 0;
-                            storageViewModel.LPOId = 0;
-                            storageViewModel.Decription = "Direct Sale";
-                            storageViewModel.ProductId = customerOrderListViewModel.customerOrderViewModels[0].ProductId;
-                            storageViewModel.uniques = uniqueId;
-
+                            StorageViewModel storageViewModel = new StorageViewModel
+                            {
+                                CreatedBy = Result.CreatedBy,
+                                SiteId = 0,
+                                LPOId = 0,
+                                Decription = "Direct Sale",
+                                ProductId = customerOrderListViewModel.customerOrderViewModels[0].ProductId,
+                                uniques = uniqueId
+                            };
                             if (i == 0)
                             {
                                 storageViewModel.Source = "client vehicle";
@@ -945,7 +948,7 @@ namespace IT.WebServices.Controllers
                                , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                                , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.DriverId }
                                , new SqlParameter("RequestedQuantity", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.OrderQuantity }
-                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
+                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                                , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.ProductId }
 
                                ).FirstOrDefault();
@@ -957,7 +960,7 @@ namespace IT.WebServices.Controllers
                                , new SqlParameter("VehicleId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.VehicleId }
                                , new SqlParameter("DriverId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.DriverId }
                                , new SqlParameter("RequestedQuantity", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.OrderQuantity }
-                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
+                               , new SqlParameter("Comments", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                                , new SqlParameter("ProductId", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.ProductId }
                                ).FirstOrDefault();
                             }
@@ -975,10 +978,10 @@ namespace IT.WebServices.Controllers
 
                 var Result = unitOfWork.GetRepositoryInstance<CustomerOrderLocationViewModel>().ReadStoredProcedure("CustomerOrderLocationUpdate @OrderId,@longitude,@latitude,@LocationFullUrl,@PickingPoint",
                      new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderListViewModel.Id }
-                   , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.longitude == null ? (object)DBNull.Value : customerOrderListViewModel.longitude }
-                   , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.latitude == null ? (object)DBNull.Value : customerOrderListViewModel.latitude }
-                   , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.LocationFullUrl == null ? (object)DBNull.Value : customerOrderListViewModel.LocationFullUrl }
-                   , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.PickingPoint == null ? (object)DBNull.Value : customerOrderListViewModel.PickingPoint }
+                   , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.longitude ?? (object)DBNull.Value  }
+                   , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.latitude ?? (object)DBNull.Value }
+                   , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.LocationFullUrl ?? (object)DBNull.Value }
+                   , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderListViewModel.PickingPoint ?? (object)DBNull.Value }
 
                   ).FirstOrDefault();
 
@@ -1013,10 +1016,10 @@ namespace IT.WebServices.Controllers
             {
                 var Result = unitOfWork.GetRepositoryInstance<CustomerOrderLocationViewModel>().ReadStoredProcedure("CustomerOrderLocationUpdate @OrderId,@longitude,@latitude,@LocationFullUrl,@PickingPoint,@SiteId",
                         new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = customerOrderLocationViewModel.OrderId }
-                      , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.longitude == null ? (object)DBNull.Value : customerOrderLocationViewModel.longitude }
-                      , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.latitude == null ? (object)DBNull.Value : customerOrderLocationViewModel.latitude }
-                      , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.LocationFullUrl == null ? (object)DBNull.Value : customerOrderLocationViewModel.LocationFullUrl }
-                      , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.PickingPoint == null ? (object)DBNull.Value : customerOrderLocationViewModel.PickingPoint }
+                      , new SqlParameter("longitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.longitude ?? (object)DBNull.Value  }
+                      , new SqlParameter("latitude", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.latitude ?? (object)DBNull.Value   }
+                      , new SqlParameter("LocationFullUrl", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.LocationFullUrl ?? (object)DBNull.Value   }
+                      , new SqlParameter("PickingPoint", System.Data.SqlDbType.NVarChar) { Value = customerOrderLocationViewModel.PickingPoint ?? (object)DBNull.Value }
                       , new SqlParameter("SiteId", System.Data.SqlDbType.Int) { Value = customerOrderLocationViewModel.SiteId }
                      ).FirstOrDefault();
 
@@ -1226,7 +1229,7 @@ namespace IT.WebServices.Controllers
                 var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderRejectByAdmin @Id,@Status,@Description,@CreatedBy"
                    , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
                    , new SqlParameter("Status", System.Data.SqlDbType.Bit) { Value = customerOrderViewModel.Status }
-                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
+                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                    , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.CreatedBy }
                    ).FirstOrDefault();
 
@@ -1272,22 +1275,21 @@ namespace IT.WebServices.Controllers
             {
                 var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("CustomerOrderAcceptRejectedOrderByAdmin @Id,@Description,@CreatedBy"
                    , new SqlParameter("Id", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.Id }
-                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments == null ? (object)DBNull.Value : customerOrderViewModel.Comments }
+                   , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = customerOrderViewModel.Comments ?? (object)DBNull.Value }
                    , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerOrderViewModel.CreatedBy }
                    ).FirstOrDefault();
 
-                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
-
-                customerOrderListViewModel.NotificationCode = "CUS-001";
-                customerOrderListViewModel.Title = "Admin Accept Order";
-                customerOrderListViewModel.Message = "Admin acccept order Rejected Order";
-                customerOrderListViewModel.RequestedQuantity = 0;
-                customerOrderListViewModel.CustomerId = Result.Result;
-
+                CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel
+                {
+                    NotificationCode = "CUS-001",
+                    Title = "Admin Accept Order",
+                    Message = "Admin acccept order Rejected Order",
+                    RequestedQuantity = 0,
+                    CustomerId = Result.Result
+                };
                 //Send Notification
                 CustomerNotification(customerOrderListViewModel);
-
-
+                
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result.Result));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -1322,7 +1324,7 @@ namespace IT.WebServices.Controllers
             {
                 var Result = unitOfWork.GetRepositoryInstance<SingleIntegerValueResult>().ReadStoredProcedure("RejectedOrderDetailsAdd @OrderId, @Description, @CreatedBy",
                  new SqlParameter("OrderId", System.Data.SqlDbType.Int) { Value = rejectedOrderDetails.OrderId }
-               , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = rejectedOrderDetails.Description == null ? (object)DBNull.Value : rejectedOrderDetails.Description }
+               , new SqlParameter("Description", System.Data.SqlDbType.NVarChar) { Value = rejectedOrderDetails.Description ?? (object)DBNull.Value }
                , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = rejectedOrderDetails.CreatedBy }
                  ).FirstOrDefault();
 
@@ -1385,8 +1387,10 @@ namespace IT.WebServices.Controllers
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("DeliverdOrderAdmin"
                     ).ToList();
 
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                serializer.MaxJsonLength = Int32.MaxValue;
+                JavaScriptSerializer serializer = new JavaScriptSerializer
+                {
+                    MaxJsonLength = Int32.MaxValue
+                };
                 userRepsonse.Success(serializer.Serialize(CustomerUnreadOrderList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -1799,12 +1803,12 @@ namespace IT.WebServices.Controllers
 
                 if (Result != null)
                 {
-                    CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel();
+                    CustomerOrderListViewModel customerOrderListViewModel = new CustomerOrderListViewModel {
 
-                    customerOrderListViewModel.NotificationCode = "ADM-001";
-                    customerOrderListViewModel.Title = "Order Created";
-                    customerOrderListViewModel.Message = "New customer order created!";
-
+                        NotificationCode = "ADM-001",
+                        Title = "Order Created",
+                        Message = "New customer order created!"
+                    };
                     int Res = AdminNotificaton(customerOrderListViewModel);
                 }
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(Result));
@@ -1860,7 +1864,7 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-                userRepsonse.Success((new JavaScriptSerializer()).Serialize(0));
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
@@ -1918,8 +1922,10 @@ namespace IT.WebServices.Controllers
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerOrderGroupAllAsignedToDriver"
                     ).ToList();
 
-                JavaScriptSerializer serializer = new JavaScriptSerializer();
-                serializer.MaxJsonLength = Int32.MaxValue;
+                JavaScriptSerializer serializer = new JavaScriptSerializer
+                {
+                    MaxJsonLength = Int32.MaxValue
+                };
                 userRepsonse.Success(serializer.Serialize(CustomerUnreadOrderList));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -2158,15 +2164,17 @@ namespace IT.WebServices.Controllers
                 var CustomerNotificationGetActive = unitOfWork.GetRepositoryInstance<CustomerNotification>().ReadStoredProcedure("CustomerNotificationGetActive"
                      ).ToList();
 
-                CustomerOrderStatistics customerOrderStatistics = new CustomerOrderStatistics();
+                CustomerOrderStatistics customerOrderStatistics = new CustomerOrderStatistics
+                {
 
-                customerOrderStatistics.TotolRequestedQuantity = RequestedQTY.Result;
-                customerOrderStatistics.TotalDeliverdQuantity = DeliverdQTY.Result;
-                customerOrderStatistics.TotalDrivers = DriverQTY.Result;
-                customerOrderStatistics.TotalVehicles = VehicleQTY.Result;
-                customerOrderStatistics.RequestedBySevenDayed = reportsByDatesViewModelsRequested;
-                customerOrderStatistics.DeliverdBySevenDayed = reportsByDatesViewModelsDeliverd;
-                customerOrderStatistics.customerNotification = CustomerNotificationGetActive;
+                    TotolRequestedQuantity = RequestedQTY.Result,
+                    TotalDeliverdQuantity = DeliverdQTY.Result,
+                    TotalDrivers = DriverQTY.Result,
+                    TotalVehicles = VehicleQTY.Result,
+                    RequestedBySevenDayed = reportsByDatesViewModelsRequested,
+                    DeliverdBySevenDayed = reportsByDatesViewModelsDeliverd,
+                    customerNotification = CustomerNotificationGetActive
+                };
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerOrderStatistics));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
@@ -2256,19 +2264,19 @@ namespace IT.WebServices.Controllers
                 var CustomerNotificationGetActive = unitOfWork.GetRepositoryInstance<CustomerNotification>().ReadStoredProcedure("CustomerNotificationGetActive"
                     ).ToList();
 
-                CustomerOrderStatistics customerOrderStatistics = new CustomerOrderStatistics();
-
-                customerOrderStatistics.TotolRequestedQuantity = RequestedQTY.Result;
-                customerOrderStatistics.TotalDeliverdQuantity = DeliverdQTY.Result;
-                customerOrderStatistics.TotalDrivers = DriverQTY.Result;
-                customerOrderStatistics.TotalVehicles = VehicleQTY.Result;
-                customerOrderStatistics.RequestedBySevenDayed = reportsByDatesViewModelsRequested;
-                customerOrderStatistics.DeliverdBySevenDayed = reportsByDatesViewModelsDeliverd;
-                customerOrderStatistics.customerNotification = CustomerNotificationGetActive;
-                customerOrderStatistics.VirtualTotalQuantity = VirtualQTY.Result;
-                customerOrderStatistics.BookedTotalQuantity = BookedQTY.Result;
-                customerOrderStatistics.CustomerConfirmBooking = CustomersBookedQTY.Result;
-
+                CustomerOrderStatistics customerOrderStatistics = new CustomerOrderStatistics
+                {
+                    TotolRequestedQuantity = RequestedQTY.Result,
+                    TotalDeliverdQuantity = DeliverdQTY.Result,
+                    TotalDrivers = DriverQTY.Result,
+                    TotalVehicles = VehicleQTY.Result,
+                    RequestedBySevenDayed = reportsByDatesViewModelsRequested,
+                    DeliverdBySevenDayed = reportsByDatesViewModelsDeliverd,
+                    customerNotification = CustomerNotificationGetActive,
+                    VirtualTotalQuantity = VirtualQTY.Result,
+                    BookedTotalQuantity = BookedQTY.Result,
+                    CustomerConfirmBooking = CustomersBookedQTY.Result
+                };
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(customerOrderStatistics));
                 return Request.CreateResponse(HttpStatusCode.Accepted, userRepsonse, contentType);
             }
@@ -2361,19 +2369,19 @@ namespace IT.WebServices.Controllers
             {
                 if (item.Device != "ios")
                 {
-                    SearchViewModel searchViewModel = new SearchViewModel();
+                    SearchViewModel searchViewModel = new SearchViewModel { 
 
-                    searchViewModel.DeviceTiken = item.DeviceToken;
-                    searchViewModel.CompanyName = "Test Company Name";
-                    searchViewModel.Quantity = customerOrderListViewModel.RequestedQuantity;
-                    //searchViewModel.NotificationCode = "ADM-001";
-                    searchViewModel.NotificationCode = customerOrderListViewModel.NotificationCode;
-                    // searchViewModel.Title = "New Order Received";
-                    searchViewModel.Title = customerOrderListViewModel.Title;
-                    // searchViewModel.Message = searchViewModel.CompanyName + "Created a new Order of " + customerOrderListViewModel.RequestedQuantity + " Gallon";
-                    searchViewModel.Message = customerOrderListViewModel.Message;
-
-                    searchViewModels.Add(searchViewModel);
+                        DeviceTiken = item.DeviceToken,
+                        CompanyName = "Test Company Name",
+                        Quantity = customerOrderListViewModel.RequestedQuantity,
+                        //searchViewModel.NotificationCode = "ADM-001";
+                        NotificationCode = customerOrderListViewModel.NotificationCode,
+                        // searchViewModel.Title = "New Order Received";
+                        Title = customerOrderListViewModel.Title,
+                        // searchViewModel.Message = searchViewModel.CompanyName + "Created a new Order of " + customerOrderListViewModel.RequestedQuantity + " Gallon";
+                        Message = customerOrderListViewModel.Message
+                    };
+                searchViewModels.Add(searchViewModel);
                 }
 
                 Result = notificationController.SendMessage(searchViewModels);
@@ -2413,18 +2421,18 @@ namespace IT.WebServices.Controllers
             {
                 if (item.Device != "IOS")
                 {
-                    SearchViewModel searchViewModel = new SearchViewModel();
+                    SearchViewModel searchViewModel = new SearchViewModel {
 
-                    searchViewModel.DeviceTiken = item.DeviceToken;
-                    searchViewModel.CompanyName = "Test Company Name";
-                    searchViewModel.Quantity = customerOrderListViewModel.RequestedQuantity;
-                    //searchViewModel.NotificationCode = "ADM-001";
-                    searchViewModel.NotificationCode = customerOrderListViewModel.NotificationCode;
-                    // searchViewModel.Title = "New Order Received";
-                    searchViewModel.Title = customerOrderListViewModel.Title;
-                    // searchViewModel.Message = searchViewModel.CompanyName + "Created a new Order of " + customerOrderListViewModel.RequestedQuantity + " Gallon";
-                    searchViewModel.Message = customerOrderListViewModel.Message;
-
+                        DeviceTiken = item.DeviceToken,
+                        CompanyName = "Test Company Name",
+                        Quantity = customerOrderListViewModel.RequestedQuantity,
+                        //searchViewModel.NotificationCode = "ADM-001",
+                        NotificationCode = customerOrderListViewModel.NotificationCode,
+                        // searchViewModel.Title = "New Order Received",
+                        Title = customerOrderListViewModel.Title,
+                        // searchViewModel.Message = searchViewModel.CompanyName + "Created a new Order of " + customerOrderListViewModel.RequestedQuantity + " Gallon",
+                        Message = customerOrderListViewModel.Message,
+                    };
                     searchViewModels.Add(searchViewModel);
                 }
             }

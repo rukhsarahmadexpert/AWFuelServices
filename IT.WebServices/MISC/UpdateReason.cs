@@ -27,7 +27,7 @@ namespace IT.WebServices.MISC
 
                 return ReasonAdded;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return ReasonAdded;
             }

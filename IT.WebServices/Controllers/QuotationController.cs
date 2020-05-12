@@ -296,7 +296,7 @@ namespace IT.WebServices.Controllers
                     , new SqlParameter("PONumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.PONumber }
                     , new SqlParameter("RefrenceNumber", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.RefrenceNumber ?? (object)DBNull.Value  }
                     , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = lPOInvoiceViewModel.CreatedBy }
-                    , new SqlParameter("ReasonUpdated", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.ReasonUpdated?? (object)DBNull.Value }
+                    , new SqlParameter("ReasonUpdated", System.Data.SqlDbType.NVarChar) { Value = lPOInvoiceViewModel.ReasonUpdated ?? (object)DBNull.Value }
                    ).FirstOrDefault();
 
                 int QuotId = Convert.ToInt32(QuotationId.Result);
@@ -337,6 +337,15 @@ namespace IT.WebServices.Controllers
                             ).FirstOrDefault();
                         }
                     }
+                }
+
+                if(lPOInvoiceViewModel.ReasonUpdated != null)
+                {
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel = new UpdateReasonDescriptionViewModel();
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.ReasonDescription = lPOInvoiceViewModel.ReasonUpdated;
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.CreatedBy = lPOInvoiceViewModel.CreatedBy;
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.Flag = "Quotation";
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.Id = QuotId;
                 }
 
 

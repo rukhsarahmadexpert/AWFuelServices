@@ -16,8 +16,8 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
     {
         WebServices webServices = new WebServices();
 
-        CustomerOrderViewModel CustomerOrder = new CustomerOrderViewModel();
-        List<CountryViewModel> CountryViewModel = new List<CountryViewModel>();
+        readonly CustomerOrderViewModel CustomerOrder = new CustomerOrderViewModel();
+        readonly List<CountryViewModel> CountryViewModel = new List<CountryViewModel>();
         List<CustomerOrderViewModel> customerOrderViewModels = new List<CustomerOrderViewModel>();
         List<VehicleViewModel> vehicleViewModels = new List<VehicleViewModel>();
         CustomerNoteOrderViewModel CustomerNoteOrderViewModel = new CustomerNoteOrderViewModel();
@@ -121,7 +121,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
@@ -240,14 +240,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -391,7 +391,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
@@ -488,7 +488,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
@@ -684,14 +684,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -777,7 +777,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
@@ -786,7 +786,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -907,7 +907,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
@@ -999,7 +999,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
@@ -1093,14 +1093,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -1186,14 +1186,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -1539,9 +1539,10 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
 
         public ActionResult GetAllUnreadOrderGroup(DataTablesParm parm)
         {
-            CustomerOrderGroupViewModel customerOrderGroupViewModel = new CustomerOrderGroupViewModel();
-            customerOrderGroupViewModel.IsSend = true;
-            customerOrderGroupViewModel.OrderProgress = "Order Created";
+            CustomerOrderGroupViewModel customerOrderGroupViewModel = new CustomerOrderGroupViewModel {
+                IsSend = true,
+                OrderProgress = "Order Created",
+            };
             try
             {
                 int pageNo = 1;
@@ -1611,14 +1612,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -1626,9 +1627,10 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
 
         public ActionResult AllRejectedOrderGroupAdmin(DataTablesParm parm)
         {
-            CustomerOrderGroupViewModel customerOrderGroupViewModel = new CustomerOrderGroupViewModel();
-            customerOrderGroupViewModel.IsSend = true;
-            customerOrderGroupViewModel.OrderProgress = "Reject By Admin";
+            CustomerOrderGroupViewModel customerOrderGroupViewModel = new CustomerOrderGroupViewModel {
+                IsSend = true,
+                OrderProgress = "Reject By Admin"
+            };
             try
             {
                 int pageNo = 1;
@@ -1698,14 +1700,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -1937,7 +1939,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderGroupViewModel,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderGroupViewModel,
                         iTotalRecords = totalCount,
@@ -2022,7 +2024,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderGroupViewModel,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderGroupViewModel,
                         iTotalRecords = totalCount,
@@ -2107,7 +2109,7 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerOrderGroupViewModel,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerOrderGroupViewModel,
                         iTotalRecords = totalCount,
@@ -2232,14 +2234,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -2331,14 +2333,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -2456,14 +2458,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -2552,14 +2554,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -2676,14 +2678,14 @@ namespace IT.Web.Areas.CustomerOrder.Controllers
                     new
                     {
                         aaData = customerNoteOrderViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = customerNoteOrderViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

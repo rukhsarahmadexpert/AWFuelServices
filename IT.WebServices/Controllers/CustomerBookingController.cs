@@ -195,7 +195,8 @@ namespace IT.WebServices.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
+                return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
 

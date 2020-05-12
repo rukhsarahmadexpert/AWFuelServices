@@ -24,7 +24,7 @@ namespace IT.Web.MISC
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return false;
             }

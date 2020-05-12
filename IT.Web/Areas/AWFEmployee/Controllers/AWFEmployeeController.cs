@@ -267,7 +267,7 @@ namespace IT.Web.Areas.AWFEmployee.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }

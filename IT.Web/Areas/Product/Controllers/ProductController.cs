@@ -40,8 +40,7 @@ namespace IT.Web.Areas.Product.Controllers
             ViewBag.Unit = productUnitViewModels;
             return View();
         }
-
-
+        
         public JsonResult GetAll(DataTablesParm parm)
         {
             try
@@ -113,21 +112,20 @@ namespace IT.Web.Areas.Product.Controllers
                     new
                     {
                         aaData = productViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = productViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
 
         }
-
-
+        
         [HttpPost]
         public ActionResult Add(ProductViewModel productViewModel)
         {
@@ -152,11 +150,10 @@ namespace IT.Web.Areas.Product.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
-
-
+        
         [HttpGet]
         public ActionResult Edit(int Id)
         {
@@ -175,14 +172,12 @@ namespace IT.Web.Areas.Product.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult Edit(ProductViewModel productViewModel)
         {
@@ -202,15 +197,14 @@ namespace IT.Web.Areas.Product.Controllers
                     return Json("Failed", JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception Exception)
+            catch (Exception)
             {
 
                 return Json("Failed", JsonRequestBehavior.AllowGet);
 
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult Delete(int Id)
         {
@@ -231,14 +225,12 @@ namespace IT.Web.Areas.Product.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
-
-
+        
         [HttpPost]
         public ActionResult GetProdctFromLPODetailsByLPOID(int Id)
         {

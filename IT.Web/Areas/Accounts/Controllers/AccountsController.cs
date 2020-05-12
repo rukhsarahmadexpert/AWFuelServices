@@ -128,7 +128,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                     new
                     {
                         aaData = accountViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = accountViewModels,
                         iTotalRecords = totalCount,
@@ -137,7 +137,7 @@ namespace IT.Web.Areas.Accounts.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -221,7 +221,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                     new
                     {
                         aaData = accountViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = accountViewModels,
                         iTotalRecords = totalCount,
@@ -318,7 +318,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                     new
                     {
                         aaData = accountViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = accountViewModels,
                         iTotalRecords = totalCount,
@@ -414,7 +414,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                     new
                     {
                         aaData = accountViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = accountViewModels,
                         iTotalRecords = totalCount,
@@ -595,7 +595,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                 else
                     return Json("Failed", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed", JsonRequestBehavior.AllowGet);
             }
@@ -621,7 +621,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                 else
                     return Json("Failed", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed", JsonRequestBehavior.AllowGet);
             }
@@ -667,7 +667,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                 else
                     return Json("Failed", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed", JsonRequestBehavior.AllowGet);
             }
@@ -691,7 +691,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                 else
                     return Json("Failed", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed", JsonRequestBehavior.AllowGet);
             }
@@ -717,7 +717,7 @@ namespace IT.Web.Areas.Accounts.Controllers
                 else
                     return Json("Failed", JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed", JsonRequestBehavior.AllowGet);
             }

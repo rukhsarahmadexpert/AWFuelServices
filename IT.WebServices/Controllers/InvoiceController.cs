@@ -333,6 +333,17 @@ namespace IT.WebServices.Controllers
                     }
                 }
 
+
+                if (lPOInvoiceViewModel.ReasonUpdated != null)
+                {
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel = new UpdateReasonDescriptionViewModel();
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.ReasonDescription = lPOInvoiceViewModel.ReasonUpdated;
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.CreatedBy = lPOInvoiceViewModel.CreatedBy;
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.Flag = "Invoice";
+                    lPOInvoiceViewModel.updateReasonDescriptionViewModel.Id = InvId;
+                }
+
+
                 if (lPOInvoiceViewModel.updateReasonDescriptionViewModel != null)
                 {
                     UpdateReason updateReason = new UpdateReason();

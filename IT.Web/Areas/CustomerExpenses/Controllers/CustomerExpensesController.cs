@@ -19,8 +19,8 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
     {
         WebServices webServices = new WebServices();
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
-        List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
-        List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
+        readonly List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
+        readonly List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
         List<EmployeeViewModel> employeeViewModels = new List<EmployeeViewModel>();
         List<ExpenseTypeViewModel> expenseTypeViewModels = new List<ExpenseTypeViewModel>();
         List<ExpenseForVIewModel> expenseForVIewModels = new List<ExpenseForVIewModel>();
@@ -111,14 +111,14 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
                     new
                     {
                         aaData = expenseViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = expenseViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -420,13 +420,13 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
                 }
 
                 ViewBag.ExpenseType = expenseTypeViewModels;
-
-
+                
                 var ResultExp = webServices.Post(new ExpenseViewModel(), "Expense/EditExpenseCustomer/" + Id);
 
-                List<VatModel> model = new List<VatModel>();
-                model.Add(new VatModel() { Id = 0, VAT = 0 });
-                model.Add(new VatModel() { Id = 5, VAT = 5 });
+                List<VatModel> model = new List<VatModel> {
+                    new VatModel() { Id = 0, VAT = 0 },
+                    new VatModel() { Id = 5, VAT = 5 }
+                };
                 ViewBag.VatDrop = model;
 
 
@@ -498,8 +498,7 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
         }
 
@@ -581,9 +580,9 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
 
                 foreach (var item in expenseDetailsModel)
                 {
-                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel();
-
-                    expenseDetailsModels.Id = item.Id;
+                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel {
+                         Id = item.Id
+                    };
                     if (item.Name == null && item.TraficPlateNumber == null)
                     {
                         expenseDetailsModels.ExpenseName = item.ExpenseName;
@@ -740,9 +739,9 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
 
                 foreach (var item in expenseDetailsModel)
                 {
-                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel();
-
-                    expenseDetailsModels.Id = item.Id;
+                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel {
+                        Id = item.Id
+                    };
                     if (item.Name == null && item.TraficPlateNumber == null)
                     {
                         expenseDetailsModels.ExpenseName = item.ExpenseName;
@@ -843,7 +842,7 @@ namespace IT.Web.Areas.CustomerExpenses.Controllers
                 Result = Convert.ToDecimal((Total / 100) * vat);
                 return Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result;
             }

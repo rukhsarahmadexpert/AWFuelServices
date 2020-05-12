@@ -126,14 +126,14 @@ namespace IT.Web.Areas.Site.Controllers
                     new
                     {
                         aaData = siteViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = siteViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -205,8 +205,7 @@ namespace IT.Web.Areas.Site.Controllers
                 throw;
             }
         }
-
-
+        
         public ActionResult Details(int Id)
         {
 

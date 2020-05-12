@@ -47,7 +47,7 @@ namespace IT.Web.Areas.ProductUnit.Controllers
             catch (Exception ex)
             {
 
-                throw;
+                throw ex;
             }
         }
 
@@ -120,7 +120,7 @@ namespace IT.Web.Areas.ProductUnit.Controllers
                     new
                     {
                         aaData = productUnitViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = productUnitViewModels,
                         iTotalRecords = totalCount,
@@ -130,7 +130,7 @@ namespace IT.Web.Areas.ProductUnit.Controllers
 
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }

@@ -57,11 +57,11 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                 //else
                 //{
 
-                    var result = webServices.Post(new VehicleViewModel(), "AWFVehicle/All/" + CompanyId);
-                    VehicleViewModels = (new JavaScriptSerializer()).Deserialize<List<VehicleViewModel>>(result.Data.ToString());
+                var result = webServices.Post(new VehicleViewModel(), "AWFVehicle/All/" + CompanyId);
+                VehicleViewModels = (new JavaScriptSerializer()).Deserialize<List<VehicleViewModel>>(result.Data.ToString());
 
-                    HttpContext.Cache["AWFuelVehicleData"] = VehicleViewModels;
-               // }
+                HttpContext.Cache["AWFuelVehicleData"] = VehicleViewModels;
+                // }
                 if (parm.sSearch != null)
                 {
                     totalCount = VehicleViewModels.Where(x => x.VehicleTypeName.ToLower().Contains(parm.sSearch.ToLower()) ||
@@ -110,7 +110,7 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                     new
                     {
                         aaData = VehicleViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = VehicleViewModels,
                         iTotalRecords = totalCount,
@@ -119,7 +119,7 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -146,7 +146,7 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
             {
 
 
-                vehicleViewModel.MulkiaExpiryDate =  Convert.ToDateTime(vehicleViewModel.MulkiaExpiryDate);
+                vehicleViewModel.MulkiaExpiryDate = Convert.ToDateTime(vehicleViewModel.MulkiaExpiryDate);
                 vehicleViewModel.InsuranceExpiryDate = Convert.ToDateTime(vehicleViewModel.InsuranceExpiryDate);
 
                 vehicleViewModel.CompanyId = Convert.ToInt32(Session["CompanyId"]);
@@ -244,11 +244,12 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                     }
                 }
 
-                List<CompanyImages> mylist = new List<CompanyImages>();
-                mylist.Add(new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaFront1 });
-                mylist.Add(new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaBack1 });
-                mylist.Add(new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaFront2 });
-                mylist.Add(new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaBack2 });
+                List<CompanyImages> mylist = new List<CompanyImages> {
+                     new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaFront1 },
+                     new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaBack1 },
+                     new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaFront2 },
+                     new CompanyImages { ImagesUrl = vehicleViewModel.MulkiaBack2 }
+                };
 
                 ViewBag.Images = mylist;
 
@@ -263,9 +264,8 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
 
                 return View(vehicleViewModel);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -294,9 +294,8 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
 
                 return Json(vehicleViewModel, JsonRequestBehavior.AllowGet);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -348,7 +347,7 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                     return Json("Failed to delete, try again later");
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Json("Failed to Delete");
             }
@@ -371,9 +370,8 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                     return Json("Failed", JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -402,15 +400,11 @@ namespace IT.Web.Areas.AWFVehicle.Controllers
                     return Json("Failed", JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
 
         }
-
-
-
     }
 }

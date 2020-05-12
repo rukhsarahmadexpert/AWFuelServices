@@ -21,8 +21,8 @@ namespace IT.Web.Areas.Expense.Controllers
 
         WebServices webServices = new WebServices();
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
-        List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
-        List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
+        readonly List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
+        readonly List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
         List<EmployeeViewModel> employeeViewModels = new List<EmployeeViewModel>();
         List<ExpenseTypeViewModel> expenseTypeViewModels = new List<ExpenseTypeViewModel>();
         List<ExpenseForVIewModel> expenseForVIewModels = new List<ExpenseForVIewModel>();
@@ -116,7 +116,7 @@ namespace IT.Web.Areas.Expense.Controllers
                     new
                     {
                         aaData = expenseViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = expenseViewModels,
                         iTotalRecords = totalCount,
@@ -125,7 +125,7 @@ namespace IT.Web.Areas.Expense.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -133,8 +133,9 @@ namespace IT.Web.Areas.Expense.Controllers
         [HttpGet]
         public ActionResult Create()
         {
-            ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel();
-            expenseDetailsViewModel.OnDates = System.DateTime.Now;
+            ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel {
+                OnDates = System.DateTime.Now
+            };
             try
             {
                 // LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
@@ -377,9 +378,10 @@ namespace IT.Web.Areas.Expense.Controllers
 
                 var ResultExp = webServices.Post(new ExpenseViewModel(), "Expense/Edit/" + Id);
 
-                List<VatModel> model = new List<VatModel>();
-                model.Add(new VatModel() { Id = 0, VAT = 0 });
-                model.Add(new VatModel() { Id = 5, VAT = 5 });
+                List<VatModel> model = new List<VatModel> {
+                     new VatModel() { Id = 0, VAT = 0 },
+                     new VatModel() { Id = 5, VAT = 5 }
+                };
                 ViewBag.VatDrop = model;
 
 
@@ -438,21 +440,21 @@ namespace IT.Web.Areas.Expense.Controllers
 
                         foreach (ExpenseDetailsViewModel ex in expenseDetailsViewModels)
                         {
-                            ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel();
+                            ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel {
 
-                            expenseDetailsViewModel.OnDates = ex.OnDates.AddDays(1);
-                            expenseDetailsViewModel.Category = ex.Category;
-                            expenseDetailsViewModel.ExpenseName = ex.ExpenseName;
-                            expenseDetailsViewModel.ExpenseRefrenceId = ex.ExpenseRefrenceId;
-                            expenseDetailsViewModel.ExpenseType = ex.ExpenseType;
-                            expenseDetailsViewModel.Id = ex.Id;
-                            expenseDetailsViewModel.NetTotal = ex.NetTotal;
-                            expenseDetailsViewModel.SubTotal = ex.SubTotal;
-                            expenseDetailsViewModel.TraficPlateNumber = ex.TraficPlateNumber;
-                            expenseDetailsViewModel.VAT = ex.VAT;
-                            expenseDetailsViewModel.Name = ex.Name;
-                            expenseDetailsViewModel.Description = ex.Description;
-
+                                OnDates = ex.OnDates.AddDays(1),
+                                Category = ex.Category,
+                                ExpenseName = ex.ExpenseName,
+                                ExpenseRefrenceId = ex.ExpenseRefrenceId,
+                                ExpenseType = ex.ExpenseType,
+                                Id = ex.Id,
+                                NetTotal = ex.NetTotal,
+                                SubTotal = ex.SubTotal,
+                                TraficPlateNumber = ex.TraficPlateNumber,
+                                VAT = ex.VAT,
+                                Name = ex.Name,
+                                Description = ex.Description
+                            };
                             expenseDetailsNew.Add(expenseDetailsViewModel);
                         }
 
@@ -479,7 +481,7 @@ namespace IT.Web.Areas.Expense.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
@@ -569,27 +571,25 @@ namespace IT.Web.Areas.Expense.Controllers
 
 
                     List<ExpenseDetailsViewModel> expenseDetailsNew = new List<ExpenseDetailsViewModel>();
-                            
-                    foreach(ExpenseDetailsViewModel ex in expenseDetailsViewModels)
+
+                    foreach (ExpenseDetailsViewModel ex in expenseDetailsViewModels)
                     {
-                        ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel();
-
-                        expenseDetailsViewModel.OnDates = ex.OnDates.AddDays(1);
-                        expenseDetailsViewModel.Category = ex.Category;
-                        expenseDetailsViewModel.ExpenseName = ex.ExpenseName;
-                        expenseDetailsViewModel.ExpenseRefrenceId = ex.ExpenseRefrenceId;
-                        expenseDetailsViewModel.ExpenseType = ex.ExpenseType;
-                        expenseDetailsViewModel.Id = ex.Id;
-                        expenseDetailsViewModel.NetTotal = ex.NetTotal;
-                        expenseDetailsViewModel.SubTotal = ex.SubTotal;
-                        expenseDetailsViewModel.TraficPlateNumber = ex.TraficPlateNumber;
-                        expenseDetailsViewModel.VAT = ex.VAT;
-                        expenseDetailsViewModel.Name = ex.Name;
-                        expenseDetailsViewModel.Description = ex.Description;
-
+                        ExpenseDetailsViewModel expenseDetailsViewModel = new ExpenseDetailsViewModel {
+                            OnDates = ex.OnDates.AddDays(1),
+                            Category = ex.Category,
+                            ExpenseName = ex.ExpenseName,
+                            ExpenseRefrenceId = ex.ExpenseRefrenceId,
+                            ExpenseType = ex.ExpenseType,
+                            Id = ex.Id,
+                            NetTotal = ex.NetTotal,
+                            SubTotal = ex.SubTotal,
+                            TraficPlateNumber = ex.TraficPlateNumber,
+                            VAT = ex.VAT,
+                            Name = ex.Name,
+                            Description = ex.Description
+                        };
                         expenseDetailsNew.Add(expenseDetailsViewModel);
                     }
-
 
                     ViewBag.expenseDetailsViewModels = expenseDetailsNew;
 
@@ -615,7 +615,7 @@ namespace IT.Web.Areas.Expense.Controllers
                     return View();
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
 
                 throw;
@@ -668,7 +668,7 @@ namespace IT.Web.Areas.Expense.Controllers
                 Result = Convert.ToDecimal((Total / 100) * vat);
                 return Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result;
             }
@@ -713,9 +713,10 @@ namespace IT.Web.Areas.Expense.Controllers
 
                 foreach (var item in expenseDetailsModel)
                 {
-                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel();
+                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel {
 
-                    expenseDetailsModels.Id = item.Id;
+                        Id = item.Id
+                    };
                     if (item.Name == null && item.TraficPlateNumber == null)
                     {
                         expenseDetailsModels.ExpenseName = item.ExpenseName;
@@ -816,9 +817,10 @@ namespace IT.Web.Areas.Expense.Controllers
 
                 foreach (var item in expenseDetailsModel)
                 {
-                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel();
+                    ExpenseDetailsModel expenseDetailsModels = new ExpenseDetailsModel { 
 
-                    expenseDetailsModels.Id = item.Id;
+                        Id = item.Id
+                    };
                     if (item.Name == null && item.TraficPlateNumber == null)
                     {
                         expenseDetailsModels.ExpenseName = item.ExpenseName;

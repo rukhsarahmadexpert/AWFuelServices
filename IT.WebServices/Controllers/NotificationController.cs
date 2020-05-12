@@ -19,9 +19,9 @@ namespace IT.WebServices.Controllers
     public class NotificationController : ApiController
     {
         UnitOfWork unitOfWork = new UnitOfWork();
-        ServiceResponseModel userRepsonse = new ServiceResponseModel();
+        readonly ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
-        string contentType = "application/json";
+       // readonly string contentType = "application/json";
 
        public int SendPushNotificationWebAndroid(string deviceTokens, string Title, string NotificationCode, string Message)
        {
@@ -166,11 +166,21 @@ namespace IT.WebServices.Controllers
                         //See what kind of exception it to further diafnose
                         if (ex is ApnsNotificationException)
                         {
-                            var notificationException = (ApnsNotificationException)ex;
 
-                            //Deal with the failed notification
+                            //----------Before Change-------
+                            /*var notificationException = (ApnsNotificationException)ex;
+
                             var apnsNotification = notificationException.Notification;
                             var StatusCode = notificationException.ErrorStatusCode;
+                            string desc = $"Apple Notification Failed: ID={apnsNotification.Identifier},Code={StatusCode}";
+                            Console.WriteLine(desc);                           */
+                           
+                            //----------
+
+
+                            //Deal with the failed notification
+                            var apnsNotification = ((ApnsNotificationException)ex).Notification;
+                            var StatusCode = ((ApnsNotificationException)ex).ErrorStatusCode;
                             string desc = $"Apple Notification Failed: ID={apnsNotification.Identifier},Code={StatusCode}";
                             Console.WriteLine(desc);
                             //lblStatus.Text = desc;
@@ -234,9 +244,8 @@ namespace IT.WebServices.Controllers
                 apnsBroker.Stop();
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }

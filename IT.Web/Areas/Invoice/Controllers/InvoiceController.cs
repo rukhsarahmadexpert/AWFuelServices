@@ -20,7 +20,7 @@ namespace IT.Web.Areas.Invoice.Controllers
 
         List<ProductViewModel> ProductViewModel = new List<ProductViewModel>();
         List<ProductUnitViewModel> productUnitViewModels = new List<ProductUnitViewModel>();
-        List<CustomerViewModel> customerViewModels = new List<CustomerViewModel>();
+        readonly List<CustomerViewModel> customerViewModels = new List<CustomerViewModel>();
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
         List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
         List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
@@ -110,14 +110,14 @@ namespace IT.Web.Areas.Invoice.Controllers
                     new
                     {
                         aaData = lPOInvoiceViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = lPOInvoiceViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -155,18 +155,18 @@ namespace IT.Web.Areas.Invoice.Controllers
 
                 ViewBag.titles = "Invoice";
 
-                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel();
-
-                lPOInvoiceVModel.FromDate = System.DateTime.Now;
-                lPOInvoiceVModel.DueDate = System.DateTime.Now;
-
+                LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel
+                {
+                    FromDate = System.DateTime.Now,
+                    DueDate = System.DateTime.Now
+                };
                 return View(lPOInvoiceVModel);
 
 
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
          
         }
@@ -257,7 +257,7 @@ namespace IT.Web.Areas.Invoice.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -282,9 +282,10 @@ namespace IT.Web.Areas.Invoice.Controllers
                 ViewBag.ProductUnit = productUnitViewModels;
 
 
-                List<VatModel> model = new List<VatModel>();
-                model.Add(new VatModel() { Id = 0, VAT = 0 });
-                model.Add(new VatModel() { Id = 5, VAT = 5 });
+                List<VatModel> model = new List<VatModel> {
+                    new VatModel() { Id = 0, VAT = 0 },
+                    new VatModel() { Id = 5, VAT = 5 }
+                };
                 ViewBag.VatDrop = model;
 
                 if (Result.Data != "[]")
@@ -314,9 +315,8 @@ namespace IT.Web.Areas.Invoice.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
         }
@@ -435,7 +435,7 @@ namespace IT.Web.Areas.Invoice.Controllers
 
                 return 1;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -485,7 +485,7 @@ namespace IT.Web.Areas.Invoice.Controllers
                 Result = Convert.ToDecimal((Total / 100) * vat);
                 return Result;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 return Result;
             }
@@ -707,9 +707,8 @@ namespace IT.Web.Areas.Invoice.Controllers
                     return Json("Failed", JsonRequestBehavior.AllowGet);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
 

@@ -12,7 +12,7 @@ namespace IT.Repository.WebServices
     public class WebServices
     {
         HttpClient httpClient;
-        string baseURL = "http://localhost:64299/api/"; //ConfigurationManager.AppSettings["BaseURL"].ToString();
+        readonly string baseURL = "http://localhost:64299/api/"; //ConfigurationManager.AppSettings["BaseURL"].ToString();
         //readonly string baseURL = "http://itmolen-001-site8.htempurl.com/api/";
         ServiceResponseModel serviceResponseModel;
 
@@ -47,7 +47,7 @@ namespace IT.Repository.WebServices
 
                 return serviceResponseModel;
             }
-            catch(Exception ex)
+            catch(Exception)
             {
                 return serviceResponseModel;
             }

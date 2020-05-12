@@ -15,9 +15,9 @@ namespace IT.Web.Areas.Bill.Controllers
     public class BillController : Controller
     {
         WebServices webServices = new WebServices();
-        List<ProductViewModel> ProductViewModel = new List<ProductViewModel>();
-        List<ProductUnitViewModel> productUnitViewModels = new List<ProductUnitViewModel>();
-        List<VenderViewModel> venderViewModels = new List<VenderViewModel>();
+        readonly List<ProductViewModel> ProductViewModel = new List<ProductViewModel>();
+        readonly List<ProductUnitViewModel> productUnitViewModels = new List<ProductUnitViewModel>();
+        readonly List<VenderViewModel> venderViewModels = new List<VenderViewModel>();
         LPOInvoiceViewModel lPOInvoiceViewModel = new LPOInvoiceViewModel();
         List<LPOInvoiceDetails> lPOInvoiceDetails = new List<LPOInvoiceDetails>();
         List<LPOInvoiceViewModel> lPOInvoiceViewModels = new List<LPOInvoiceViewModel>();
@@ -86,11 +86,11 @@ namespace IT.Web.Areas.Bill.Controllers
 
                         lPOInvoiceViewModel.PONumber = billPONumber.PnNumber();
 
-                        LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel();
+                        LPOInvoiceViewModel lPOInvoiceVModel = new LPOInvoiceViewModel {
 
-                        lPOInvoiceVModel.FromDate = System.DateTime.Now;
-                        lPOInvoiceVModel.DueDate = System.DateTime.Now;
-
+                            FromDate = System.DateTime.Now,
+                            DueDate = System.DateTime.Now
+                        };
                         return View(lPOInvoiceVModel);
                     }
                     else
@@ -104,9 +104,8 @@ namespace IT.Web.Areas.Bill.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
 
@@ -136,8 +135,7 @@ namespace IT.Web.Areas.Bill.Controllers
             }
             catch (Exception ex)
             {
-
-                throw;
+                throw ex;
             }
 
 
@@ -228,14 +226,14 @@ namespace IT.Web.Areas.Bill.Controllers
                     new
                     {
                         aaData = lPOInvoiceViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = lPOInvoiceViewModels,
                         iTotalRecords = totalCount,
                     }, JsonRequestBehavior.AllowGet);
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw;
             }
@@ -291,9 +289,8 @@ namespace IT.Web.Areas.Bill.Controllers
                 }
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-
                 throw;
             }
 

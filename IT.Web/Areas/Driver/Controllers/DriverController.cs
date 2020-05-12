@@ -120,7 +120,7 @@ namespace IT.Web.Areas.Driver.Controllers
                     new
                     {
                         aaData = driverViewModels,
-                        sEcho = parm.sEcho,
+                        parm.sEcho,
                         iTotalDisplayRecords = totalCount,
                         data = driverViewModels,
                         iTotalRecords = totalCount,
@@ -132,7 +132,7 @@ namespace IT.Web.Areas.Driver.Controllers
             }
             catch (Exception ex)
             {
-                throw;
+                throw ex;
             }
 
         }
@@ -273,14 +273,14 @@ namespace IT.Web.Areas.Driver.Controllers
                     }
                 }
 
-                List<CompanyImages> mylist = new List<CompanyImages>();
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.PassportCopy });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.VisaCopy });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyFront });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyBack });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseFront });
-                mylist.Add(new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseBack });
-
+                List<CompanyImages> mylist = new List<CompanyImages> {
+                    new CompanyImages { ImagesUrl = driverViewModel.PassportCopy },
+                    new CompanyImages { ImagesUrl = driverViewModel.VisaCopy },
+                    new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyFront },
+                    new CompanyImages { ImagesUrl = driverViewModel.IDUAECopyBack },
+                    new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseFront },
+                    new CompanyImages { ImagesUrl = driverViewModel.DrivingLicenseBack }
+                };
                 ViewBag.Images = mylist;
 
                 var results = webServices.Post(new CountryViewModel(), "Country/All");
@@ -316,10 +316,10 @@ namespace IT.Web.Areas.Driver.Controllers
                     }
                 }
 
-                List<LicenseTypeViewModel> types = new List<LicenseTypeViewModel>();
-                types.Add(new LicenseTypeViewModel { Id = 1, Name = "Heavy" });
-                types.Add(new LicenseTypeViewModel { Id = 2, Name = "Light" });
-
+                List<LicenseTypeViewModel> types = new List<LicenseTypeViewModel> { 
+                    new LicenseTypeViewModel { Id = 1, Name = "Heavy" },
+                    new LicenseTypeViewModel { Id = 2, Name = "Light" }
+                };
                 ViewBag.LicenseType = types;
 
                 var results = webServices.Post(new CountryViewModel(), "Country/All");
