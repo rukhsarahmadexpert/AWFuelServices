@@ -36,8 +36,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.Ambiguous, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Add(SearchViewModel searchViewModel)
         {
@@ -57,9 +56,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.Ambiguous, userRepsonse, contentType);
             }
         }
-
-
-
+               
         [HttpPost]
         public HttpResponseMessage AWFuelDepartmentDetailsByDepartmentId(SearchViewModel searchViewModel)
         {

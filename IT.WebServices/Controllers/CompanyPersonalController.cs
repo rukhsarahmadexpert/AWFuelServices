@@ -17,8 +17,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage CompanyInforamtion()
         {
@@ -35,8 +34,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage AboutInforamtion()
         {
@@ -53,8 +51,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Contactforamtion()
         {
@@ -71,7 +68,6 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
     }
 }

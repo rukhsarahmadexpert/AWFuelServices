@@ -45,8 +45,7 @@ namespace IT.WebServices.Controllers
 
             return 1;
         }
-
-
+        
         [HttpPost]
         public int SendMessage(List<SearchViewModel> searchViewModel)
         {
@@ -96,8 +95,7 @@ namespace IT.WebServices.Controllers
 
             return 1;
         }
-
-
+        
         public void SendNotification(object data)
         {
             var Serlializer = new JavaScriptSerializer();
@@ -249,8 +247,7 @@ namespace IT.WebServices.Controllers
                 throw;
             }
         }
-
-
+        
         public List<NotificationInformation> GetAllAdminTokens(string Authority)
         {
             try
@@ -268,8 +265,7 @@ namespace IT.WebServices.Controllers
                 throw ex;
             }
         }
-
-
+        
         public List<NotificationInformation> GetCompaniesTokens(int CompanyId)
         {
             try
@@ -287,8 +283,7 @@ namespace IT.WebServices.Controllers
                 throw ex;
             }
         }
-
-
+        
         public List<NotificationInformation> GetDriverTokens(string email)
         {
             try

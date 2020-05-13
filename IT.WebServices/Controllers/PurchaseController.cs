@@ -19,8 +19,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         readonly string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage PurchaseNumber()
         {
@@ -37,8 +36,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage All()
         {

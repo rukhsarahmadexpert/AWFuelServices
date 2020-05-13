@@ -17,8 +17,7 @@ namespace IT.WebServices.Controllers
         UnitOfWork unitOfWork = new UnitOfWork();
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
         string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage GetAll()
         {

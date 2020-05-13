@@ -18,8 +18,7 @@ namespace IT.WebServices.Controllers
         ServiceResponseModel userRepsonse = new ServiceResponseModel();
 
         string contentType = "application/json";
-
-
+        
         [HttpPost]
         public HttpResponseMessage Add([FromBody] ProjectViewModel projectViewModel)
         {
@@ -67,8 +66,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Edit(int Id)
         {
@@ -87,8 +85,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Update(ProjectViewModel projectViewModel)
         {
@@ -118,8 +115,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         [HttpPost]
         public HttpResponseMessage Details(int Id)
         {

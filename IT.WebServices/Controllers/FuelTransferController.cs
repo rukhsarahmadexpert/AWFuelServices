@@ -133,7 +133,6 @@ namespace IT.WebServices.Controllers
         }
 
         //for bragi
-
         [HttpPost]
         public HttpResponseMessage CustomerOrderGroupTransferFromDriverAdd(TransferFromDriverViewModel transferFromDriverViewModel)
         {
@@ -181,8 +180,7 @@ namespace IT.WebServices.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
             }
         }
-
-
+        
         //Storage is here
         [HttpPost]
         public HttpResponseMessage OrderTransferRequestsAdd(OrderTransferRequestsViewModel orderTransferRequestsViewModel)
