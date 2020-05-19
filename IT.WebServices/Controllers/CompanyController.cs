@@ -440,7 +440,14 @@ namespace IT.WebServices.Controllers
                 // Returns List of Customer after applying Paging   
                 var items = CompanyList.OrderByDescending(x=>x.Id).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
 
-                if(items.Count > 0)
+                //bool IsAscending = true;
+
+                //if (pagingparametermodel.sortColumnDir != null)
+                //{
+                //    string direction = IsAscending ? " ASC" : " DESC";
+                //    items = CompanyList.OrderBy(x => pagingparametermodel.sortColumn + pagingparametermodel.sortColumnDir).Skip((CurrentPage - 1) * PageSize).Take(PageSize).ToList();
+                //}
+                if (items.Count > 0)
                 {
                     items[0].TotalRows = TotalCount;
                 }

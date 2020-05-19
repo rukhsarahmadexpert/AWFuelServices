@@ -66,6 +66,19 @@ namespace IT.WebServices.Controllers
                         , new SqlParameter("SubTotal", System.Data.SqlDbType.Money) { Value = DetailsList.SubTotal }
                        ).FirstOrDefault();
                     }
+
+                    CustomerOrderController customerOrderController = new CustomerOrderController();
+                    var customerOrderListViewModel = new CustomerOrderListViewModel
+                    {
+
+                        NotificationCode = "CUS-003",
+                        Title = "Quotation Created",
+                        Message = "New quotation has beed created for you",
+                        RequestedQuantity = 0,
+                        CustomerId = lPOInvoiceViewModel.CustomerId
+                    };
+
+                    var resultNotification = customerOrderController.CustomerNotification(customerOrderListViewModel);
                 }
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(QuotId.Result));

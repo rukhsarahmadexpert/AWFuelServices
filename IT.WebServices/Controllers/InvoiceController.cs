@@ -153,8 +153,7 @@ namespace IT.WebServices.Controllers
         public HttpResponseMessage Add([FromBody] LPOInvoiceViewModel lPOInvoiceViewModel)
         {
             try
-            {
-               
+            {               
                 DateTime FromDate = Convert.ToDateTime(lPOInvoiceViewModel.FromDate).AddDays(1);
                 DateTime DueDate = Convert.ToDateTime(lPOInvoiceViewModel.DueDate).AddDays(1);
 
@@ -190,6 +189,17 @@ namespace IT.WebServices.Controllers
                         , new SqlParameter("SubTotal", System.Data.SqlDbType.Money) { Value = DetailsList.SubTotal }
                        ).FirstOrDefault();
                     }
+
+                    CustomerOrderController customerOrderController = new CustomerOrderController();
+                    var customerOrderListViewModel = new CustomerOrderListViewModel
+                    {
+                        NotificationCode = "CUS-003",
+                        Title = "Invoice Created",
+                        Message = "New Invoice has beed created for you",
+                        RequestedQuantity = 0,
+                        CustomerId = lPOInvoiceViewModel.CustomerId
+                    };
+                    var resultNotification = customerOrderController.CustomerNotification(customerOrderListViewModel);
                 }
 
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(InvocieID.Result));

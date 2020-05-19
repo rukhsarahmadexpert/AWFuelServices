@@ -1041,7 +1041,7 @@ namespace IT.WebServices.Controllers
             try
             {
                 var CustomerUnreadOrderList = unitOfWork.GetRepositoryInstance<CustomerNoteOrderViewModel>().ReadStoredProcedure("CustomerOrderGroupAll @OrderPrgress,@IsSend,@IsRead,@CompanyId,@IsTrue"
-                      , new SqlParameter("OrderPrgress", System.Data.SqlDbType.NVarChar) { Value = customerOrderGroupViewModel.OrderProgress }
+                      , new SqlParameter("OrderPrgress", System.Data.SqlDbType.NVarChar) { Value = customerOrderGroupViewModel.OrderProgress ?? (object)DBNull.Value }
                       , new SqlParameter("IsSend", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsSend }
                       , new SqlParameter("IsRead", System.Data.SqlDbType.Bit) { Value = customerOrderGroupViewModel.IsRead }
                       , new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerOrderGroupViewModel.CompanyId }

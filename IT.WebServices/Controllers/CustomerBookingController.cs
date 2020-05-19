@@ -315,8 +315,8 @@ namespace IT.WebServices.Controllers
                          ).FirstOrDefault();
 
                     customerOrderListViewModel.NotificationCode = "CUS-006";
-                    customerOrderListViewModel.Title = "Booking Accepted";
-                    customerOrderListViewModel.Message = "Confirmation has beed sended successfully, Please send LPO";
+                    customerOrderListViewModel.Title = "Booking Confirmed";
+                    customerOrderListViewModel.Message = "Your booking is accepted and order Confirmation is generated successfully, Please send LPO or call +971 555 771 4620";
                     customerOrderListViewModel.RequestedQuantity = 0;
                     customerOrderListViewModel.CustomerId = BookingAcceptReject.CompanyId;
 
@@ -327,7 +327,7 @@ namespace IT.WebServices.Controllers
                 {
                     customerOrderListViewModel.NotificationCode = "CUS-007";
                     customerOrderListViewModel.Title = "Unfortunately! Booking Rejected";
-                    customerOrderListViewModel.Message = "Plase contact Customer Care center";
+                    customerOrderListViewModel.Message = "Plase contact Customer Care center +971 555 771 4620";
                     customerOrderListViewModel.RequestedQuantity = 0;
                     customerOrderListViewModel.CustomerId = BookingAcceptReject.CompanyId;
 

@@ -13,10 +13,8 @@ namespace IT.WebServices.MISC
         {
             try
             {
-
                 if (input != null)
                 {
-
                     StringBuilder hash = new StringBuilder();
                     MD5CryptoServiceProvider md5provider = new MD5CryptoServiceProvider();
                     byte[] bytes = md5provider.ComputeHash(new UTF8Encoding().GetBytes(input));

@@ -221,7 +221,6 @@ namespace IT.WebServices.Controllers
 
                 if (sendMailRessetPassword(loginViewModel.UserName, responselist.Result, Number))
                 {
-
                     SearchViewModel searchViewModel = new SearchViewModel();
                     searchViewModel.searchkey = Number;
                    
@@ -439,7 +438,7 @@ namespace IT.WebServices.Controllers
             {
 
                 #region formatter
-                string text = string.Format("Please click on this link to {0}: {1}", "", "Please verify your email to loogin");
+                string text = string.Format("Please click on this link to {0}: {1}", "", "Please verify your email to login");
                 string html = "Reset Password Code:<br/>";
 
                 html += Number;
