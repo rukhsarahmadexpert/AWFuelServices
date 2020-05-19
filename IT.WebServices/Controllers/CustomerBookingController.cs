@@ -97,7 +97,9 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-                var BookingAdd = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingAdd @CompanyId, @BookQuantity, @UnitPrice, @VAT, @TotalAmount, @Description,@CreatedBy,@Productid,@UnitId",
+                string Number = BookingNumber();
+
+                var BookingAdd = unitOfWork.GetRepositoryInstance<CustomerBookingViewModel>().ReadStoredProcedure("CustomerBookingAdd @CompanyId, @BookQuantity, @UnitPrice, @VAT, @TotalAmount, @Description,@CreatedBy,@Productid,@UnitId,@OrderNo",
                  new SqlParameter("CompanyId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CompanyId }
                , new SqlParameter("BookQuantity", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.BookQuantity }
                , new SqlParameter("UnitPrice", System.Data.SqlDbType.Money) { Value = customerBookingViewModel.UnitPrice }
@@ -107,6 +109,7 @@ namespace IT.WebServices.Controllers
                , new SqlParameter("CreatedBy", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.CreatedBy }
                , new SqlParameter("Productid", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.Productid }
                , new SqlParameter("UnitId", System.Data.SqlDbType.Int) { Value = customerBookingViewModel.UnitId }
+               , new SqlParameter("OrderNo", System.Data.SqlDbType.NVarChar) { Value = Number ?? (object)DBNull.Value }
                  ).FirstOrDefault();
 
                 if (BookingAdd.Id > 0)
@@ -475,6 +478,33 @@ namespace IT.WebServices.Controllers
             {
                 userRepsonse.Success((new JavaScriptSerializer()).Serialize(ex));
                 return Request.CreateResponse(HttpStatusCode.BadRequest, userRepsonse, contentType);
+            }
+        }
+
+        [NonAction]
+        public string BookingNumber()
+        {
+            try
+            {
+                string No = "Order-1000";
+                var OrderNo = unitOfWork.GetRepositoryInstance<SingleStringValueResult>().ReadStoredProcedure("CustomerBookingGetLAstOrderNo"
+                              ).FirstOrDefault();
+                if(OrderNo != null)
+                {
+                    if(OrderNo.Result != null)
+                    {
+                        if(OrderNo.Result != No)
+                        {
+                            int newNo = Convert.ToInt32(OrderNo.Result.Split('-').Last())+1;
+                            No = "Order-"+ newNo;
+                        }
+                    }
+                }
+                return No;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }
