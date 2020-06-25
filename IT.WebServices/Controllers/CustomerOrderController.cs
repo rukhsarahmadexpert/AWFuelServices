@@ -2295,14 +2295,14 @@ namespace IT.WebServices.Controllers
 
             List<NotificationInformation> notificationInformation = notificationController.GetAllAdminTokens("Admin");
 
-            var tekenNot = notificationInformation.Where(x => x.DeviceToken == "token not availibe").ToList();
+            var tekenNot = notificationInformation.Where(x => x.DeviceToken.ToLower() == "token not availibe").ToList();
 
             foreach (var item in tekenNot)
             {
                 notificationInformation.Remove(item);
             }
 
-            var Tokenss = notificationInformation.Where(x => x.Device == "ios")
+            var Tokenss = notificationInformation.Where(x => x.Device.ToLower().Trim() == "ios")
                                                     .Select(x => new NotificationInformation()
                                                     {
                                                         Device = x.Device,
@@ -2318,7 +2318,7 @@ namespace IT.WebServices.Controllers
             }
             var pushSent = PushNotificationLogic.SendPushNotification(tokens, customerOrderListViewModel.Title, customerOrderListViewModel.NotificationCode, customerOrderListViewModel.Message);
 
-            var TokenWebAndroid = notificationInformation.Where(x => x.Device != "ios")
+            var TokenWebAndroid = notificationInformation.Where(x => x.Device.ToLower().Trim() != "ios")
                                                     .Select(x => new NotificationInformation()
                                                     {
                                                         Device = x.Device,
@@ -2346,13 +2346,13 @@ namespace IT.WebServices.Controllers
 
             List<NotificationInformation> notificationInformation = notificationController.GetCompaniesTokens(customerOrderListViewModel.CustomerId);
 
-            var tekenNot = notificationInformation.Where(x => x.DeviceToken == "token not availibe").ToList();
+            var tekenNot = notificationInformation.Where(x => x.DeviceToken.ToLower() == "token not availibe").ToList();
 
             foreach (var item in tekenNot)
             {
                 notificationInformation.Remove(item);
             }
-            var Tokenss = notificationInformation.Where(x => x.Device == "ios").ToList();
+            var Tokenss = notificationInformation.Where(x => x.Device.ToLower().Trim() == "ios").ToList();
 
             var tokens = new string[Tokenss.Count];
 
@@ -2367,7 +2367,7 @@ namespace IT.WebServices.Controllers
             int Result = 0;
             foreach (var item in notificationInformation)
             {
-                if (item.Device != "ios")
+                if (item.Device.ToLower().Trim() != "ios")
                 {
                     SearchViewModel searchViewModel = new SearchViewModel { 
 

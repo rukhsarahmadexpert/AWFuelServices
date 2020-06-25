@@ -30,7 +30,6 @@ namespace IT.WebServices.Controllers
         {
             try
             {
-
                 var advertisementList = unitOfWork.GetRepositoryInstance<CustomerNotification>().ReadStoredProcedure("CustomerNotificationAll"
                     ).ToList();
 
